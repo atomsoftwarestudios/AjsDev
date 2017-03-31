@@ -90,16 +90,9 @@
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\CHANGELOG">
-      <Link>CHANGELOG</Link>
-    </None>
-    <None Include="..\LICENSE">
-      <Link>LICENSE</Link>
-    </None>
-    <None Include="..\README.md">
-      <Link>README.md</Link>
-    </None>
     <None Include="buildtools\tocgen.ps1" />
+    <Content Include="LICENSE" />
+    <Content Include="README.md" />
     <None Include="tsconfig.common.json">
       <DependentUpon>tsconfig.json</DependentUpon>
     </None>

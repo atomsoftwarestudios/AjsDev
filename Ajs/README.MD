@@ -1,53 +1,21 @@
-﻿> Ajs Fw is currently maintained together with AjsDoc at https://github.com/atomsoftwarestudios/AjsDoc
+﻿Ajs Framework is currently developed together with other Ajs related projects. Latest sources are always available at https://github.com/atomsoftwarestudios/AjsDev
 
 # Ajs framework
 
-## Another (Atom) JavaScript Frontend Application Framework
-
 http://ajsfw.azurewebsites.net
 
-Copyright &copy;2016-2017 Atom Software Studios<br>
-Released under the MIT License
-
----
-
-### Table of Contents
-
-- [Introduction]
-- [How to start]
-- [Documentation & examples]
-- [Download]
-- [Clonning & Build]
-- [License]
-- [Contribution]
-
-### Introduction
+Another (Atom) JavaScript Frontend Framework<br />
+pronounce /aɪs/
 
 Ajs Framework is another Single Page JavaScript Frontend Application Framework focused to rapid and easy way of application development and offline application caching.
 
 It is still in the heavy development process.
 
----
+# Contributing
 
-### How to start
+It is probably too early to contribute to the AJS itself but it is possible, for example, to test it and let us know about your experience or report bugs. Also, you can request features to be included.
 
-TBD
-
----
-
-### Documentation & Examples
-
-See [project page](http://ajsfw.azurewebsites.net)
-
----
-
-### Download
-
-TBD
-
----
-
-### Clonning & Build
+# Building
 
 The whole repository is targeted for the Visual Studio (Enterprise, Standard, Commmunity, Express for Web). It should be fully compilable and executable directly after clonning:
 
@@ -57,15 +25,6 @@ git clone https://github.com/atomsoftwarestudios/Ajs.git
 
 If there are any issues during clonning, openning the solution or compiling / running it, please create an issue.
 
----
+# Documentation & Examples
 
-### License
-
-For details see the [License]{./LICENSE} file
-
----
-
-### Contribution
-
-Contribution is more than welcome.
-
+Creation of the documentation is in process. It will be placed on the www.ajsfw.org as soon as possible. In the meanwhile, you can check the example project (the documentation browser) which is currently under development at https://github.com/atomsoftwarestudios/AjsDoc
