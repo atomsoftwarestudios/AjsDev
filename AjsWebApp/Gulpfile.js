@@ -964,9 +964,8 @@ function awatcher() {
  */
 function watcher() {
     "use strict";
-    var errorFlag = false;
     var paused = false;
-    var solutionData;
+    var solutionData = null;
     var ajsWebAppCfg;
     var ajsWebAppProj;
     var projectDirs;
@@ -980,19 +979,22 @@ function watcher() {
     function reloadSolution() {
         // load solution info
         index_1.printf("Loading solution info...");
-        solutionData = vs.getSolution();
-        // warning if solutionInfo.json not parsed correctly
-        if (solutionData === null) {
-            if (!errorFlag) {
-                errorFlag = true;
+        var sData = vs.getSolution();
+        if (sData === null) {
+            if (solutionData === null) {
                 index_1.printf();
-                index_1.printf("Unable to monitor file changes for un-built solution (./buildtools/solutionInfo.json is missing)!");
+                index_1.printf("Unable to monitor file changes for un-built solution (./buildtools/solutionInfo.json is missing or failed to read)!");
                 index_1.printf("Build the solution first in order to be possible to collect the solution and projects information!");
+                index_1.printf();
+                process.exit(0);
+            }
+            else {
+                index_1.printf("Unable to load current solution info. Keeping previous");
                 index_1.printf();
             }
         }
         else {
-            errorFlag = false;
+            solutionData = sData;
             // get AjsWebApp project
             ajsWebAppProj = getProject(solutionData.solutionInfo.ajsWebAppProject, solutionData);
             // get AjsWebApp project configuration (merge the main with Debug or Release)
@@ -1056,9 +1058,11 @@ function watcher() {
      * @param file added / changed / removed file
      */
     function fileChanged(file) {
-        /*if (fs.existsSync(file.path)) {
-            printf("File changed: " + file.path + " " + fs.statSync(file.path).size);
-        }*/
+        /*
+        if (fs.existsSync(file.path)) {
+            printf("File changed: " + file.path + " " + fs.statSync(file.path).size + " " + fs.statSync(file.path).mtime);
+        }
+        */
         // gulpfile / if the build tool is modified -> exit watcher (changes needs to be applied by restarting watcher)
         if (file.path === __filename) {
             var gf_2 = fs.readFileSync(__filename, "utf8");

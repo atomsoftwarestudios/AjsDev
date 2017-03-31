@@ -89,16 +89,22 @@ export function getSolution(): ISolution {
             si = si.replace(/\"comment.*\,/g, "");
             si = si.replace(/\"comment.*\,/g, "");
 
-            // parse solutionInfo.json
-            solution.solutionInfo = JSON.parse(si);
+            // parse solutionInfo.json - wait for full file
+            try {
+                solution.solutionInfo = JSON.parse(si);
 
-            // load a solution file and get the solutioon projects
-            solution.projects = getSolutionProjects(solution.solutionInfo);
+                // load a solution file and get the solutioon projects
+                solution.projects = getSolutionProjects(solution.solutionInfo);
+            } catch (e) {
+                console.log("Unable to parse solution file information, it seems that the file is not fully written.");
+                return null;
+            }
 
             return solution;
 
         } catch (e) {
 
+            console.log("test2");
             printf("Reading the solution information failed: " + e);
             return null;
 
@@ -160,12 +166,15 @@ function getSolutionProjects(solutionInfo: ISolutionInfo): IProjectInfo[] {
         let p3: string[] = p2[0].split(",");
 
         // get project data (p3[0] = project name, p3[1] = project relative path)
-        projectInfo.push(
-            getProjectInfo(
-                p3[0].trim().replace(/"/g, ""),
-                solutionInfo.solutionDir + p3[1].trim().replace(/"/g, "")
-            )
-        );
+        // check if the info from solution is a csproj
+        if (p3[1].indexOf(".csproj") !== -1) {
+            projectInfo.push(
+                getProjectInfo(
+                    p3[0].trim().replace(/"/g, ""),
+                    solutionInfo.solutionDir + p3[1].trim().replace(/"/g, "")
+                )
+            );
+        }
 
     }
 

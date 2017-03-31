@@ -1,4 +1,4 @@
-﻿/// <binding Clean='clean' ProjectOpened='projectOpen' />
+﻿﻿/// <binding Clean='clean' ProjectOpened='projectOpen' />
 /*
 The MIT License (MIT)
 Copyright (c)2017 Atom Software Studios. All rights reserved.
@@ -718,73 +718,73 @@ function setupSrcVirutalDirs(
 
     // if (solutionData.solutionInfo.configurationName === "Debug") {
 
-        let appHostFileName: string = solutionData.solutionInfo.solutionDir + ".vs\\config\\applicationhost.config";
-        printf("Updating applicationhost.config %1...", appHostFileName);
+    let appHostFileName: string = solutionData.solutionInfo.solutionDir + ".vs\\config\\applicationhost.config";
+    printf("Updating applicationhost.config %1...", appHostFileName);
 
-        let appHost: string = fs.readFileSync(appHostFileName, "utf8");
+    let appHost: string = fs.readFileSync(appHostFileName, "utf8");
 
-        xml2js.parseString(appHost,
+    xml2js.parseString(appHost,
 
-            function (err: any, result: any): void {
+        function (err: any, result: any): void {
+
+            /* tslint:disable */
+            let sites: string[] = result["configuration"]["system.applicationHost"][0]["sites"][0]["site"];
+            /* tslint:enable */
+
+            for (let i: number = 0; i < sites.length; i++) {
 
                 /* tslint:disable */
-                let sites: string[] = result["configuration"]["system.applicationHost"][0]["sites"][0]["site"];
-                /* tslint:enable */
-
-                for (let i: number = 0; i < sites.length; i++) {
-
-                    /* tslint:disable */
-                    if (sites[i]["$"]["name"] === solutionData.solutionInfo.ajsWebAppProject) {
+                if (sites[i]["$"]["name"] === solutionData.solutionInfo.ajsWebAppProject) {
                     /* tslint:enable */
 
-                        printf("Adding virtual directory: %1 => %2",
-                            projectConfig.sourcesPath + "/" + project.projectName,
-                            project.projectDir);
+                    printf("Adding virtual directory: %1 => %2",
+                        projectConfig.sourcesPath + "/" + project.projectName,
+                        project.projectDir);
 
-                        /* tslint:disable */
-                        sites[i]["application"][0]["virtualDirectory"].push({
+                    /* tslint:disable */
+                    sites[i]["application"][0]["virtualDirectory"].push({
                         /* tslint:enable */
-                            "$": {
-                                path: projectConfig.sourcesPath + "/" + project.projectName,
-                                physicalPath: project.projectDir
-                            }
-                        });
-
-                        break;
-                    }
-                }
-
-                let builder: xml2js.Builder = new xml2js.Builder({
-                    renderOpts: {
-                        pretty: true,
-                        newline: "\r\n"
-                    }
-                });
-
-                let xml: string = builder.buildObject(result);
-
-                // waits while the file is ready to write
-                function writeAppHost(): void {
-
-                    try {
-                        printf("Updating applicationhost.config. file...");
-                        fs.writeFileSync(appHostFileName, xml, "utf8");
-                        printf("Applicationhost.config updated succesfully.");
-                    } catch (e) {
-                        if (e.code !== "EBUSY") {
-                            throw e;
-                        } else {
-                            printf("Waiting for applicationhost.config to be ready for writing...");
-                            writeAppHost();
+                        "$": {
+                            path: projectConfig.sourcesPath + "/" + project.projectName,
+                            physicalPath: project.projectDir
                         }
-                    }
+                    });
 
+                    break;
                 }
-
-                writeAppHost();
             }
 
-        );
+            let builder: xml2js.Builder = new xml2js.Builder({
+                renderOpts: {
+                    pretty: true,
+                    newline: "\r\n"
+                }
+            });
+
+            let xml: string = builder.buildObject(result);
+
+            // waits while the file is ready to write
+            function writeAppHost(): void {
+
+                try {
+                    printf("Updating applicationhost.config. file...");
+                    fs.writeFileSync(appHostFileName, xml, "utf8");
+                    printf("Applicationhost.config updated succesfully.");
+                } catch (e) {
+                    if (e.code !== "EBUSY") {
+                        throw e;
+                    } else {
+                        printf("Waiting for applicationhost.config to be ready for writing...");
+                        writeAppHost();
+                    }
+                }
+
+            }
+
+            writeAppHost();
+        }
+
+    );
 
     // }
 }
@@ -916,12 +916,12 @@ function cleanApplicationHost(solutionData: vs.ISolution): void {
 
                 /* tslint:disable */
                 if (sites[i]["$"]["name"] === solutionData.solutionInfo.ajsWebAppProject) {
-                /* tslint:enable */
+                    /* tslint:enable */
 
                     // set only root project virtual directory
                     /* tslint:disable */
                     sites[i]["application"][0]["virtualDirectory"] = [{
-                    /* tslint:enable */
+                        /* tslint:enable */
                         "$": {
                             path: "/",
                             physicalPath: project.projectDir
@@ -1157,9 +1157,9 @@ interface IWatchedFileInfo {
 }
 
 interface IFSWatcherParams {
-    persistent ?: boolean;
-    recursive ?: boolean;
-    encoding ?: string;
+    persistent?: boolean;
+    recursive?: boolean;
+    encoding?: string;
 }
 
 let awatcherInstance: {
@@ -1206,7 +1206,7 @@ let awatcherInstance: {
  * Cleans the wwwroot and js folders after the VS AjsWebApp clean action
  * @return Cleaner promise or process exit code if something fails
  */
-function cleaner(): Promise<void>|void {
+function cleaner(): Promise<void> | void {
 
     "use strict";
 
@@ -1235,7 +1235,7 @@ function cleaner(): Promise<void>|void {
                             // awatcher-resumed-callback
                             function (): void {
                                 resolve();
-                        });
+                            });
                     }
                 );
             }
@@ -1429,9 +1429,8 @@ function watcher(): Promise<void> | undefined {
         };
     }
 
-    let errorFlag: boolean = false;
     let paused: boolean = false;
-    let solutionData: vs.ISolution;
+    let solutionData: vs.ISolution = null;
     let ajsWebAppCfg: cfg.IAjsWebAppConfig;
     let ajsWebAppProj: vs.IProjectInfo;
     let projectDirs: IProjectDirInfo;
@@ -1450,23 +1449,25 @@ function watcher(): Promise<void> | undefined {
 
         printf("Loading solution info...");
 
-        solutionData = vs.getSolution();
 
-        // warning if solutionInfo.json not parsed correctly
+        let sData: vs.ISolution = vs.getSolution();
 
-        if (solutionData === null) {
+        if (sData === null) {
 
-            if (!errorFlag) {
-                errorFlag = true;
+            if (solutionData === null) {
                 printf();
-                printf("Unable to monitor file changes for un-built solution (./buildtools/solutionInfo.json is missing)!");
+                printf("Unable to monitor file changes for un-built solution (./buildtools/solutionInfo.json is missing or failed to read)!");
                 printf("Build the solution first in order to be possible to collect the solution and projects information!");
+                printf();
+                process.exit(0);
+            } else {
+                printf("Unable to load current solution info. Keeping previous");
                 printf();
             }
 
         } else {
 
-            errorFlag = false;
+            solutionData = sData;
 
             // get AjsWebApp project
             ajsWebAppProj = getProject(
@@ -1559,9 +1560,11 @@ function watcher(): Promise<void> | undefined {
      */
     function fileChanged(file: { event: string, path: string }): void {
 
-        /*if (fs.existsSync(file.path)) {
-            printf("File changed: " + file.path + " " + fs.statSync(file.path).size);
-        }*/
+        /*
+        if (fs.existsSync(file.path)) {
+            printf("File changed: " + file.path + " " + fs.statSync(file.path).size + " " + fs.statSync(file.path).mtime);
+        }
+        */
 
         // gulpfile / if the build tool is modified -> exit watcher (changes needs to be applied by restarting watcher)
 
@@ -1635,7 +1638,7 @@ function watcher(): Promise<void> | undefined {
                             let stat: fs.Stats = fs.statSync(file.path);
                             exists = true;
                             isDir = stat.isDirectory();
-                        } catch(e) {
+                        } catch (e) {
                             exists = false;
                             isDir = false;
                         }
@@ -1794,7 +1797,7 @@ function watcher(): Promise<void> | undefined {
  * Issues command to pause watcher by creating the watcher.pause and calls callback once the watcher gets paused
  * @param pausedCallback Callback to be called when wather gets paused
  */
-function pauseWatcher(pausedCallback: () =>  void): void {
+function pauseWatcher(pausedCallback: () => void): void {
 
     "use strict";
 
@@ -1982,4 +1985,3 @@ gulp.task("default",
     }
 
 );
-
