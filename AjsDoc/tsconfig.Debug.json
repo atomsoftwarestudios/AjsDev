@@ -1,0 +1,16 @@
+{
+  // TypeScript 2.1 compiler configuration
+  // DEBUG CONFIGURATION
+
+  "extends": "./tsconfig.common.json",
+
+  "compilerOptions": {
+    // generate source maps
+    "sourceMap": true,
+    // source maps root
+    "sourceRoot": "/src/AjsDoc",
+    // remove comments
+    "removeComments": false
+  }
+
+}
