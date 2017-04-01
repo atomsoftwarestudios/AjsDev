@@ -110,6 +110,9 @@
     <TypeScriptCompile Include="AjsDocBrowser.ts" />
     <TypeScriptCompile Include="components\AjsDoc.ts" />
     <None Include="components\AjsDocArticle.ts.old" />
+    <TypeScriptCompile Include="components\AjsDocMemberTypeParameters.ts" />
+    <TypeScriptCompile Include="components\AjsDocMemberImplements.ts" />
+    <TypeScriptCompile Include="components\AjsDocMemberFunctionParams.ts" />
     <TypeScriptCompile Include="lib\atsdoc.ts" />
     <None Include="components\AjsDoc.ts.1" />
     <TypeScriptCompile Include="components\AjsDocArticle.ts" />
@@ -125,6 +128,7 @@
     <TypeScriptCompile Include="IAjsDocBrowserConfig.ts" />
     <TypeScriptCompile Include="lib\hljs.d.ts" />
     <TypeScriptCompile Include="models\ContentModel.ts" />
+    <TypeScriptCompile Include="utils\AtsDoc.ts" />
     <TypeScriptCompile Include="utils\HTMLHelpers.ts" />
     <TypeScriptCompile Include="models\ProgramModel.ts" />
     <TypeScriptCompile Include="states\IAjsDocLayoutState.ts" />

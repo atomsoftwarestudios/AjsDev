@@ -16,6 +16,9 @@
     "./buildtools/**/*"
   ],
   "exclude": [
+    "./src",
+    "./src/",
+    "./src/**/*",
     "./buildtools/dist/**/*"
   ]
 

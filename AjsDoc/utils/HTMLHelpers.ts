@@ -61,7 +61,7 @@ namespace ajsdoc {
             for (let i: number = 0; i < examples.length; i++) {
 
                 let example: string = examples[i].substring(9, examples[i].length);
-                let examplePath = example;
+                let examplePath: string = example;
 
                 if (examplePath.indexOf("/") === -1) {
                     examplePath = examplesBasePath + example;

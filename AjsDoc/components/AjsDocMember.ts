@@ -27,48 +27,44 @@ namespace ajsdoc {
 
     export class AjsDocMember extends ajs.mvvm.viewmodel.ViewComponent {
 
-        public get exported(): boolean {
-            // too lazy to implement the state interface so retype to any
-            let _this: any = this;
+        public get translatedKindString(): string {
+            let nks: string = translateNodeKind(<any>this).toLowerCase();
 
-            return _this.flags && _this.flags.isExported &&
-                _this.kindString !== "property" &&
-                _this.kindString !== "method" &&
-                _this.kindString !== "get" &&
-                _this.kindString !== "set" &&
-                _this.kindString !== "constructor";
+            if (nks.indexOf(" accessor") !== -1) {
+                nks = nks.substr(0, nks.indexOf(" accessor"));
+            }
+
+            return nks;
+        }
+
+        public get isExported(): boolean {
+            return (<any>this).modifierFlags &&
+                (((<any>this).modifierFlags & atsdoc.ModifierFlags.Export) === atsdoc.ModifierFlags.Export);
         }
 
         public get isPublic(): boolean {
-            let _this: any = this;
-
-            return _this.flags && !_this.flags.isPrivate &&
-                !_this.flags.isProtected &&
-                (_this.kindString === "property" ||
-                    _this.kindString === "method" ||
-                    _this.kindString === "accessor" ||
-                    _this.kindString === "constructor");
+            return (<any>this).modifierFlags &&
+                (((<any>this).modifierFlags & atsdoc.ModifierFlags.Public) === atsdoc.ModifierFlags.Public);
         }
 
-        protected _filterState(state: INodeState): INodeState {
-            return state;
+        public get isProtected(): boolean {
+            return (<any>this).modifierFlags &&
+                (((<any>this).modifierFlags & atsdoc.ModifierFlags.Protected) === atsdoc.ModifierFlags.Protected);
         }
 
-        protected _filterStateArrayItem(key: string, index: number, length: number, state: INodeState): ajs.mvvm.viewmodel.IFilteredState {
-            if (key === "extendedTypes" || key === "implementedTypes") {
-                state.isLast = index === length - 1;
-                return {
-                    filterApplied: true,
-                    key: key,
-                    state: state
-                };
-            }
+        public get isPrivate(): boolean {
+            return (<any>this).modifierFlags &&
+                (((<any>this).modifierFlags & atsdoc.ModifierFlags.Private) === atsdoc.ModifierFlags.Private);
+        }
 
-            return {
-                filterApplied: false,
-                key: null,
-                state: null
-            };
+        public get isAbstract(): boolean {
+            return (<any>this).modifierFlags &&
+                (((<any>this).modifierFlags & atsdoc.ModifierFlags.Abstract) === atsdoc.ModifierFlags.Abstract);
+        }
+
+        public get isStatic(): boolean {
+            return (<any>this).modifierFlags &&
+                (((<any>this).modifierFlags & atsdoc.ModifierFlags.Static) === atsdoc.ModifierFlags.Static);
         }
 
     }

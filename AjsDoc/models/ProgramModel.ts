@@ -25,7 +25,7 @@ namespace ajsdoc {
     /**
      * Used to recognize nodes which should not be expandable in the menu
      */
-    const MENU_DONT_EXPAND: string[] = [
+    export const MENU_DONT_EXPAND: string[] = [
         "InterfaceDeclaration",
         "VariableDeclaration",
         "EnumDeclaration",
@@ -40,7 +40,7 @@ namespace ajsdoc {
     /**
      * Used to sort menu groups
      */
-    const MENU_GROUP_SORT: string[] = [
+    export const MENU_GROUP_SORT: string[] = [
         "Namespaces",
         "Modules",
         "Interfaces",
@@ -247,71 +247,11 @@ namespace ajsdoc {
         }
 
         /**
-         * Translates node name to user friendly string
-         * @param node
-         */
-        protected _translateNodeKind(node: atsdoc.IATsDocNode, plural?: boolean): string {
-
-            switch (node.kind) {
-
-                case atsdoc.SyntaxKind.SourceFile:
-                    return plural ? "Source files" : "Source file";
-
-                case atsdoc.SyntaxKind.ModuleDeclaration:
-                    if (node.nodeFlagsString.indexOf("Namespace") !== -1) {
-                        return plural ? "Namespaces" : "Namespace";
-                    } else {
-                        return plural ? "Modules" : "Module";
-                    }
-
-                case atsdoc.SyntaxKind.ClassDeclaration:
-                    return plural ? "Classes" : "Class";
-
-                case atsdoc.SyntaxKind.InterfaceDeclaration:
-                    return plural ? "Interfaces" : "Interface";
-
-                case atsdoc.SyntaxKind.FunctionDeclaration:
-                    return plural ? "Functions" : "Function";
-
-                case atsdoc.SyntaxKind.VariableDeclaration:
-                    if (node.atsNodeFlagsString.indexOf("const") !== -1) {
-                        return plural ? "Constants" : "Constant";
-                    } else {
-                        return plural ? "Variables" : "Variable";
-                    }
-
-                case atsdoc.SyntaxKind.Constructor:
-                    return plural ? "Constructors" : "Constructor";
-
-                case atsdoc.SyntaxKind.PropertyDeclaration:
-                case atsdoc.SyntaxKind.PropertySignature:
-                    return plural ? "Properties" : "Property";
-
-                case atsdoc.SyntaxKind.GetAccessor:
-                    return plural ? "Accessors" : "Get Accessor";
-
-                case atsdoc.SyntaxKind.SetAccessor:
-                    return plural ? "Accessors" : "Set Accessor";
-
-                case atsdoc.SyntaxKind.MethodDeclaration:
-                    return plural ? "Methods" : "Method";
-
-                case atsdoc.SyntaxKind.EnumDeclaration:
-                    return plural ? "Enumerations" : "Enumeration";
-
-                default:
-                    return node.kindString;
-
-            }
-
-        }
-
-        /**
          * Retruns the group name (kind in plural) to be shown in menu
          * @param node Node from which the node kind will be extracted
          */
         protected _getGroupNameFromNodeKind(node: atsdoc.IATsDocNode): string {
-            return this._translateNodeKind(node, true);
+            return translateNodeKind(node, true);
         }
 
         /**
@@ -416,7 +356,7 @@ namespace ajsdoc {
             let allowRoot: boolean = true;
 
             let parentLabel: string = node.parent !== null && (node.parent.kind !== -1 || allowRoot) ?
-                this._translateNodeKind(node.parent) + " " + node.parent.name : null;
+                translateNodeKind(node.parent) + " " + node.parent.name : null;
             let parentPath: string = node.parent !== null && (node.parent.kind !== -1 || allowRoot) ? node.parent.fqdn : "";
 
             // prepare menu state
@@ -430,7 +370,7 @@ namespace ajsdoc {
             // push the current item to the menu as a first option
             menu.items.push({
                 key: "itemLabel:" + node.fqdn,
-                label: this._translateNodeKind(node) + " " + (node.name !== undefined ? node.name : ""),
+                label: translateNodeKind(node) + " " + (node.name !== undefined ? node.name : ""),
                 path: "/ref/" + node.fqdn,
                 selected: node.fqdn === navPath,
                 expandable: false,
@@ -510,7 +450,7 @@ namespace ajsdoc {
                     key: n.fqdn,
                     firstItem: index === 0,
                     itemPath: "/ref/" + n.fqdn,
-                    itemType: this._translateNodeKind(n),
+                    itemType: translateNodeKind(n),
                     itemLabel: n.name
                 };
 
@@ -532,7 +472,7 @@ namespace ajsdoc {
             let node: atsdoc.IATsDocNode = this.navigateDocNode(path);
 
             let articleState: IAjsDocArticleState = {};
-            articleState.caption = this._translateNodeKind(node) + " " + node.name;
+            articleState.caption = translateNodeKind(node) + " " + node.name;
             articleState.description = node.commentShort ? node.commentShort : undefined;
             this._getExtends(node, articleState);
             this._getImplements(node, articleState);
@@ -573,7 +513,7 @@ namespace ajsdoc {
                 for (let i of node.implements) {
                     articleState.implements.push({
                         key: i.fqdn,
-                        name: "interface " + i.name,
+                        name: "interface " + i.fqdn,
                         path: i.fqdn
                     });
                 }
@@ -583,11 +523,11 @@ namespace ajsdoc {
         }
 
         protected _getExtends(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
-            if (node.extends) {
+            if (node.extends && node.extends.name) {
 
                 let n: atsdoc.IATsDocNode = node;
                 let h: IHierarchyNodeState = {
-                    name: this._translateNodeKind(n).toLocaleLowerCase() + " " + n.name,
+                    name: translateNodeKind(n).toLocaleLowerCase() + " " + n.fqdn,
                     path: n.fqdn
                 };
                 articleState.hierarchy = h;
@@ -599,7 +539,7 @@ namespace ajsdoc {
                     if (n !== null) {
 
                         let hs: IHierarchyNodeState = {
-                            name: this._translateNodeKind(n).toLocaleLowerCase() + " " + n.name,
+                            name: translateNodeKind(n).toLocaleLowerCase() + " " + n.fqdn,
                             path: n.fqdn
                         };
 
@@ -646,6 +586,10 @@ namespace ajsdoc {
 
                         case atsdoc.SyntaxKind.EnumDeclaration:
                             addMember("enumerations", n);
+                            break;
+
+                        case atsdoc.SyntaxKind.EnumMember:
+                            addMember("enumMembers", n);
                             break;
 
                         case atsdoc.SyntaxKind.ObjectLiteralExpression:

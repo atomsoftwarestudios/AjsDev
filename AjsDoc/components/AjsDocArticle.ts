@@ -105,6 +105,24 @@ namespace ajsdoc {
         public get hasAccessors(): boolean { return this.accessors instanceof Array && this.accessors.length > 0; }
         public get hasEnumMembers(): boolean { return this.enumMembers instanceof Array && this.enumMembers.length > 0; }
 
+        public get hasMembers(): boolean {
+            return false ||
+                this.hasModules ||
+                this.hasNamespaces ||
+                this.hasFunctions ||
+                this.hasClasses ||
+                this.hasInterfaces ||
+                this.hasVariables ||
+                this.hasEnumerations ||
+                this.hasObjectLiterals ||
+                this.hasConstructors ||
+                this.hasProperties ||
+                this.hasMethods ||
+                this.hasAccessors ||
+                this.hasEnumMembers;
+        }
+
+
         public setState(state: IAjsDocArticleState): void {
             super.setState(state);
         }

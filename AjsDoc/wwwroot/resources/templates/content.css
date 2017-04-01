@@ -2,6 +2,11 @@
     text-align: left;
 }
 
+.ajsDocArticleContentMargin {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
 .ajsDocArticleContent a {
     color: black;
     font-style: oblique;
