@@ -28,7 +28,13 @@ namespace ajsdoc {
     export class AjsDocMember extends ajs.mvvm.viewmodel.ViewComponent {
 
         public get translatedKindString(): string {
-            let nks: string = translateNodeKind(<any>this).toLowerCase();
+            let nks: string = translateNodeKind(<any>this);
+
+            nks = nks.toLowerCase();
+
+            if (nks === "parameter" || nks === "returnstatement") {
+                nks = "";
+            }
 
             if (nks.indexOf(" accessor") !== -1) {
                 nks = nks.substr(0, nks.indexOf(" accessor"));

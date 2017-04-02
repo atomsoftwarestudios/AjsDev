@@ -1,5 +1,5 @@
 /* *************************************************************************
-The MIT License (MIT)
+The fretIT License (MIT)
 Copyright (c)2017 Atom Software Studios. All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -506,121 +506,182 @@ namespace ajsdoc {
         }
 
         protected _getImplements(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
-            if (node.implements && node.implements.length > 0) {
-
-                articleState.implements = [];
-
-                for (let i of node.implements) {
-                    articleState.implements.push({
-                        key: i.fqdn,
-                        name: "interface " + i.fqdn,
-                        path: i.fqdn
-                    });
-                }
-
+            if (!node.implements || !(node.implements.length === 0)) {
+                return;
             }
 
+            articleState.implements = [];
+
+            for (let i of node.implements) {
+                articleState.implements.push({
+                    key: i.fqdn,
+                    name: "interface " + i.fqdn,
+                    path: i.fqdn
+                });
+            }
         }
 
         protected _getExtends(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
-            if (node.extends && node.extends.name) {
 
-                let n: atsdoc.IATsDocNode = node;
-                let h: IHierarchyNodeState = {
-                    name: translateNodeKind(n).toLocaleLowerCase() + " " + n.fqdn,
-                    path: n.fqdn
-                };
-                articleState.hierarchy = h;
+            if (!node.extends || !node.extends.name) {
+                return;
+            }
 
-                while (n !== null) {
+            let n: atsdoc.IATsDocNode = node;
+            let h: IHierarchyNodeState = {
+                name: translateNodeKind(n).toLocaleLowerCase() + " " + n.fqdn,
+                path: n.fqdn
+            };
+            articleState.hierarchy = h;
 
-                    n = n.extends && n.extends.fqdn && this._nodesByFqdn[n.extends.fqdn] ? this._nodesByFqdn[n.extends.fqdn][0] : null;
+            while (n !== null) {
 
-                    if (n !== null) {
+                n = n.extends && n.extends.fqdn && this._nodesByFqdn[n.extends.fqdn] ? this._nodesByFqdn[n.extends.fqdn][0] : null;
 
-                        let hs: IHierarchyNodeState = {
-                            name: translateNodeKind(n).toLocaleLowerCase() + " " + n.fqdn,
-                            path: n.fqdn
-                        };
+                if (n !== null) {
 
-                        h.extends = hs;
-                        h = h.extends;
-                    }
+                    let hs: IHierarchyNodeState = {
+                        name: translateNodeKind(n).toLocaleLowerCase() + " " + n.fqdn,
+                        path: n.fqdn
+                    };
+
+                    h.extends = hs;
+                    h = h.extends;
                 }
+            }
+
+        }
+
+        protected _addMember(articleState: IAjsDocArticleState, kind: string, n: atsdoc.IATsDocNode): void {
+            if (!(articleState[kind] instanceof Array)) {
+                articleState[kind] = [];
+            }
+            articleState[kind].push(n);
+        }
+
+        protected _addMembers_childrenNodes(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+
+            if (!(node.children instanceof Array) || !(node.children.length > 0)) {
+                return;
+            }
+
+            for (let n of node.children) {
+
+                switch (n.kind) {
+
+                    case atsdoc.SyntaxKind.ModuleDeclaration:
+                        if (n.nodeFlagsString.indexOf("Namespace") !== -1) {
+                            this._addMember(articleState, "namespaces", n);
+                        }
+                        if (n.nodeFlagsString.indexOf("Module") !== -1) {
+                            this._addMember(articleState, "modules", n);
+                        }
+                        break;
+
+                    case atsdoc.SyntaxKind.FunctionDeclaration:
+                        this._addMember(articleState, "functions", n);
+                        break;
+
+                    case atsdoc.SyntaxKind.ClassDeclaration:
+                        this._addMember(articleState, "classes", n);
+                        break;
+
+                    case atsdoc.SyntaxKind.VariableDeclaration:
+                        if (n.atsNodeFlags === atsdoc.ATsDocNodeFlags.const) {
+                            this._addMember(articleState, "constants", n);
+                        } else {
+                            this._addMember(articleState, "variables", n);
+                        }
+                        break;
+
+                    case atsdoc.SyntaxKind.EnumDeclaration:
+                        this._addMember(articleState, "enumerations", n);
+                        break;
+
+                    case atsdoc.SyntaxKind.EnumMember:
+                        this._addMember(articleState, "enumMembers", n);
+                        break;
+
+                    case atsdoc.SyntaxKind.ObjectLiteralExpression:
+                        this._addMember(articleState, "objectLiterals", n);
+                        break;
+
+                    case atsdoc.SyntaxKind.Constructor:
+                        this._addMember(articleState, "constructors", n);
+                        break;
+
+                    case atsdoc.SyntaxKind.PropertyDeclaration:
+                    case atsdoc.SyntaxKind.PropertySignature:
+                        this._addMember(articleState, "properties", n);
+                        break;
+
+                    case atsdoc.SyntaxKind.GetAccessor:
+                    case atsdoc.SyntaxKind.SetAccessor:
+                        this._addMember(articleState, "accessors", n);
+                        break;
+
+                    case atsdoc.SyntaxKind.MethodDeclaration:
+                        this._addMember(articleState, "methods", n);
+                        break;
+
+                }
+            }
+
+        }
+
+        protected _addMembers_nodeParameters(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+            if (!(node.parameters instanceof Array) || !(node.parameters.length > 0)) {
+                return;
+            }
+
+            for (let param of node.parameters) {
+                this._addMember(articleState, "parameters", param);
             }
         }
 
+        protected _addMembers_returnValue(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+
+            if ((node.kind !== atsdoc.SyntaxKind.FunctionDeclaration) && (node.kind !== atsdoc.SyntaxKind.MethodDeclaration)) {
+                return;
+            }
+
+            if (!node.hasOwnProperty("type")) {
+                return;
+            }
+
+            if (node.type.name === "void") {
+                return;
+            }
+
+            let n: atsdoc.IATsDocNode = {
+                kind: atsdoc.SyntaxKind.ReturnStatement,
+                kindString: "ReturnStatement",
+                parent: node,
+                name: "",
+                type: node.type,
+                children: []
+            };
+
+            if (node.type.commentShort) {
+                n.commentShort = node.type.commentShort;
+            }
+
+            if (node.type.commentLong) {
+                n.commentLong = node.type.commentLong;
+            }
+
+
+            this._addMember(articleState, "returnValue", n);
+
+        }
+
+
         protected _getMembers(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
 
-            function addMember(kind: string, n: atsdoc.IATsDocNode): void {
-                if (!(articleState[kind] instanceof Array)) {
-                    articleState[kind] = [];
-                }
-                articleState[kind].push(n);
-            }
+            this._addMembers_childrenNodes(node, articleState);
+            this._addMembers_nodeParameters(node, articleState);
+            this._addMembers_returnValue(node, articleState);
 
-            if (node.children instanceof Array && node.children.length > 0) {
-                for (let n of node.children) {
-                    switch (n.kind) {
-
-                        case atsdoc.SyntaxKind.ModuleDeclaration:
-                            if (n.nodeFlagsString.indexOf("Namespace") !== -1) {
-                                addMember("namespaces", n);
-                            }
-                            if (n.nodeFlagsString.indexOf("Module") !== -1) {
-                                addMember("modules", n);
-                            }
-                            break;
-
-                        case atsdoc.SyntaxKind.FunctionDeclaration:
-                            addMember("functions", n);
-                            break;
-
-                        case atsdoc.SyntaxKind.ClassDeclaration:
-                            addMember("classes", n);
-                            break;
-
-                        case atsdoc.SyntaxKind.VariableDeclaration:
-                            addMember("variables", n);
-                            break;
-
-                        case atsdoc.SyntaxKind.EnumDeclaration:
-                            addMember("enumerations", n);
-                            break;
-
-                        case atsdoc.SyntaxKind.EnumMember:
-                            addMember("enumMembers", n);
-                            break;
-
-                        case atsdoc.SyntaxKind.ObjectLiteralExpression:
-                            addMember("objectLiterals", n);
-                            break;
-
-                        case atsdoc.SyntaxKind.Constructor:
-                            addMember("constructors", n);
-                            break;
-
-                        case atsdoc.SyntaxKind.PropertyDeclaration:
-                        case atsdoc.SyntaxKind.PropertySignature:
-                            addMember("properties", n);
-                            break;
-
-                        case atsdoc.SyntaxKind.GetAccessor:
-                        case atsdoc.SyntaxKind.SetAccessor:
-                            addMember("accessors", n);
-                            break;
-
-                        case atsdoc.SyntaxKind.PropertyDeclaration:
-                            addMember("methods", n);
-                            break;
-
-/*
-        public enumMembers?: atsdoc.IATsDocNode[];
-*/
-
-                    }
-                }
-            }
 
         }
 

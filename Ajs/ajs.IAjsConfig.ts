@@ -41,7 +41,7 @@ namespace ajs {
      * <p>
      * The following example shows how to configure all components of the Ajs Framework:
      * </p>
-     * #example /resources/examples/ajs.boot.config-ajs.ts
+     * #example /resources/examples/ajs.boot.config.ts
      * <p>
      * TODO: Review necessary options
      * </p>

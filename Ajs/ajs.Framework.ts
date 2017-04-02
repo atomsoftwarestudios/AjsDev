@@ -22,7 +22,7 @@ IN THE SOFTWARE.
 **************************************************************************** */
 
 /**
- * The main AJS namespace
+ * The top level Ajs Framework namespace
  * Contains the static Framework class, Framework exceptions and Ajs
  * configuration template
  */

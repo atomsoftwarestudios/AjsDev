@@ -40,6 +40,6 @@ namespace ajs.ui {
 
     }
 
-    export let errorPage: ProgressBar;
+    export let errorPage: ErrorPage;
 
 }

@@ -38,14 +38,16 @@ namespace ajs.resources {
      */
     export const LOCAL_ONLY_PREFIX: string = "LOCAL.";
 
-    /** Default cache sizes 20 / 4 / 4 MB */
+    /** Default memory cache size 20MB */
     const MEMORY_CACHE_SIZE: number = 20 * 1024 * 1024;
+    /** Default session cache size 20MB */
     const SESSION_CACHE_SIZE: number = 4 * 1024 * 1024;
+    /** Default local cache size 20MB */
     const LOCAL_CACHE_SIZE: number = 4 * 1024 * 1024;
 
     const WAIT: number = 1;
 
-    /** Indicates if loaded scripts should executed using the eval function or by adding the &lt;script&gt; tag */
+    /** Indicates if loaded scripts should be executed using the eval function or by adding the <script> tag */
     const USE_EVAL: boolean = true;
 
     /** Resource types and their file name extensions */

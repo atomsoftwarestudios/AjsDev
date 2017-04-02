@@ -55,6 +55,7 @@ namespace ajsdoc {
         functions?: atsdoc.IATsDocNode[];
         classes?: atsdoc.IATsDocNode[];
         interfaces?: atsdoc.IATsDocNode[];
+        constants?: atsdoc.IATsDocNode[];
         variables?: atsdoc.IATsDocNode[];
         enumerations?: atsdoc.IATsDocNode[];
         objectLiterals?: atsdoc.IATsDocNode[];
@@ -63,6 +64,8 @@ namespace ajsdoc {
         methods?: atsdoc.IATsDocNode[];
         accessors?: atsdoc.IATsDocNode[];
         enumMembers?: atsdoc.IATsDocNode[];
+        parameters?: atsdoc.IATsDocNode[];
+        returnValue?: atsdoc.IATsDocNode;
     }
 
     export class AjsDocArticle extends ajs.mvvm.viewmodel.ViewComponent implements IAjsDocArticleState {
@@ -79,6 +82,7 @@ namespace ajsdoc {
         public functions?: atsdoc.IATsDocNode[];
         public classes?: atsdoc.IATsDocNode[];
         public interfaces?: atsdoc.IATsDocNode[];
+        public constants?: atsdoc.IATsDocNode[];
         public variables?: atsdoc.IATsDocNode[];
         public enumerations?: atsdoc.IATsDocNode[];
         public objectLiterals?: atsdoc.IATsDocNode[];
@@ -87,6 +91,8 @@ namespace ajsdoc {
         public accessors?: atsdoc.IATsDocNode[];
         public methods?: atsdoc.IATsDocNode[];
         public enumMembers?: atsdoc.IATsDocNode[];
+        public parameters?: atsdoc.IATsDocNode[];
+        public returnValue?: atsdoc.IATsDocNode;
 
         public get hasHierarchy(): boolean { return this.hierarchy !== undefined && this.hierarchy !== null; }
         public get hasImplements(): boolean { return this.hierarchy !== undefined && this.hierarchy !== null; }
@@ -96,6 +102,7 @@ namespace ajsdoc {
         public get hasFunctions(): boolean { return this.functions instanceof Array && this.functions.length > 0; }
         public get hasClasses(): boolean { return this.classes instanceof Array && this.classes.length > 0; }
         public get hasInterfaces(): boolean { return this.interfaces instanceof Array && this.interfaces.length > 0; }
+        public get hasConstants(): boolean { return this.constants instanceof Array && this.constants.length > 0; }
         public get hasVariables(): boolean { return this.variables instanceof Array && this.variables.length > 0; }
         public get hasEnumerations(): boolean { return this.enumerations instanceof Array && this.enumerations.length > 0; }
         public get hasObjectLiterals(): boolean { return this.objectLiterals instanceof Array && this.objectLiterals.length > 0; }
@@ -104,21 +111,15 @@ namespace ajsdoc {
         public get hasMethods(): boolean { return this.methods instanceof Array && this.methods.length > 0; }
         public get hasAccessors(): boolean { return this.accessors instanceof Array && this.accessors.length > 0; }
         public get hasEnumMembers(): boolean { return this.enumMembers instanceof Array && this.enumMembers.length > 0; }
+        public get hasParameters(): boolean { return this.parameters instanceof Array && this.parameters.length > 0; }
+        public get hasReturnValue(): boolean { return this.hasOwnProperty("returnValue"); }
 
         public get hasMembers(): boolean {
             return false ||
-                this.hasModules ||
-                this.hasNamespaces ||
-                this.hasFunctions ||
-                this.hasClasses ||
-                this.hasInterfaces ||
-                this.hasVariables ||
-                this.hasEnumerations ||
-                this.hasObjectLiterals ||
                 this.hasConstructors ||
                 this.hasProperties ||
-                this.hasMethods ||
                 this.hasAccessors ||
+                this.hasMethods ||
                 this.hasEnumMembers;
         }
 

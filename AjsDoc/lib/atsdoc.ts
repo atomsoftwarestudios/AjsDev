@@ -447,7 +447,8 @@
      */
     export interface IATsDocType {
         parent: IATsDocNode;
-
+        commentShort?: string;
+        commentLong?: string;
         name: string;
         fqdn?: string;
         flags: TypeFlags;

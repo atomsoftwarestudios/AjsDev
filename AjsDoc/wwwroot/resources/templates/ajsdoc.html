@@ -117,7 +117,11 @@
     <!-- ------------------------------------------------------------------------------------------------------------------------ -->
     <!-- CODE TEMPLATES -->
 
-    <span component="AjsDocMemberDataType">: <span class="hljs-built_in" if="this.name !==''">{name}</span><span class="hljs-built_in" if="this.name ===''">any</span></span>
+    <span component="AjsDocMemberDataType"><!--
+     --><span if="this.ajs.parentComponent.kind !== 218">: </span><!--
+     --><span class="hljs-built_in" if="this.name !==''">{name}</span><!--
+     --><span class="hljs-built_in" if="this.name ===''">any</span><!--
+ --></span>
 
     <component name="AjsDocMemberFunctionParams"><!--
      --><span if="this.restParameter">...</span><!--
@@ -126,6 +130,7 @@
      --><span><!--
          --><ajsDocMemberDataType id="type"></ajsDocMemberDataType><!--
      --></span><!--
+     --><span if="this.initializer"> = {initializer}</span><!--
      --><span if="!this.isLast">, </span><!--
  --></component>
 
@@ -159,7 +164,7 @@
                  -->)<!--
                  --></span><!--
                  --><ajsDocMemberDataType class="hljs-built_in" id="type"></ajsDocMemberDataType><!--
-                 --><span if="this.initializer"> = {initializer}</span>
+                 --><span if="this.initializer"> = <pre style="display: inline">{initializer}</pre></span>
                     <!--{body}-->
                 </code>
             </div>
@@ -168,6 +173,7 @@
                     <strong>!!! DOCUMENTATION IS MISSING !!!</strong>
                 </span>
                 <span if="this.ajs.parentComponent.ajs.id !== 'syntaxes' && this.commentShort && this.commentShort.trim() !== ''">{commentShort}</span>
+                <!--<div component="AjsDocFiles" id="files" style="font-size: 0.75em">{file}</div>-->
             </div>
         </a>
 
@@ -178,7 +184,6 @@
         <div style="padding-left: 0.5em; padding-right: 0.5em">
 
             <h2 class="ajsDocArticleCaption">{caption}</h2>
-            <br/>
 
             <!--<h4 if="this.description && this.descriptioon !== ''">Description</h4>-->
             <p if="this.description && this.description !== ''" class="ajsDocArticleContent">{description}</p>
@@ -210,6 +215,61 @@
                 <p class="ajsDocArticleContent">{longDescription}</p>
             </div>
 
+            <div if="this.hasModules">
+                <h3>Modules</h3>
+                <ajsDocMember id="modules"></ajsDocMember>
+            </div>
+
+            <div if="this.hasNamespaces">
+                <h3>Namespaces</h3>
+                <ajsDocMember id="namespaces"></ajsDocMember>
+            </div>
+
+            <div if="this.hasInterfaces">
+                <h3>Interfaces</h3>
+                <ajsDocMember id="interfaces"></ajsDocMember>
+            </div>
+
+            <div if="this.hasClasses">
+                <h3>Classes</h3>
+                <ajsDocMember id="classes"></ajsDocMember>
+            </div>
+
+            <div if="this.hasFunctions">
+                <h3>Functions</h3>
+                <ajsDocMember id="functions"></ajsDocMember>
+            </div>
+
+            <div if="this.hasConstants">
+                <h3>Constants</h3>
+                <ajsDocMember id="constants"></ajsDocMember>
+            </div>
+
+            <div if="this.hasVariables">
+                <h3>Variables</h3>
+                <ajsDocMember id="variables"></ajsDocMember>
+            </div>
+
+            <div if="this.hasEnumerations">
+                <h3>Enumerations</h3>
+                <ajsDocMember id="enumerations"></ajsDocMember>
+            </div>
+
+            <div if="this.hasObjectLiterals">
+                <h3>Object literals</h3>
+                <ajsDocMember id="objectLiterals"></ajsDocMember>
+            </div>
+
+            <div if="this.hasParameters">
+                <h3>Parameters</h3>
+                <ajsDocMember id="parameters"></ajsDocMember>
+            </div>
+
+            <div if="this.hasReturnValue">
+                <h3>Returns</h3>
+                <ajsDocMember id="returnValue"></ajsDocMember>
+            </div>
+
             <div if="this.hasMembers">
 
                 <h3 class="ajsDocArticleCaption">Members</h3>
@@ -221,45 +281,6 @@
                         <ajsDocMember id="constructors"></ajsDocMember>
                     </div>
 
-                    <div if="this.hasModules">
-                        <h4>Modules</h4>
-                        <ajsDocMember id="modules"></ajsDocMember>
-                    </div>
-
-                    <div if="this.hasNamespaces">
-                        <h4>Namespaces</h4>
-                        <ajsDocMember id="namespaces"></ajsDocMember>
-                    </div>
-
-                    <div if="this.hasInterfaces">
-                        <h4>Interfaces</h4>
-                        <ajsDocMember id="interfaces"></ajsDocMember>
-                    </div>
-
-                    <div if="this.hasClasses">
-                        <h4>Classes</h4>
-                        <ajsDocMember id="classes"></ajsDocMember>
-                    </div>
-
-                    <div if="this.hasFunctions">
-                        <h4>Functions</h4>
-                        <ajsDocMember id="functions"></ajsDocMember>
-                    </div>
-
-                    <div if="this.hasVariables">
-                        <h4>Variables</h4>
-                        <ajsDocMember id="variables"></ajsDocMember>
-                    </div>
-
-                    <div if="this.hasEnumerations">
-                        <h4>Enumerations</h4>
-                        <ajsDocMember id="enumerations"></ajsDocMember>
-                    </div>
-
-                    <div if="this.hasObjectLiterals">
-                        <h4>Object literals</h4>
-                        <ajsDocMember id="objectLiterals"></ajsDocMember>
-                    </div>
 
                     <div if="this.hasProperties">
                         <h4>Properties</h4>
