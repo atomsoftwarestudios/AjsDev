@@ -634,12 +634,12 @@ namespace ajs.mvvm.viewmodel {
          * @param usingShadowDom information if the render is performed to the main DOM or shadow DOM
          * @param clearStateChangeOnly informs renderer that rendering should not be done, just state changed flag should be cleared
          */
-        public render(parentElement: HTMLElement, clearStateChangeOnly: boolean): HTMLElement {
+        public render(parentElement: HTMLElement, clearStateChangeOnly: boolean, attributes?: NamedNodeMap): HTMLElement {
 
             let node: Node;
 
             // render the tree of the visual component related to the current view component
-            node = this._renderTree(this.ajs.visualComponent.component, parentElement, clearStateChangeOnly);
+            node = this._renderTree(this.ajs.visualComponent.component, parentElement, clearStateChangeOnly, attributes);
 
             // reset the dirty state after change
             this.ajs.stateChanged = false;
@@ -667,7 +667,7 @@ namespace ajs.mvvm.viewmodel {
 
         }
 
-        protected _renderTree(sourceNode: Node, targetNode: Node, clearStateChangeOnly: boolean): Node {
+        protected _renderTree(sourceNode: Node, targetNode: Node, clearStateChangeOnly: boolean, attributes?: NamedNodeMap): Node {
 
             let id: string = null;
             if (sourceNode.nodeType === Node.ELEMENT_NODE) {
@@ -679,7 +679,7 @@ namespace ajs.mvvm.viewmodel {
 
                 // if it is a view component, render it
                 if (this[id] instanceof ViewComponent) {
-                    (this[id] as ViewComponent).render(targetNode as HTMLElement, clearStateChangeOnly);
+                    (this[id] as ViewComponent).render(targetNode as HTMLElement, clearStateChangeOnly, sourceNode.attributes);
                 } else {
                     // if it is an array
                     if (this[id] instanceof Array) {
@@ -699,7 +699,7 @@ namespace ajs.mvvm.viewmodel {
                 if (clearStateChangeOnly) {
                     addedNode = null;
                 } else {
-                    addedNode = this._renderNode(sourceNode, targetNode);
+                    addedNode = this._renderNode(sourceNode, targetNode, attributes);
                 }
 
                 // check if the node is root node of the view component and if the component and its
@@ -736,9 +736,13 @@ namespace ajs.mvvm.viewmodel {
          * @param sourceNode node in the VisualComponent template
          * @param targetNode node in the targer document
          */
-        protected _renderNode(sourceNode: Node, targetNode: Node): Node {
+        protected _renderNode(sourceNode: Node, targetNode: Node, attributes?: NamedNodeMap): Node {
             let clonedNode: Node = sourceNode.cloneNode(false);
             let adoptedNode: Node = targetNode.ownerDocument.adoptNode(clonedNode);
+
+            if (attributes) {
+            }
+
             let processedNode: Node = this._processNode(adoptedNode);
             if (processedNode && processedNode !== null) {
                 if (processedNode instanceof HTMLElement) {
