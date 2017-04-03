@@ -686,7 +686,7 @@ namespace ajs.mvvm.viewmodel {
                         // go through it and render all view components existing in the array
                         for (let i: number = 0; i < this[id].length; i++) {
                             if (this[id][i] instanceof ViewComponent) {
-                                (this[id][i] as ViewComponent).render(targetNode as HTMLElement, clearStateChangeOnly);
+                                (this[id][i] as ViewComponent).render(targetNode as HTMLElement, clearStateChangeOnly, sourceNode.attributes);
                             }
                         }
                     }
@@ -741,6 +741,7 @@ namespace ajs.mvvm.viewmodel {
             let adoptedNode: Node = targetNode.ownerDocument.adoptNode(clonedNode);
 
             if (attributes) {
+                this._mergeAttributes(adoptedNode, attributes);
             }
 
             let processedNode: Node = this._processNode(adoptedNode);
@@ -752,6 +753,39 @@ namespace ajs.mvvm.viewmodel {
                 targetNode.appendChild(processedNode);
             }
             return processedNode;
+        }
+
+        /**
+         * Merges attributes from source to adopted node
+         * @param targetNode Adopted node to be populated with attributes collected from the component implementation node
+         * @param attributes Attributes collected from the component implementation node
+         */
+        protected _mergeAttributes(targetNode: Node, attributes?: NamedNodeMap): void {
+            if (!(targetNode instanceof Element)) {
+                return;
+            }
+
+            for (let i: number = 0; i < attributes.length; i++) {
+
+                switch (attributes[i].nodeName.toLowerCase()) {
+                    case "class":
+                        if ((<Element>targetNode).hasAttribute("class")) {
+                            if ((<Element>targetNode).getAttribute("class").indexOf(attributes[i].nodeValue) === -1) {
+                                (<Element>targetNode).setAttribute(
+                                    attributes[i].nodeName,
+                                    (<Element>targetNode).getAttribute("class") + " " + attributes[i].nodeValue);
+                            }
+                        } else {
+                            (<Element>targetNode).setAttribute(attributes[i].nodeName, attributes[i].nodeValue);
+                        }
+                        break;
+                    case "id":
+                        break;
+                    default:
+                        (<Element>targetNode).setAttribute(attributes[i].nodeName, attributes[i].nodeValue);
+                        break;
+                }
+            }
         }
 
         /**
