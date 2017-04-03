@@ -1,6 +1,7 @@
 {
   "kind": -1,
-  "kindString": "program",
+  "kindString": "Program",
+  "name": "Program",
   "children": [
     {
       "kind": 263,
@@ -296,28 +297,35 @@
                     "Public",
                     "Static"
                   ],
-                  "parameters": []
-                },
-                {
-                  "kind": 225,
-                  "kindString": "VariableDeclaration",
-                  "files": [
+                  "parameters": [],
+                  "children": [
                     {
-                      "file": "test/classes/classes-static.ts:10:17"
+                      "kind": 225,
+                      "kindString": "VariableDeclaration",
+                      "files": [
+                        {
+                          "file": "test/classes/classes-static.ts:10:17"
+                        }
+                      ],
+                      "name": "t",
+                      "fqdn": "classes_static.A.a.t",
+                      "type": {
+                        "flags": 2,
+                        "name": "string",
+                        "flagsString": [
+                          "String"
+                        ]
+                      },
+                      "atsNodeFlags": 1,
+                      "atsNodeFlagsString": [
+                        "let"
+                      ]
                     }
                   ],
-                  "name": "t",
-                  "fqdn": "classes_static.A.a.t",
-                  "type": {
-                    "flags": 2,
-                    "name": "string",
-                    "flagsString": [
-                      "String"
-                    ]
-                  },
-                  "atsNodeFlags": 1,
-                  "atsNodeFlagsString": [
-                    "let"
+                  "files": [
+                    {
+                      "file": "test/classes/classes-static.ts:9:9"
+                    }
                   ]
                 }
               ]
@@ -724,6 +732,11 @@
                         ]
                       }
                     }
+                  ],
+                  "files": [
+                    {
+                      "file": "test/classes/classes.ts:84:9"
+                    }
                   ]
                 },
                 {
@@ -759,6 +772,11 @@
                           "String"
                         ]
                       }
+                    }
+                  ],
+                  "files": [
+                    {
+                      "file": "test/classes/classes.ts:94:9"
                     }
                   ]
                 },
@@ -796,6 +814,11 @@
                           "String"
                         ]
                       }
+                    }
+                  ],
+                  "files": [
+                    {
+                      "file": "test/classes/classes.ts:104:9"
                     }
                   ]
                 },

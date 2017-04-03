@@ -306,8 +306,17 @@
 
             </div>
 
+            <div if="this.hasSourceFiles">
+                <h3>Source files</h3>
+                <div component="AjsDocSourceFile" class="ajsDocMember" id="files">
+                    <a class="ajsDocLink" href="/ref/{fqdn}">
+                        <div>{name}</div>
+                    </a>
+                </div>
+            </div>
+
         </div>
 
-    </component>
+</component>
 
 </ajstemplate>
