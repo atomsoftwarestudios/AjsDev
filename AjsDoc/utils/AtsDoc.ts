@@ -34,7 +34,7 @@ namespace ajsdoc {
                 return plural ? "Source files" : "Source file";
 
             case atsdoc.SyntaxKind.ModuleDeclaration:
-                if (node.nodeFlagsString.indexOf("Namespace") !== -1) {
+                if (node.nodeFlagsString && node.nodeFlagsString.indexOf("Namespace") !== -1) {
                     return plural ? "Namespaces" : "Namespace";
                 } else {
                     return plural ? "Modules" : "Module";

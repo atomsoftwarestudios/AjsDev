@@ -32,12 +32,23 @@ namespace ajsdoc {
 
             nks = nks.toLowerCase();
 
-            if (nks === "parameter" || nks === "returnstatement") {
+            if (nks === "constructor" ||
+                nks === "parameter" ||
+                nks === "returnstatement" ||
+                nks === "enumeration member") {
                 nks = "";
             }
 
             if (nks.indexOf(" accessor") !== -1) {
                 nks = nks.substr(0, nks.indexOf(" accessor"));
+            }
+
+            if (nks === "constant") {
+                nks = "const";
+            }
+
+            if (nks === "enumeration") {
+                nks = "enum";
             }
 
             return nks;

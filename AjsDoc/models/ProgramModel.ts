@@ -205,17 +205,25 @@ namespace ajsdoc {
             if (node.kind === atsdoc.SyntaxKind.SourceFile) {
                 let fn: string = (<any>node).files[0].file;
                 node.name = fn.substr(fn.lastIndexOf("/") + 1);
-                node.fqdn = fn.replace(/\//g, "_").replace(/\./g, "_");
             }
 
+            // update fqdn and build nodesByFqdn dictionary
+            if (node.fqdn) {
+                node.fqdn = node.fqdn.replace(/\.ts/g, "_ts");
+            }
 
             let fqdn: string = node.fqdn;
-            if (fqdn !== "") {
+            if (fqdn && fqdn !== "") {
+
+                if (fqdn[0] === "/") {
+                    fqdn = fqdn.substr(1);
+                    node.fqdn = fqdn;
+                }
+
                 if (!(this._nodesByFqdn[fqdn] instanceof Array)) {
                     this._nodesByFqdn[fqdn] = [];
                 }
                 this._nodesByFqdn[fqdn].push(node);
-                node.fqdn = fqdn;
             }
 
             if (node.children instanceof Array) {
@@ -391,16 +399,28 @@ namespace ajsdoc {
 
                     // add children doc nodes to the appropriate group
                     if (!this._menuGroupItemPathExists(group, children.fqdn)) {
-                        group.items.push({
-                            key: children.fqdn,
-                            label: children.name,
-                            path: children.fqdn,
-                            selected: children.fqdn === navPath,
-                            expandable: children.children instanceof Array &&
-                                        children.children.length > 0 &&
-                                        MENU_DONT_EXPAND.indexOf(children.kindString) === -1,
-                            menuLabel: false
-                        });
+
+                        // check if item with same fqdn is not in already
+                        let found: boolean = false;
+                        for (const i of group.items) {
+                            if (i.path === "/ref/" + children.fqdn) {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found) {
+                            group.items.push({
+                                key: children.fqdn,
+                                label: children.name,
+                                path: "/ref/" + children.fqdn,
+                                selected: children.fqdn === navPath,
+                                expandable: children.children instanceof Array &&
+                                children.children.length > 0 &&
+                                MENU_DONT_EXPAND.indexOf(children.kindString) === -1,
+                                menuLabel: false
+                            });
+                        }
                     }
 
                 }
@@ -593,10 +613,9 @@ namespace ajsdoc {
                 switch (n.kind) {
 
                     case atsdoc.SyntaxKind.ModuleDeclaration:
-                        if (n.nodeFlagsString.indexOf("Namespace") !== -1) {
+                        if (n.nodeFlagsString && n.nodeFlagsString.indexOf("Namespace") !== -1) {
                             this._addMember(articleState, "namespaces", n);
-                        }
-                        if (n.nodeFlagsString.indexOf("Module") !== -1) {
+                        } else {
                             this._addMember(articleState, "modules", n);
                         }
                         break;
