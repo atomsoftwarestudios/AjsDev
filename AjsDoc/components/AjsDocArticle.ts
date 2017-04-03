@@ -66,6 +66,7 @@ namespace ajsdoc {
         enumMembers?: atsdoc.IATsDocNode[];
         parameters?: atsdoc.IATsDocNode[];
         returnValue?: atsdoc.IATsDocNode;
+        files?: atsdoc.IATsDocNode[];
     }
 
     export class AjsDocArticle extends ajs.mvvm.viewmodel.ViewComponent implements IAjsDocArticleState {
@@ -93,6 +94,7 @@ namespace ajsdoc {
         public enumMembers?: atsdoc.IATsDocNode[];
         public parameters?: atsdoc.IATsDocNode[];
         public returnValue?: atsdoc.IATsDocNode;
+        public files?: atsdoc.IATsDocNode[];
 
         public get hasHierarchy(): boolean { return this.hierarchy !== undefined && this.hierarchy !== null; }
         public get hasImplements(): boolean { return this.hierarchy !== undefined && this.hierarchy !== null; }
@@ -113,6 +115,7 @@ namespace ajsdoc {
         public get hasEnumMembers(): boolean { return this.enumMembers instanceof Array && this.enumMembers.length > 0; }
         public get hasParameters(): boolean { return this.parameters instanceof Array && this.parameters.length > 0; }
         public get hasReturnValue(): boolean { return this.hasOwnProperty("returnValue"); }
+        public get hasSourceFiles(): boolean { return this.files instanceof Array && this.files.length > 0; }
 
         public get hasMembers(): boolean {
             return false ||
