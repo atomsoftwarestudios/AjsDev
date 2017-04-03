@@ -24,9 +24,6 @@ IN THE SOFTWARE.
 ///<reference path="Console.ts" />
 ///<reference path="modules/logger/Logger.ts" />
 
-/**
- * The debugging namespace
- */
 namespace ajs.dbg {
 
     "use strict";

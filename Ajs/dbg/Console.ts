@@ -28,6 +28,7 @@ IN THE SOFTWARE.
  * The debugging namespace contain the debugging console and debugging tools for Ajs and Application developers
  */
 namespace ajs.dbg {
+
     "use strict";
 
     export class Console {
