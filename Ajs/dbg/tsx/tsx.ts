@@ -181,4 +181,20 @@ namespace ajs.dbg.tsx {
 }
 
 /* tslint:disable:no-unused-variable */
+/**
+ * Replaces the React.js by ajs.dbg.tsx to process tsx files
+ * <p>
+ * ajs.dbg.tsx is simplified Reactive library without update functionality used for debug console modules rendering only.
+ * </p>
+ * <p>
+ * <strong>It is not supposed to be used in the productional environments!</strong>
+ * <p>
+ * This global variable makes tsx processor available in the same way as in case the React.js is loaded by require.js.
+ * </p>
+ * <p>
+ * Ajs framework library must be compiled with --jsx react and --reactNamespace AjsDebugTsxFactory parameters in order to
+ * work correctly. For productional environments the AjsDebugTsxFactory variable and ajs.dbg* namespace/s should be
+ * removed from the library
+ * </p>
+ */
 let AjsDebugTsxFactory: typeof ajs.dbg.tsx = ajs.dbg.tsx;
