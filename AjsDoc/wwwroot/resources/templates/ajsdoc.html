@@ -168,7 +168,7 @@
                     <!--{body}-->
                 </code>
             </div>
-            <div style="padding: 0.25em; ">
+            <div style="padding: 0.25em;" if="this.ajs.id !== 'declarations'">
                 <span if="(!this.commentShort || this.commentShort.trim() === '') && this.ajs.parentComponent.ajs.id !== 'syntaxes'">
                     <strong>!!! DOCUMENTATION IS MISSING !!!</strong>
                 </span>
@@ -189,7 +189,7 @@
             <p if="this.description && this.description !== ''" class="ajsDocArticleContent">{description}</p>
 
             <div if="this.hasDeclarations">
-                <h3>Declaration</h3>
+                <h3>Declarations</h3>
                 <div class="ajsDocArticleContentMargin">
                     <ajsDocMember id="declarations"></ajsDocMember>
                 </div>

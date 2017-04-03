@@ -204,7 +204,7 @@ namespace ajsdoc {
 
             // source file node
             if (node.kind === atsdoc.SyntaxKind.SourceFile) {
-                let fn: string = (<any>node).files[0];
+                let fn: string = (<any>node).files[0].file;
                 node.name = fn.substr(fn.lastIndexOf("/") + 1);
                 node.fqdn = fn.replace(/\//g, "_").replace(/\./g, "_");
             }
@@ -473,14 +473,32 @@ namespace ajsdoc {
 
             let articleState: IAjsDocArticleState = {};
             articleState.caption = translateNodeKind(node) + " " + node.name;
-            articleState.description = node.commentShort ? node.commentShort : undefined;
             this._getExtends(node, articleState);
             this._getImplements(node, articleState);
             this._getDeclarations(node, articleState);
-            this._getMembers(node, articleState);
 
-            if (node.commentLong && node.commentLong !== "") {
-                setupHTMLContent(node.commentLong).then(
+            let nodes: atsdoc.IATsDocNode[] = this._nodesByFqdn[path];
+            let commentLong: string = "";
+
+            if (nodes) {
+                for (const n of nodes) {
+                    this._getMembers(n, articleState);
+                    if (n.commentShort && n.commentShort !== "") {
+                        if (articleState.description === undefined) {
+                            articleState.description = node.commentShort;
+                        } else {
+                            articleState.description += "\n" + node.commentShort;
+                        }
+                    }
+
+                    if (n.commentLong && n.commentLong !== "") {
+                        commentLong += "<p>" + n.commentLong + "</p>";
+                    }
+                }
+            }
+
+            if (commentLong !== "") {
+                setupHTMLContent(commentLong).then(
                     (htmlContent: string) => {
                         articleState.longDescription = htmlContent;
                         this._dataReadyNotifier.notify(this, { articleState: articleState });
