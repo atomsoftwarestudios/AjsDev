@@ -198,7 +198,6 @@ namespace ajsdoc {
 
             // program node
             if (node.kind === -1) {
-                node.name = "";
                 node.fqdn = "";
             }
 
@@ -477,7 +476,13 @@ namespace ajsdoc {
             this._getImplements(node, articleState);
             this._getDeclarations(node, articleState);
 
-            let nodes: atsdoc.IATsDocNode[] = this._nodesByFqdn[path];
+            let nodes: atsdoc.IATsDocNode[] = [];
+            if (path !== "") {
+                nodes = this._nodesByFqdn[path];
+            } else {
+                nodes = [this._data];
+            }
+
             let commentLong: string = "";
 
             if (nodes) {
@@ -693,12 +698,33 @@ namespace ajsdoc {
 
         }
 
+        protected _addMembers_sourceFiles(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+
+            if (!node.children) {
+                return;
+            }
+
+            for (let children of node.children) {
+                if (children.kind === atsdoc.SyntaxKind.SourceFile) {
+                    this._addMember(articleState, "files", {
+                        parent: children.parent,
+                        kind: children.kind,
+                        kindString: children.kindString,
+                        type: node.type,
+                        name: children.name,
+                        fqdn: children.fqdn,
+                        children: []
+                    });
+                }
+            }
+        }
 
         protected _getMembers(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
 
             this._addMembers_childrenNodes(node, articleState);
             this._addMembers_nodeParameters(node, articleState);
             this._addMembers_returnValue(node, articleState);
+            this._addMembers_sourceFiles(node, articleState);
 
 
         }
