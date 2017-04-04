@@ -67,6 +67,8 @@ namespace ajsdoc {
         parameters?: atsdoc.IATsDocNode[];
         returnValue?: atsdoc.IATsDocNode;
         files?: atsdoc.IATsDocNode[];
+        callSignatures?: atsdoc.IATsDocNode[];
+        indexSignatures?: atsdoc.IATsDocNode[];
     }
 
     export class AjsDocArticle extends ajs.mvvm.viewmodel.ViewComponent implements IAjsDocArticleState {
@@ -95,6 +97,8 @@ namespace ajsdoc {
         public parameters?: atsdoc.IATsDocNode[];
         public returnValue?: atsdoc.IATsDocNode;
         public files?: atsdoc.IATsDocNode[];
+        public callSignatures?: atsdoc.IATsDocNode[];
+        public indexSignatures?: atsdoc.IATsDocNode[];
 
         public get hasHierarchy(): boolean { return this.hierarchy !== undefined && this.hierarchy !== null; }
         public get hasImplements(): boolean { return this.hierarchy !== undefined && this.hierarchy !== null; }
@@ -116,6 +120,8 @@ namespace ajsdoc {
         public get hasParameters(): boolean { return this.parameters instanceof Array && this.parameters.length > 0; }
         public get hasReturnValue(): boolean { return this.hasOwnProperty("returnValue"); }
         public get hasSourceFiles(): boolean { return this.files instanceof Array && this.files.length > 0; }
+        public get hasCallSignatures(): boolean { return this.callSignatures instanceof Array && this.callSignatures.length > 0; }
+        public get hasIndexSignatures(): boolean { return this.indexSignatures instanceof Array && this.indexSignatures.length > 0; }
 
         public get hasMembers(): boolean {
             return false ||
@@ -123,7 +129,9 @@ namespace ajsdoc {
                 this.hasProperties ||
                 this.hasAccessors ||
                 this.hasMethods ||
-                this.hasEnumMembers;
+                this.hasEnumMembers ||
+                this.hasCallSignatures ||
+                this.hasIndexSignatures;
         }
 
 

@@ -26,14 +26,15 @@ namespace ajsdoc {
      * Used to recognize nodes which should not be expandable in the menu
      */
     export const MENU_DONT_EXPAND: string[] = [
+        //"ClassDeclaration",
         "InterfaceDeclaration",
-        "VariableDeclaration",
+        //"VariableStatement",
         "EnumDeclaration",
         // "Object literal",
         "FunctionDeclaration",
-        // "Constructor",
-        // "Method",
-        // "Property",
+        "Constructor",
+        "MethodDeclaration",
+        "PropertyDeclaration",
         // "Accessor"
     ];
 
@@ -109,21 +110,28 @@ namespace ajsdoc {
          * Navigates to the doc node specified in the path
          * @param path
          */
-        public navigateDocNode(path: string): atsdoc.IATsDocNode {
+        public navigateDocNode(path: string, dontExpand?: boolean): atsdoc.IATsDocNode {
+
+            let node: atsdoc.IATsDocNode = this._data;
 
             if (path === "") {
-                return this._data;
+                return node;
             }
 
             for (let n in this._nodesByFqdn) {
                 if (this._nodesByFqdn.hasOwnProperty(n)) {
                     if (path === n) {
-                        return this._nodesByFqdn[n][0];
+                        node = this._nodesByFqdn[n][0];
+                        break;
                     }
                 }
             }
 
-            return this._data;
+            if (dontExpand && MENU_DONT_EXPAND.indexOf(node.kindString) !== -1) {
+                node = node.parent;
+            }
+
+            return node;
         }
 
         /**
@@ -165,7 +173,7 @@ namespace ajsdoc {
          * @param node
          * Deprecated: FQDN is generated correctly by the atsdoc tool now
          */
-        protected _getNodeFqdn(node: atsdoc.IATsDocNode): string {
+        /*protected _getNodeFqdn(node: atsdoc.IATsDocNode): string {
 
             let fqdn: string = "";
 
@@ -181,7 +189,7 @@ namespace ajsdoc {
             }
 
             return fqdn;
-        }
+        }*/
 
         /**
          * Processes all nodes of loaded program
@@ -350,7 +358,7 @@ namespace ajsdoc {
         protected _getMenu(navPath: string): void {
 
             // get doc node from navigation path
-            let node: atsdoc.IATsDocNode = this.navigateDocNode(navPath);
+            let node: atsdoc.IATsDocNode = this.navigateDocNode(navPath, true);
 
             // some node types should not be expandable so menu is generated from parent nodes
             if (!(node.children instanceof Array) || node.children.length === 0) {
@@ -450,9 +458,12 @@ namespace ajsdoc {
 
             let node: atsdoc.IATsDocNode = this.navigateDocNode(path);
 
-            if (!node.fqdn) {
-                node.fqdn = "";
+            let fqdn: string = node.fqdn;
+
+            if (fqdn === undefined) {
+                fqdn = "";
             }
+
             let split: string[] = node.fqdn.split(".");
 
             let index: number = 0;
@@ -478,6 +489,17 @@ namespace ajsdoc {
                 index++;
             }
 
+            if (node !== this._data) {
+                let navBarItem: INavBarItemState = {
+                    key: "",
+                    firstItem: true,
+                    itemPath: "/ref/",
+                    itemType: translateNodeKind(this._data),
+                    itemLabel: this._data.name
+                }
+                items.splice(0, 0, navBarItem);
+                items[1].firstItem = false;
+            }
 
             this._dataReadyNotifier.notify(this, { navBarState: items });
         }
@@ -624,6 +646,10 @@ namespace ajsdoc {
                         this._addMember(articleState, "functions", n);
                         break;
 
+                    case atsdoc.SyntaxKind.InterfaceDeclaration:
+                        this._addMember(articleState, "interfaces", n);
+                        break;
+
                     case atsdoc.SyntaxKind.ClassDeclaration:
                         this._addMember(articleState, "classes", n);
                         break;
@@ -666,6 +692,13 @@ namespace ajsdoc {
                         this._addMember(articleState, "methods", n);
                         break;
 
+                    case atsdoc.SyntaxKind.CallSignature:
+                        this._addMember(articleState, "callSignatures", n);
+                        break;
+
+                    case atsdoc.SyntaxKind.IndexSignature:
+                        this._addMember(articleState, "indexSignatures", n);
+                        break;
                 }
             }
 

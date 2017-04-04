@@ -35,7 +35,9 @@ namespace ajsdoc {
             if (nks === "constructor" ||
                 nks === "parameter" ||
                 nks === "returnstatement" ||
-                nks === "enumeration member") {
+                nks === "enumeration member" ||
+                nks === "call signature" ||
+                nks === "index signature") {
                 nks = "";
             }
 

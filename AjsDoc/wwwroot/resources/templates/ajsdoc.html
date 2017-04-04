@@ -158,11 +158,11 @@
                  --><span class="hljs-keyword" if="this.typeParameters">&lt;<ajsDocMemberTypeParameters id="typeParameters"></ajsDocMemberTypeParameters>&gt;</span><!--
                  --><span class="hljs-keyword" if="this.extends && this.extends.name"> extends <ajsDocMemberExtends id="extends"></ajsDocMemberExtends></span><!--
                  --><span class="hljs-keyword" if="this.implements"> implements <ajsDocMemberImplements id="implements"></ajsDocMemberImplements></span><!--
-                 --><span if="this.parameters"><!--
-                 -->(<!--
-                 --><span if="this.parameters !== null && this.parameters.length > 0"><ajsDocMemberFunctionParams id="parameters"></ajsDocMemberFunctionParams></span><!--
-                 -->)<!--
-                 --></span><!--
+                 --><span if="this.parameters && this.kindString !== 'IndexSignature'">(</span><!--
+                 --><span if="this.parameters && this.kindString === 'IndexSignature'">[</span><!--
+                 --><span if="this.parameters instanceof Array && this.parameters.length > 0"><ajsDocMemberFunctionParams id="parameters"></ajsDocMemberFunctionParams></span><!--
+                 --><span if="this.parameters && this.kindString !== 'IndexSignature'">)</span><!--
+                 --><span if="this.parameters && this.kindString === 'IndexSignature'">]</span><!--
                  --><ajsDocMemberDataType class="hljs-built_in" id="type"></ajsDocMemberDataType><!--
                  --><span if="this.initializer"> = <pre style="display: inline">{initializer}</pre></span>
                     <!--{body}-->
@@ -281,6 +281,15 @@
                         <ajsDocMember id="constructors"></ajsDocMember>
                     </div>
 
+                    <div if="this.hasCallSignatures">
+                        <h4>Call signatures</h4>
+                        <ajsDocMember id="callSignatures"></ajsDocMember>
+                    </div>
+
+                    <div if="this.hasIndexSignatures">
+                        <h4>Index signatures</h4>
+                        <ajsDocMember id="indexSignatures"></ajsDocMember>
+                    </div>
 
                     <div if="this.hasProperties">
                         <h4>Properties</h4>

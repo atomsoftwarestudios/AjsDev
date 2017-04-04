@@ -33,9 +33,10 @@ namespace ajsdoc {
     }
 
     const MENU_DONT_EXPAND: string[] = [
-        "Interface",
-        "Variable",
-        "Enumeration",
+        "InterfaceDeclaration",
+        "VariableStatement",
+        "VariableDeclaration",
+        "EnumerationDeclaration",
         "Object literal",
         "Function",
         "Constructor",

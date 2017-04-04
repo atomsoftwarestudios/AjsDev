@@ -81,6 +81,12 @@ namespace ajsdoc {
             case atsdoc.SyntaxKind.TypeParameter:
                 return plural ? "Type parameters" : "Type parameter";
 
+            case atsdoc.SyntaxKind.IndexSignature:
+                return plural ? "Index signatures" : "Index signature";
+
+            case atsdoc.SyntaxKind.CallSignature:
+                return plural ? "Call signatures" : "Call signature";
+
             default:
                 return node.kindString;
 

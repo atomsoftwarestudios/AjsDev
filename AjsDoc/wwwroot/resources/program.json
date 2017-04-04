@@ -902,10 +902,6 @@
               "parameters": []
             },
             {
-              "kind": 205,
-              "kindString": "SemicolonClassElement"
-            },
-            {
               "kind": 148,
               "kindString": "PropertyDeclaration",
               "name": "_templateManager",
