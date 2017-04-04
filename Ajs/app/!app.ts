@@ -64,6 +64,8 @@ namespace ajs.app {
 
     /**
      * this is test2 function
+     * @returns testicek short
+     *          testicek long
      */
     function test2(): number {
         return 0;
@@ -71,6 +73,9 @@ namespace ajs.app {
 
     /**
      * this is test3 function
+     * @param test testicek short
+     *             testicek long
+     * @returns testicek1
      */
     function test3(test: string): string {
         return "";
@@ -78,8 +83,14 @@ namespace ajs.app {
 
     /**
      * This is interface 1
+     * <b>interface 1 long</b>
      */
     interface Interface1 {
+        /**
+         * doc
+         * @param index index doc
+         * @returns return doc
+         */
         (index: number): string[];
     }
 

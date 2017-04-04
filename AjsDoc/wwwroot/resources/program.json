@@ -1783,7 +1783,7 @@
               "kindString": "FunctionDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:68:5"
+                  "file": "/app/!app.ts:70:5"
                 }
               ],
               "name": "test2",
@@ -1794,7 +1794,8 @@
                 "name": "number",
                 "flagsString": [
                   "Number"
-                ]
+                ],
+                "commentShort": "testicek short\rtesticek long"
               },
               "parameters": []
             },
@@ -1803,7 +1804,7 @@
               "kindString": "FunctionDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:75:5"
+                  "file": "/app/!app.ts:80:5"
                 }
               ],
               "name": "test3",
@@ -1814,10 +1815,12 @@
                 "name": "string",
                 "flagsString": [
                   "String"
-                ]
+                ],
+                "commentShort": "testicek1"
               },
               "parameters": [
                 {
+                  "commentShort": "testicek short\rtesticek long",
                   "kind": 145,
                   "kindString": "Parameter",
                   "name": "test",
@@ -1837,16 +1840,18 @@
               "kindString": "InterfaceDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:82:5"
+                  "file": "/app/!app.ts:88:5"
                 }
               ],
               "name": "Interface1",
               "fqdn": "ajs.app.Interface1",
               "commentShort": "This is interface 1",
+              "commentLong": "<b>interface 1 long</b>\n",
               "children": [
                 {
                   "kind": 154,
                   "kindString": "CallSignature",
+                  "commentShort": "doc",
                   "type": {
                     "flags": 32768,
                     "name": "string[]",
@@ -1861,6 +1866,7 @@
                   },
                   "parameters": [
                     {
+                      "commentShort": "index doc",
                       "kind": 145,
                       "kindString": "Parameter",
                       "name": "index",
@@ -1876,7 +1882,7 @@
                   ],
                   "files": [
                     {
-                      "file": "/app/!app.ts:83:9"
+                      "file": "/app/!app.ts:94:9"
                     }
                   ]
                 }
@@ -1887,7 +1893,7 @@
               "kindString": "InterfaceDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:89:5"
+                  "file": "/app/!app.ts:100:5"
                 }
               ],
               "name": "Interface2",
@@ -1929,7 +1935,7 @@
               "kindString": "InterfaceDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:99:5"
+                  "file": "/app/!app.ts:110:5"
                 }
               ],
               "name": "Interface3",
@@ -1969,7 +1975,7 @@
               "kindString": "InterfaceDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:106:5"
+                  "file": "/app/!app.ts:117:5"
                 }
               ],
               "name": "Interface4",
@@ -1993,7 +1999,7 @@
               "kindString": "ClassDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:112:5"
+                  "file": "/app/!app.ts:123:5"
                 }
               ],
               "name": "Class1",
@@ -2005,7 +2011,7 @@
               "kindString": "ClassDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:118:5"
+                  "file": "/app/!app.ts:129:5"
                 }
               ],
               "name": "Class2",
@@ -2030,7 +2036,7 @@
               "kindString": "ClassDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:124:5"
+                  "file": "/app/!app.ts:135:5"
                 }
               ],
               "name": "Class3",
@@ -2107,7 +2113,7 @@
               "kindString": "ClassDeclaration",
               "files": [
                 {
-                  "file": "/app/!app.ts:136:5"
+                  "file": "/app/!app.ts:147:5"
                 }
               ],
               "name": "Class4",
