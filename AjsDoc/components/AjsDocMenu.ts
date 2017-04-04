@@ -38,11 +38,12 @@ namespace ajsdoc {
         "VariableDeclaration",
         "EnumerationDeclaration",
         "Object literal",
-        "Function",
+        "FunctionDeclaration",
         "Constructor",
-        "Method",
-        "Property",
-        "Accessor"
+        "MethodDeclaration",
+        "PropertyDeclaration",
+        "GetAccessor",
+        "SetAccessor"
     ];
 
     export class AjsDocMenu extends ajs.mvvm.viewmodel.ViewComponent {

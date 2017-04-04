@@ -26,6 +26,19 @@ namespace ajsdoc {
      * Used to recognize nodes which should not be expandable in the menu
      */
     export const MENU_DONT_EXPAND: string[] = [
+        "InterfaceDeclaration",
+        "VariableStatement",
+        "VariableDeclaration",
+        "EnumerationDeclaration",
+        "Object literal",
+        "FunctionDeclaration",
+        "Constructor",
+        "MethodDeclaration",
+        "PropertyDeclaration",
+        "GetAccessor",
+        "SetAccessor"
+
+        /*
         //"ClassDeclaration",
         "InterfaceDeclaration",
         //"VariableStatement",
@@ -36,6 +49,7 @@ namespace ajsdoc {
         "MethodDeclaration",
         "PropertyDeclaration",
         // "Accessor"
+        */
     ];
 
     /**
@@ -491,7 +505,7 @@ namespace ajsdoc {
 
             if (node !== this._data) {
                 let navBarItem: INavBarItemState = {
-                    key: "",
+                    key: "root",
                     firstItem: true,
                     itemPath: "/ref/",
                     itemType: translateNodeKind(this._data),

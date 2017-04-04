@@ -197,10 +197,12 @@
 
             <div if="this.hasHierarchy">
                 <h3>Hierarchy</h3>
-                <ul component="AjsDocHierarchy" id="hierarchy" style="text-decoration: none; list-style: none; margin: 0; padding-left: 1em">
-                    <li><a class="ajsDocLink" href="/ref/{path}">{name}</a></li>
-                    <ajsDocHierarchy id="extends"></ajsDocHierarchy>
-                </ul>
+                <p>
+                    <ul component="AjsDocHierarchy" id="hierarchy" style="text-decoration: none; list-style: none; margin: 0; padding-left: 1em">
+                        <li><a class="ajsDocLink" href="/ref/{path}">{name}</a></li>
+                        <ajsDocHierarchy id="extends"></ajsDocHierarchy>
+                    </ul>
+                </p>
             </div>
 
             <div if="this.implements">
