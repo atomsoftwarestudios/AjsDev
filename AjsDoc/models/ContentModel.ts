@@ -204,7 +204,9 @@ namespace ajsdoc {
                     menuLabel: false
                 };
 
-                menu.parentLabel = article.parent && article.parent.label ? article.parent.label : "Guide & Examples";
+                menu.parentLabel = article.parent && article.parent !== null ?
+                    article.parent.label !== "" ? article.parent.label : "Guide & Examples"
+                    : "";
                 menu.parentPath = article.parent && article.parent !== null ?
                     article.parent.navPath !== "" ? article.parent.navPath : "/"
                     :
