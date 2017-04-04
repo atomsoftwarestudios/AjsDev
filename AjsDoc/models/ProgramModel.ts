@@ -510,7 +510,7 @@ namespace ajsdoc {
                     itemPath: "/ref/",
                     itemType: translateNodeKind(this._data),
                     itemLabel: this._data.name
-                }
+                };
                 items.splice(0, 0, navBarItem);
                 items[1].firstItem = false;
             }

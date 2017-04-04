@@ -275,7 +275,8 @@ namespace ajs.navigation {
 
             for (let i: number = 0; i < this._redirections.length; i++) {
                 if (this._redirections[i].path === url) {
-                    //window.history.pushState({}, "", this._redirections[i].target);
+                    // rem by fn - state should not be stored during redirect
+                    // window.history.pushState({}, "", this._redirections[i].target);
                     redirected = true;
                     this._router.route();
                     break;
