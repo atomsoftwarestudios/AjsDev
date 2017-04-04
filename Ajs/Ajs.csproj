@@ -26,7 +26,6 @@
     <TypeScriptCompile Include="ajs.Framework.Exceptions.ts" />
     <TypeScriptCompile Include="ajs.Framework.ts" />
     <TypeScriptCompile Include="ajs.IAjsConfig.ts" />
-    <TypeScriptCompile Include="app\!app.ts" />
     <TypeScriptCompile Include="app\Application.ts" />
     <TypeScriptCompile Include="app\Exceptions.ts" />
     <TypeScriptCompile Include="app\IApplicationConfig.ts" />
