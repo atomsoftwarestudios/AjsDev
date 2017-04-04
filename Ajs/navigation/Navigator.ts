@@ -186,7 +186,7 @@ namespace ajs.navigation {
 
             ajs.dbg.log(dbg.LogType.Info, 0, "ajs.navigation", this, "Navigating to: " + url);
 
-            if (window.location.href !== url) {
+            if (window.location.href !== url && window.location.href !== window.location.origin + url) {
                 this._lastUrl = url;
                 window.history.pushState({}, "", url);
 
@@ -275,7 +275,7 @@ namespace ajs.navigation {
 
             for (let i: number = 0; i < this._redirections.length; i++) {
                 if (this._redirections[i].path === url) {
-                    window.history.pushState({}, "", this._redirections[i].target);
+                    //window.history.pushState({}, "", this._redirections[i].target);
                     redirected = true;
                     this._router.route();
                     break;
