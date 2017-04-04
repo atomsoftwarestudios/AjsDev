@@ -92,7 +92,7 @@ namespace ajs {
         /** Stores the ViewComponentManager object instantiated automatically during the framework intitialization */
         protected static _viewComponentManager: ajs.mvvm.viewmodel.ViewComponentManager;
         /** Returns the ViewComponentManager object */
-        public static get viewComponentManager(): ajs.mvvm.viewmodel.ViewComponentManager { return Framework._viewComponentManager; };
+        public static get viewComponentManager(): ajs.mvvm.viewmodel.ViewComponentManager { return Framework._viewComponentManager; }
 
         /** Stores the TemplateManager object instantiated automatically during the framework intitialization */
         protected static _templateManager: ajs.templating.TemplateManager;
