@@ -9,6 +9,9 @@ rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 sell copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,20 +25,17 @@ namespace ajsdoc {
 
     "use strict";
 
-    export interface IAjsDocBrowserConfig extends ajs.app.IApplicationUserConfig {
-        storageType: ajs.resources.STORAGE_TYPE;
-        storagePolicy: ajs.resources.CACHE_POLICY;
-        templateList: string;
-        templateLoadingPreference: ajs.resources.LOADING_PREFERENCE;
-        resourceList: string;
-        resourceLoadingPreference: ajs.resources.LOADING_PREFERENCE;
-        dataSources: {
-            toc: string;
-            program: string;
-        };
-        dataLoadingPreference: ajs.resources.LOADING_PREFERENCE;
-        headerLabel: string;
-        headerDescription: string;
+    export class AjsDocHeader extends ajs.mvvm.viewmodel.ViewComponent {
+
+        public get headerLabel(): string {
+            return (<IAjsDocBrowserConfig>ajs.Framework.appConfig.userConfig).headerLabel;
+        }
+
+        public get headerDescription(): string {
+            return (<IAjsDocBrowserConfig>ajs.Framework.appConfig.userConfig).headerDescription;
+        }
     }
+
+    ajs.Framework.viewComponentManager.registerComponents(AjsDocHeader);
 
 }

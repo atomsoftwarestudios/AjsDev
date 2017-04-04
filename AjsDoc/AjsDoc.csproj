@@ -119,7 +119,7 @@
     <TypeScriptCompile Include="components\AjsDocContextSwitcher.ts" />
     <TypeScriptCompile Include="components\AjsDocLayout.ts" />
     <TypeScriptCompile Include="components\AjsDocLayoutMenuButton.ts" />
-    <TypeScriptCompile Include="components\AjsDocMember.ts" />
+    <TypeScriptCompile Include="components\AjsDocHeader.ts" />
     <TypeScriptCompile Include="components\AjsDocMenu.ts" />
     <TypeScriptCompile Include="components\AjsDocMenuGroup.ts" />
     <TypeScriptCompile Include="components\AjsDocMenuItem.ts" />

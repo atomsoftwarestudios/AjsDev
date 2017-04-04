@@ -146,6 +146,8 @@ namespace ajs.boot {
                 program: "/resources/program.json"
             },
             dataLoadingPreference: APP_RESOURCES_LOADING_PREFERENCE,
+            headerLabel: "Ajs Framework",
+            headerDescription: "Developer's guide"
         };
 
         return {
