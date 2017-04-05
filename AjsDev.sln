@@ -37,6 +37,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example1-SimpleApp", "Example1-SimpleApp", "{667EEBC0-58B7-4020-8F75-41EB0FD7F03C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleApp", "SimpleApp\SimpleApp.csproj", "{EEAF3620-EDE3-4CA7-8FA0-1895C05D799A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleApp.Boot", "SimpleApp.Boot\SimpleApp.Boot.csproj", "{E82E6EA6-C947-46DD-98CA-13F0619696F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,8 +73,20 @@ Global
 		{C63B3A20-1C93-4096-BB84-B9568AD06D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C63B3A20-1C93-4096-BB84-B9568AD06D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C63B3A20-1C93-4096-BB84-B9568AD06D9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEAF3620-EDE3-4CA7-8FA0-1895C05D799A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEAF3620-EDE3-4CA7-8FA0-1895C05D799A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEAF3620-EDE3-4CA7-8FA0-1895C05D799A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEAF3620-EDE3-4CA7-8FA0-1895C05D799A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E82E6EA6-C947-46DD-98CA-13F0619696F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E82E6EA6-C947-46DD-98CA-13F0619696F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E82E6EA6-C947-46DD-98CA-13F0619696F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E82E6EA6-C947-46DD-98CA-13F0619696F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EEAF3620-EDE3-4CA7-8FA0-1895C05D799A} = {667EEBC0-58B7-4020-8F75-41EB0FD7F03C}
+		{E82E6EA6-C947-46DD-98CA-13F0619696F8} = {667EEBC0-58B7-4020-8F75-41EB0FD7F03C}
 	EndGlobalSection
 EndGlobal

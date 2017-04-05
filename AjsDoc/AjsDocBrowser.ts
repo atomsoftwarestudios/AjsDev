@@ -52,14 +52,14 @@ namespace ajsdoc {
                 this._config.templateLoadingPreference
             );
 
-            templateList.
+            templateList
                 // on success parse the templates list and load templates
-                then((resource: ajs.resources.IResource) => {
+                .then((resource: ajs.resources.IResource) => {
                     this._loadTemplates(JSON.parse(resource.data));
-                }).
+                })
                 // otherwise crash
-                catch((reason?: any) => {
-                    throw new Error("Failed to load template list." + reason);
+                .catch((reason: ajs.Exception) => {
+                    throw new ajs.Exception("Failed to load template list.", reason);
                 });
         }
 
@@ -75,13 +75,12 @@ namespace ajsdoc {
                 this._config.templateLoadingPreference
             );
 
-            templatePromise.then(
-                (templates: ajs.templating.Template[]) => {
+            templatePromise
+                .then((templates: ajs.templating.Template[]) => {
                     this._loadResourcesList();
-                }
-            ).catch(
-                (reason: any) => {
-                    throw new Error("Failed to load templates");
+                })
+                .catch((reason: ajs.Exception) => {
+                    throw new ajs.Exception("Failed to load templates", reason);
                 }
             );
 
@@ -100,14 +99,14 @@ namespace ajsdoc {
                 this._config.resourceLoadingPreference
             );
 
-            resourceList.
+            resourceList
                 // on success parse the templates list and load templates
-                then((resource: ajs.resources.IResource) => {
+                .then((resource: ajs.resources.IResource) => {
                     this._loadResources(JSON.parse(resource.data));
-                }).
+                })
                 // otherwise crash
-                catch((reason?: any) => {
-                    throw new Error("Failed to load resources configuration");
+                .catch((reason?: ajs.Exception) => {
+                    throw new ajs.Exception("Failed to load resources configuration", reason);
                 });
 
         }
@@ -127,24 +126,13 @@ namespace ajsdoc {
                 ajs.resources.CACHE_POLICY.PERMANENT,
                 this._config.resourceLoadingPreference);
 
-            // void promise, don't store/return, just resolve
-            /* tslint:disable */
-            new Promise<void>(
-                async (resolve: () => void, reject: (reason?: any) => void) => {
-
-                    try {
-
-                        await resourcesPromise;
-                        this._initDone();
-
-                    } catch (e) {
-                        throw new Error("Failed to load templates");
-                    }
-
-                }
-            );
-            /* tslint:enable */
-
+            resourcesPromise
+                .then((resources: ajs.resources.IResource[]): void => {
+                    this._initDone();
+                })
+                .catch((reason: ajs.Exception): void => {
+                    throw new ajs.Exception("Failed to load application resources", reason);
+                });
         }
 
         /**

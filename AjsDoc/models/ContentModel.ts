@@ -49,21 +49,21 @@ namespace ajsdoc {
 
         public getMenu(path: string): void {
             this._checkInitialized(
-                new Error("Documentation contents loading timeout"),
+                new ajs.Exception("Documentation contents loading timeout"),
                 () => { this._getMenu(path); }
             );
         }
 
         public getNavBar(path: string): void {
             this._checkInitialized(
-                new Error("Program data loading timeout"),
+                new ajs.Exception("Program data loading timeout"),
                 () => { this._getNavBar(path); }
             );
         }
 
         public getContent(path: string): void {
             this._checkInitialized(
-                new Error("Documentation contents loading timeout"),
+                new ajs.Exception("Documentation contents loading timeout"),
                 () => { this._getContent(path); }
             );
         }

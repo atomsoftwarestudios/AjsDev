@@ -28,11 +28,11 @@ namespace ajsdoc {
     export class AjsDocHeader extends ajs.mvvm.viewmodel.ViewComponent {
 
         public get headerLabel(): string {
-            return (<IAjsDocBrowserConfig>ajs.Framework.appConfig.userConfig).headerLabel;
+            return (<IAjsDocBrowserConfig>ajs.Framework.appConfig.config).headerLabel;
         }
 
         public get headerDescription(): string {
-            return (<IAjsDocBrowserConfig>ajs.Framework.appConfig.userConfig).headerDescription;
+            return (<IAjsDocBrowserConfig>ajs.Framework.appConfig.config).headerDescription;
         }
     }
 

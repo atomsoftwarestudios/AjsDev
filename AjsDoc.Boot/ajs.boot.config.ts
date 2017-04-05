@@ -129,7 +129,7 @@ namespace ajs.boot {
 
     };
 
-    getApplicationConfig = function(): ajs.app.IApplicationConfig {
+    getApplicationInfo = function(): ajs.app.IApplicationInfo {
 
         // const APP_RESOURCES_LOADING_PREFERENCE: ajs.resources.LOADING_PREFERENCE = ajs.resources.LOADING_PREFERENCE.SERVER;
         const APP_RESOURCES_LOADING_PREFERENCE: ajs.resources.LOADING_PREFERENCE = ajs.resources.LOADING_PREFERENCE.CACHE;
@@ -152,7 +152,7 @@ namespace ajs.boot {
 
         return {
             appConstructor: ajsdoc.AjsDocBrowser,
-            userConfig: userConfig
+            config: userConfig
         };
 
     };

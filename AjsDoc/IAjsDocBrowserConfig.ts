@@ -22,7 +22,7 @@ namespace ajsdoc {
 
     "use strict";
 
-    export interface IAjsDocBrowserConfig extends ajs.app.IApplicationUserConfig {
+    export interface IAjsDocBrowserConfig extends ajs.app.IApplicationConfig {
         storageType: ajs.resources.STORAGE_TYPE;
         storagePolicy: ajs.resources.CACHE_POLICY;
         templateList: string;
