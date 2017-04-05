@@ -21,20 +21,20 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
+///<reference path="../ajs.Exception.ts" />
+
 namespace ajs.app {
 
     "use strict";
 
     /**
      * Thrown when the application recognizes it was not initialized before calling the _run method
-     * @
      */
-    export class NotInitializedException extends Error { }
+    export class NotInitializedException extends ajs.Exception { }
 
     /**
      * Thrown when the inherited application does not implement required functionality
-     * @
      */
-    export class NotImplementedException extends Error { }
+    export class NotImplementedException extends ajs.Exception { }
 
 }

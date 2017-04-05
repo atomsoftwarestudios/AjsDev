@@ -26,11 +26,13 @@ namespace ajs.boot {
     "use strict";
 
     /**
-     * Defines the function returning the ajs application configuration
-     * This function must be implemented in the cofiguration file (namepace ajs.boot)
-     * and loaded by html page. It is expcected to be defined in the ajs.boot namespace.
+     * Boot module configuration
      */
     export interface IBootConfig {
+        /**
+         * Specifies if the cahcable cached resources returned by the @see ajs.boot.getResourceLists
+         * are preferably loaded from server or the cache
+         */
         bootResourcesLoadingPreference: resources.LOADING_PREFERENCE;
     }
 

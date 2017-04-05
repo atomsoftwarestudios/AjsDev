@@ -96,7 +96,7 @@ namespace ajs.resources {
     }
 
     /**
-     * Loading preference
+     * Loading preference specifies where cached resources should be prefrably loaded from
      */
     export enum LOADING_PREFERENCE {
         SERVER,

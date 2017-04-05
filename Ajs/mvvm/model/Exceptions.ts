@@ -21,12 +21,14 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
+///<reference path="../../ajs.Exception.ts" />
+
 namespace ajs.mvvm.model {
 
     "use strict";
 
-    export class NotImplementedException extends Error { }
+    export class NotImplementedException extends ajs.Exception { }
 
-    export class ModelConstructorIsNotFunctionException extends Error { }
+    export class ModelConstructorIsNotFunctionException extends ajs.Exception { }
 
 }

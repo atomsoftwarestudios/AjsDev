@@ -21,6 +21,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
+///<reference path="../ajs.Exception.ts" />
+
 /**
  * dom namespace contains the DOM updater and related interfaces
  */
@@ -28,13 +30,13 @@ namespace ajs.doc {
 
     "use strict";
 
-    export class RenderTargetNotInManagedDocumentException extends Error { };
+    export class RenderTargetNotInManagedDocumentException extends ajs.Exception { }
 
-    export class TargetOrParentIsUnknownException extends Error { };
+    export class TargetOrParentIsUnknownException extends ajs.Exception { }
 
-    export class SourceNodeHasNoComponentAssignedException extends Error { };
+    export class SourceNodeHasNoComponentAssignedException extends ajs.Exception { }
 
-    export class CSSRequiredResourceNotLoadedException extends Error { };
+    export class CSSRequiredResourceNotLoadedException extends ajs.Exception { }
 
-    export class CSSInvalidResourceSpecificationException extends Error { };
+    export class CSSInvalidResourceSpecificationException extends ajs.Exception { }
 }

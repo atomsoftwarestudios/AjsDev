@@ -39,7 +39,7 @@ namespace ajs.boot {
         memoryPermanent?: string[];
         /** loads resources to the memory store with the last recently used caching policy */
         memoryLastRecentlyUsed?: string[];
-        /** direct load without using of the store */
+        /** loads resources directly from the server without using of the store */
         direct?: string[];
     }
 

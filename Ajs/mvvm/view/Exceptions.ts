@@ -21,14 +21,16 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
+///<reference path="../../ajs.Exception.ts" />
+
 namespace ajs.mvvm.view {
 
     "use strict";
 
-    export class UpdateRootViewComponentFailedException extends Error { }
+    export class UpdateRootViewComponentFailedException extends ajs.Exception { }
 
-    export class VisualComponentNotRegisteredException extends Error { }
+    export class VisualComponentNotRegisteredException extends ajs.Exception { }
 
-    export class ViewComponentInitializationTimeoutException extends Error { }
+    export class ViewComponentInitializationTimeoutException extends ajs.Exception { }
 
 }

@@ -1,4 +1,4 @@
-/* *************************************************************************
+﻿/* *************************************************************************
 The MIT License (MIT)
 Copyright (c)2016-2017 Atom Software Studios. All rights reserved.
 
@@ -21,22 +21,33 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-///<reference path="../ajs.Exception.ts" />
-
-namespace ajs.boot {
+/**
+ * Exception class for better exception handling
+ */
+namespace ajs {
 
     "use strict";
 
-    /** Fired if the ajs.boot.getAjsConfig function is not defined */
-    export class GetAjsConfigFunctionNotDefinedException extends ajs.Exception { }
+    export class Exception extends Error {
 
-    /** Fired if the ajs.boot.getAjsConfig function is not defined */
-    export class GetApplicationConfigFunctionNotDefinedException extends ajs.Exception { }
+        protected _parentException: Exception;
 
-    /** Fired if the ajs.boot.getResourceList function is not defined */
-    export class GetResourceListFunctionNotDefinedException extends ajs.Exception { }
+        constructor(message?: string, parentException?: Exception) {
 
-    /** Fired when loading resources specified in the configuration file fails */
-    export class ResourcesLoadingFailedException extends ajs.Exception { }
+            if (!(<any>message instanceof Exception)) {
+                super(message);
+            } else {
+                super();
+            }
+
+            if (parentException) {
+                this._parentException = parentException;
+            } else {
+                this._parentException = null;
+            }
+
+        }
+
+    }
 
 }

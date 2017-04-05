@@ -44,12 +44,12 @@ namespace ajs.app {
      * to perform basic application tasks such as application initialization, application
      * resource loading, routes setup, application state loading and so on
      */
-    export class Application {
+    export abstract class Application {
 
         /** Stores the configuration passed to the application from the boot config */
-        protected _config: IApplicationUserConfig;
+        protected _config: IApplicationConfig;
         /** Returns the application configuration */
-        public get config(): IApplicationUserConfig { return this._config; }
+        public get config(): IApplicationConfig { return this._config; }
 
         /** Indicates if the application was succesfully initialized.
          *  _initDone should be called when the user application initialization routines finishes
@@ -64,7 +64,7 @@ namespace ajs.app {
          * going out of the page
          * @param config Application configuration. TODO: Not in use now. It can be used by the user application
          */
-        public constructor(config: IApplicationUserConfig) {
+        public constructor(config: IApplicationConfig) {
             this._config = config;
             window.addEventListener("beforeunload", (e: Event) => {
                 this._finalize();
@@ -78,9 +78,7 @@ namespace ajs.app {
          * overriden method (or async methods called in the chain) must make sure the
          * this._initDone() method is called in order to run the application
          */
-        public initialize(): void {
-            throw new NotImplementedException();
-        }
+        public abstract initialize(): void;
 
         /**
          * Must be called by inherited class super.initDone(); at the end of initialization
@@ -97,7 +95,9 @@ namespace ajs.app {
          *                                 initialized by calling the _initDone method
          */
         protected _run(): void {
-            if (!this._initialized) { throw new NotInitializedException(); }
+            if (!this._initialized) {
+                throw new NotInitializedException();
+            }
             ajs.Framework.navigator.canNavigate = true;
             ajs.Framework.navigator.navigated();
         }
@@ -110,9 +110,7 @@ namespace ajs.app {
          * the page. This should be done directly in the user application by adding additional
          * beforeunload event handler (will be usualy done in some root ViewComponent)
          */
-        protected _finalize(): void {
-            throw new NotImplementedException();
-        }
+        protected abstract _finalize(): void;
 
     }
 

@@ -26,9 +26,17 @@ namespace ajs.app {
     "use strict";
 
     /**
-     * User configuration of the application
+     * TODO: This is not defined yet. At least name of the error
+     * view component should be defined here
      */
-    export interface IApplicationUserConfig {
+    export interface IApplicationInfo {
+
+        /** Constructor of the user application class derived from the ajs.app.Application class */
+        appConstructor: typeof ajs.app.Application;
+
+        /** User configuration of the application */
+        config?: IApplicationConfig;
+
     }
 
 }

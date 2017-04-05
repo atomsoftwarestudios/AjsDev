@@ -59,7 +59,7 @@ namespace ajs.mvvm.model {
          * @param callForward Method to be called when initialization is done
          * @param param Parameter to be passed to the method
          */
-        protected _checkInitialized(exception: Error, callForward: Function): void {
+        protected _checkInitialized(exception: Exception, callForward: Function): void {
             if (!this._initialized) {
                 // if not initialized, wait for it up to 20 seconds (80 x 250ms)
                 let timeout: number = 80;

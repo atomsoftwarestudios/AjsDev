@@ -65,7 +65,7 @@ namespace ajs.boot {
      * This function must be declared in the ajs.boot.config file (usually separate
      * VS project) and loaded during the index.html loading
      */
-    export let getApplicationConfig: IGetAjsApplicationConfig;
+    export let getApplicationInfo: IGetApplicationInfo;
 
     /**
      * Holds collected ajs config
@@ -187,12 +187,12 @@ namespace ajs.boot {
 
         ajs.dbg.log(dbg.LogType.Info, 0, "ajs.boot", this, "Getting the Application config");
 
-        if (!(getApplicationConfig instanceof Function)) {
+        if (!(getApplicationInfo instanceof Function)) {
             ajs.dbg.log(dbg.LogType.Error, 0, this, "GetApplicationConfigFunctionNotDefinedException");
             throw new GetApplicationConfigFunctionNotDefinedException();
         }
 
-        let appConfig: ajs.app.IApplicationConfig = getApplicationConfig();
+        let appConfig: ajs.app.IApplicationInfo = getApplicationInfo();
         ajs.Framework.configureApplication(appConfig);
 
         _start();

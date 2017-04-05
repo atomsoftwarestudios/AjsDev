@@ -28,8 +28,8 @@
     <TypeScriptCompile Include="ajs.IAjsConfig.ts" />
     <TypeScriptCompile Include="app\Application.ts" />
     <TypeScriptCompile Include="app\Exceptions.ts" />
+    <TypeScriptCompile Include="app\IApplicationInfo.ts" />
     <TypeScriptCompile Include="app\IApplicationConfig.ts" />
-    <TypeScriptCompile Include="app\IApplicationUserConfig.ts" />
     <TypeScriptCompile Include="boot\boot.ts" />
     <TypeScriptCompile Include="boot\Exceptions.ts" />
     <TypeScriptCompile Include="boot\IBootConfig.ts" />
@@ -59,6 +59,7 @@
     <TypeScriptCompile Include="doc\INodeData.ts" />
     <TypeScriptCompile Include="doc\INode.ts" />
     <TypeScriptCompile Include="doc\DocumentManager.ts" />
+    <TypeScriptCompile Include="ajs.Exception.ts" />
     <TypeScriptCompile Include="mvvm\!mvvm.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\ITransitionBeginHandler.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\ITransitionType.ts" />

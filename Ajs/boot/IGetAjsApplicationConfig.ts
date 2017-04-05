@@ -30,8 +30,8 @@ namespace ajs.boot {
      * This function must be implemented in the cofiguration file (namepace ajs.boot)
      * and loaded by html page. It is expcected to be defined in the ajs.boot namespace.
      */
-    export interface IGetAjsApplicationConfig {
-        (): ajs.app.IApplicationConfig;
+    export interface IGetApplicationInfo {
+        (): ajs.app.IApplicationInfo;
     }
 
 }

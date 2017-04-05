@@ -21,11 +21,13 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
+///<reference path="../../ajs.Exception.ts" />
+
 namespace ajs.mvvm.viewmodel {
 
     "use strict";
 
-    export class VisualComponentNotRegisteredException extends Error { }
+    export class VisualComponentNotRegisteredException extends ajs.Exception { }
 
-    export class InvalidAttributeIfValueException extends Error { }
+    export class InvalidAttributeIfValueException extends ajs.Exception { }
 }

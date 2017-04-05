@@ -21,16 +21,18 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
+///<reference path="../ajs.Exception.ts" />
+
 namespace ajs.templating {
 
     "use strict";
 
-    export class FailedToLoadTemplatesException extends Error { }
+    export class FailedToLoadTemplatesException extends ajs.Exception { }
 
-    export class MissingTemplateNameException extends Error { }
+    export class MissingTemplateNameException extends ajs.Exception { }
 
-    export class MissingVisualComponentNameException extends Error { }
+    export class MissingVisualComponentNameException extends ajs.Exception { }
 
-    export class FailedToLoadTemplateStylesheetsException extends Error { }
+    export class FailedToLoadTemplateStylesheetsException extends ajs.Exception { }
 
 }

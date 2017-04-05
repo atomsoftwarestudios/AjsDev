@@ -21,10 +21,12 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
+///<reference path="../ajs.Exception.ts" />
+
 namespace ajs.routing {
 
     "use strict";
 
-    export class RouteNotFoundException extends Error { }
+    export class RouteNotFoundException extends ajs.Exception { }
 
 }

@@ -60,9 +60,9 @@ namespace ajs {
         public static get config(): ajs.IAjsConfig { return Framework._config; }
 
         /** Stores the application configuration */
-        protected static _appConfig: ajs.app.IApplicationConfig;
+        protected static _appConfig: ajs.app.IApplicationInfo;
         /** Returns the application configuration */
-        public static get appConfig(): ajs.app.IApplicationConfig { return Framework._appConfig; }
+        public static get appConfig(): ajs.app.IApplicationInfo { return Framework._appConfig; }
 
         /** Stores the application object automatically instantiated from the constructor passed in the configuration */
         protected static _application: ajs.app.Application;
@@ -142,7 +142,7 @@ namespace ajs {
          * Called automatically from boot when window.onload event occurs
          * @param config Application configuration file
          */
-        public static configureApplication(config: ajs.app.IApplicationConfig): void {
+        public static configureApplication(config: ajs.app.IApplicationInfo): void {
             ajs.dbg.log(dbg.LogType.Enter, 0, "ajs", this);
 
             ajs.dbg.log(dbg.LogType.Info, 0, "ajs", this, "Configuring application");
@@ -170,7 +170,7 @@ namespace ajs {
             }
 
             if (typeof (Framework._appConfig.appConstructor) === typeof (Function)) {
-                Framework._application = new Framework._appConfig.appConstructor(Framework._appConfig.userConfig);
+                Framework._application = new (<any>Framework._appConfig.appConstructor)(Framework._appConfig.config);
                 ajs.dbg.log(dbg.LogType.Info, 0, "ajs", this, "Initializing the application");
                 Framework._application.initialize();
             } else {
