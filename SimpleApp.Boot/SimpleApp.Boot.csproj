@@ -87,4 +87,11 @@
     <TypeScriptSourceMap>false</TypeScriptSourceMap>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>rem *** Prepare tsconfig.json based on the solution configuration (Debug/Release)
+echo // This file is generated automatically based on the Visual Studio Solution configuration. &gt; "$(ProjectDir)tsconfig.json"
+echo // To configure TypeScript transpiller for given solution configuration use the tsconfig.common.json, tsconfig.Debug.json and tsconfig.Release.json &gt;&gt; "$(ProjectDir)tsconfig.json"
+echo { "compileOnSave": true, "extends" : "./tsconfig.$(ConfigurationName).json" } &gt;&gt; "$(ProjectDir)tsconfig.json"
+</PreBuildEvent>
+  </PropertyGroup>
 </Project>
