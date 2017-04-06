@@ -365,6 +365,7 @@ namespace ajs.doc {
 
             let clonedNode: Node = src.cloneNode(false);
             let adoptedNode: INode = tgt.ownerDocument.adoptNode(clonedNode) as INode;
+            this._adoptStrangeAttributes(adoptedNode);
             tgt.appendChild(adoptedNode);
 
             this._setNodeMetadata(src, adoptedNode);
@@ -391,6 +392,7 @@ namespace ajs.doc {
             // clone, adapt and insert node from shadow dom to target document
             let clonedNode: Node = src.cloneNode(false);
             let adoptedNode: INode = tgt.ownerDocument.adoptNode(clonedNode) as INode;
+            this._adoptStrangeAttributes(adoptedNode);
             tgt.parentNode.insertBefore(adoptedNode, tgt);
 
             this._setNodeMetadata(src, adoptedNode);
@@ -433,6 +435,7 @@ namespace ajs.doc {
 
             let clonedNode: Node = src.cloneNode(false);
             let adoptedNode: INode = tgt.ownerDocument.adoptNode(clonedNode) as INode;
+            this._adoptStrangeAttributes(adoptedNode);
             tgt.parentNode.replaceChild(adoptedNode, tgt);
 
             this._setNodeMetadata(src, adoptedNode);
@@ -547,6 +550,9 @@ namespace ajs.doc {
                         tattr = target.ownerDocument.createAttribute(source.attributes.item(i).nodeName);
                         tattr.value = source.attributes.item(i).nodeValue;
                         target.attributes.setNamedItem(tattr);
+
+                        this._processStrangeAttributes((target as HTMLElement), tattr);
+
                     } else {
                         if (tattr.nodeValue !== source.attributes.item(i).nodeValue) {
 
@@ -554,6 +560,8 @@ namespace ajs.doc {
                                 "Updating the attribute value " + tattr.nodeName + "=" + source.attributes.item(i).nodeValue);
 
                             tattr.nodeValue = source.attributes.item(i).nodeValue;
+
+                            this._processStrangeAttributes((target as HTMLElement), tattr);
                         }
                     }
                 }
@@ -567,6 +575,40 @@ namespace ajs.doc {
             }
 
             ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+
+        }
+
+        protected _adoptStrangeAttributes(adoptedNode: Node): void {
+            if (adoptedNode.nodeType === Node.ELEMENT_NODE) {
+                for (let i: number = 0; i < adoptedNode.attributes.length; i++) {
+                    this._processStrangeAttributes(<HTMLElement>adoptedNode, adoptedNode.attributes[i]);
+                }
+            }
+        }
+
+        /**
+         * Sets element properties which are not updated by updating the attribute value
+         * @param element
+         * @param attribute
+         */
+        protected _processStrangeAttributes(element: HTMLElement, attribute: Attr): void {
+
+            if (element instanceof HTMLInputElement &&
+                element.type.toLowerCase() === "text" &&
+                attribute.name.toLowerCase() === "value") {
+                element.value = attribute.value;
+            }
+
+            if (element instanceof HTMLInputElement &&
+                element.type.toLowerCase() === "checkbox" &&
+                attribute.name.toLowerCase() === "checked") {
+                if (attribute.value.toLowerCase() === "true") {
+                    element.checked = true;
+                } else {
+                    element.attributes.removeNamedItem("checked");
+                    element.checked = false;
+                }
+            }
 
         }
 
