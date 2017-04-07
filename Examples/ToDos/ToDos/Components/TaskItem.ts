@@ -1,5 +1,6 @@
 ﻿/* *************************************************************************
-Copyright (c)Year, Company
+Copyright (c)2017, Atom Software Studios
+Released under the MIT license
 **************************************************************************** */
 
 namespace ToDos.Components {

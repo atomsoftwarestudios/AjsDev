@@ -1,8 +1,23 @@
-﻿html {
+﻿html, body {
+    margin: 1px;
+    padding: 0;
 }
 
 body {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Calibri', Arial, 'sans-serif';
+}
+
+h1, h5 {
+    margin: 0;
+    padding: 0;
+}
+
+input {
+    font: inherit;
+}
+
+select {
+    font: inherit;
 }
 
 .textAlignCenter {
@@ -10,16 +25,20 @@ body {
 }
 
 .tasksContainer {
-    border: ridge;
+    width: 100%;
+    max-width: 40em;
+    margin: auto;
+    border: solid 1px darkgray;
     border-radius: 10px;
     padding: 1em;
+    box-sizing: border-box;
 }
 
 .tasksFilter {
     width: 100%;
     height: 2.5em;
     padding: 0.5em;
-    border: ridge;
+    border: solid 1px darkgray;
     border-radius: 5px;
     box-sizing: border-box;
     -webkit-appearance: none;
@@ -27,7 +46,7 @@ body {
 
 .tasksTable {
     width: 100%;
-    border-bottom: ridge;
+    border-bottom: solid 1px darkgray;
 }
 
 .tasksHeader {
@@ -45,29 +64,30 @@ body {
 }
 
 .tasksColumnDone {
-    border-top: ridge;
-    width: 0.01em;
+    border-top: solid 1px darkgray;
+    width: 4em;
 }
 
 .tasksColumnDescription {
-    border-top: ridge;
+    border-top: solid 1px darkgray;
     width: auto;
 }
 
 .tasksColumnDelete {
-    border-top: ridge;
-    width: 4em;
+    border-top: solid 1px darkgray;
+    width: 5.2em;
 }
 
 .tasksColumnEdit {
-    border-top: ridge;
-    width: 4em;
+    border-top: solid 1px darkgray;
+    width: 5.2em;
 }
 
 .button {
-    border: ridge;
+    border: solid 1px darkgray;
     border-radius: 5px;
     -webkit-appearance: none;
+    height: 2em;
 }
 
 .taskButton {
@@ -79,16 +99,23 @@ body {
     width: 100%;
     height: 2.5em;
     padding: 0.5em;
-    border: ridge;
+    border: solid 1px darkgray;
     border-radius: 5px;
     box-sizing: border-box;
     -webkit-appearance: none;
 }
 
 .addButton {
-    width: 4em;
+    width: 5em;
 }
 
 .cancelButton {
-    width: 4em;
+    width: 5em;
+}
+
+.copy {
+    max-width: 40em;
+    margin: auto;
+    box-sizing: border-box;
+    text-align: center;
 }

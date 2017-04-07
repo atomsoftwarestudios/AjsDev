@@ -1,5 +1,6 @@
 ﻿/* *************************************************************************
-Copyright (c)Year, Company
+Copyright (c)2017, Atom Software Studios
+Released under the MIT license
 **************************************************************************** */
 
 namespace ToDos.Models {
@@ -50,14 +51,14 @@ namespace ToDos.Models {
             // simulate async code by creating a promise which is resolved immediately
             // in a real application the request to server resource or data cache returning the 
             // promise with the appropriate data type can be here
-            let promise: Promise<void> = new Promise<void>(
+            let dataResolverPromise: Promise<void> = new Promise<void>(
                 (resolve: () => void, reject: (reason: ajs.Exception) => void) => {
                     resolve();
                 }
             );
 
             // define actions for the promise returned by the data resolver
-            promise
+            dataResolverPromise
 
                 // resolved -> module is initialized
                 .then((): void => {
@@ -68,8 +69,13 @@ namespace ToDos.Models {
                 .catch((reason: ajs.Exception): void => {
                     throw new ajs.Exception("Unable to initialize default model", reason);
                 });
+
         }
 
+        /**
+         * Returns the task from the task list identified by key
+         * @param key Key identifier of the task
+         */
         protected _getTaskByKey(key: number): ITask {
             for (const task of this._tasks) {
                 if (task.key === key) {
@@ -79,6 +85,10 @@ namespace ToDos.Models {
             return null;
         }
 
+        /**
+         * Returns the index of the task identified by the key from the task list
+         * @param key Key to be serched for
+         */
         protected _getTaskIndexByKey(key: number): number {
             for (let i: number = 0; i < this._tasks.length; i++) {
                 if (this._tasks[i].key === key) {
@@ -93,8 +103,9 @@ namespace ToDos.Models {
          * This example is for async data loadable from server but the model can also return the data instantly
          * It depends on what the ViewComponent expects but it is recommended to use async code all the time
          * in order to avoid possible problems during conversions of the code
+         * @param filter Used to filter tasks returned by their state (possible values: All, Done, Undone)
          */
-        public getTasks(filter: string): Promise<ITask[]> {
+        public getTasks(filter: "All" | "Done" | "Undone"): Promise<ITask[]> {
 
             return new Promise<ITask[]>(
                 (resolve: (data: ITask[]) => void, reject: (reason: ajs.Exception) => void) => {
@@ -121,10 +132,18 @@ namespace ToDos.Models {
 
         }
 
+        /**
+         * Returns a task identified by the key from the task list
+         * @param key Key of the task to be returned
+         */
         public getTaskByKey(key: number): ITask {
             return this._getTaskByKey(key);
         }
 
+        /**
+         * Adds a new task to the taks list
+         * @param description Description of the task
+         */
         public addTask(description: string): void {
             let task: ITask = {
                 key: this._lastKey,
@@ -135,6 +154,10 @@ namespace ToDos.Models {
             this._lastKey++;
         }
 
+        /**
+         * Deletes a task identified by the key from the task list
+         * @param key Key of the task to be deleted
+         */
         public deleteTask(key: number): void {
             let taskIndex: number = this._getTaskIndexByKey(key);
             if (taskIndex !== null) {
@@ -142,6 +165,11 @@ namespace ToDos.Models {
             }
         }
 
+        /**
+         * Updates a task description
+         * @param key Key of the task to be updated
+         * @param description New description of the task
+         */
         public updateTaskDescription(key: number, description: string): void {
             let task: ITask = this._getTaskByKey(key);
             if (task !== null) {
@@ -149,6 +177,11 @@ namespace ToDos.Models {
             }
         }
 
+        /**
+         * Sets or unsets the Done flag of the task
+         * @param key Key of the task which done flag should be set
+         * @param done The value to be set (done = true, undone = false)
+         */
         public taskDone(key: number, done: boolean): void {
             let task: ITask = this._getTaskByKey(key);
             if (task !== null) {

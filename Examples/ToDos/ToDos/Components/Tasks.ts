@@ -1,5 +1,6 @@
 ﻿/* *************************************************************************
 Copyright (c)2017, Atom Software Studios
+Released under the MIT license
 **************************************************************************** */
 
 namespace ToDos.Components {
@@ -26,7 +27,7 @@ namespace ToDos.Components {
         public tasks: ToDos.Models.ITask[];
         public taskDescription: string;
         public actionLabel: string;
-        public filter: string;
+        public filter: "All" | "Done" | "Undone";
 
         protected _defaultState(): ajs.mvvm.viewmodel.IViewStateSet {
             return({
@@ -132,7 +133,7 @@ namespace ToDos.Components {
         }
 
         public setFilter(e: Event): void {
-            this.filter = (<HTMLSelectElement>e.target).value;
+            this.filter = <any>(<HTMLSelectElement>e.target).value;
             this._update(false);
         }
 
