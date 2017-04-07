@@ -1,30 +1,60 @@
-<ajstemplate name="default">
+<ajstemplate name="default" stylesheets="/templates/default.css">
 
     <component name="Tasks">
 
-        <table border="1">
+        <div class="tasksContainer">
 
-            <tr>
-                <th>Done</th>
-                <th>Description</th>
-                <th>Delete</th>
-                <th>Edit</th>
-            </tr>
+            <label>
+                Filter:
+                <select class="tasksFilter" oninput="setFilter">
+                    <option selected>All</option>
+                    <option>Done</option>
+                    <option>Undone</option>
+                </select>
+            </label>
 
-            <tr component="TaskItem" id="tasks">
-                <td><input type="checkbox" key="{key}" checked="{done}" onchange="doneChanged" /></td>
-                <td>{description}</td>
-                <td><input type="button" value="Delete" key="{key}" onclick="deleteTask"/></td>
-                <td><input type="button" value="Edit" key="{key}" onclick="editTask" /></td>
-            </tr>
+            <br />
+            <br />
 
-        </table>
+            <table class="tasksTable" cellspacing="0" cellpadding="0">
 
-        <p>
-            <input type="text" value="{taskDescription}" oninput="textChanged" onkeydown="submitOnEnter" />
-            <input type="button" value="{actionLabel}" onclick="addUpdateTask" />
-            <input type="button" value="Cancel" onclick="cancelUpdate" if="this._currentItem !== -1" />
-        </p>
+                <tr class="tasksHeader">
+                    <th class="tasksColumn tasksColumnDone">Done</th>
+                    <th class="tasksColumn tasksColumnDescription">Description</th>
+                    <th class="tasksColumn tasksColumnDelete">Delete</th>
+                    <th class="tasksColumn tasksColumnEdit">Edit</th>
+                </tr>
+
+                <tr component="TaskItem" id="tasks" class="tasksItem">
+                    <td class="tasksColumn tasksColumnDone textAlignCenter">
+                        <input type="checkbox" key="{key}" checked="{done}" onchange="doneChanged" />
+                    </td>
+
+                    <td class="tasksColumn tasksColumnDescription">
+                        {description}
+                    </td>
+
+                    <td class="tasksColumn tasksColumnDelete textAlignCenter">
+                        <input class="button taskButton" type="button" value="Delete" key="{key}" onclick="deleteTask" />
+                    </td>
+
+                    <td class="tasksColumn tasksColumnEdit textAlignCenter">
+                        <input class="button taskButton" type="button" value="Edit" key="{key}" onclick="editTask" />
+                    </td>
+                </tr>
+
+            </table>
+
+            <p>
+                Description:<br />
+                <input class="taskDescription" type="text" value="{taskDescription}" oninput="textChanged" onkeydown="submitOnEnter" onrender="setInputField" />
+                <div style="text-align: right">
+                    <input class="button addButton" type="button" value="{actionLabel}" onclick="addUpdateTask" />
+                    <input class="button cancelButton" type="button" value="Cancel" onclick="cancelUpdate" if="this._currentItem !== -1" />
+                </div>
+            </p>
+
+        </div>
 
     </component>
 

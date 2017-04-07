@@ -94,7 +94,7 @@ namespace ToDos.Models {
          * It depends on what the ViewComponent expects but it is recommended to use async code all the time
          * in order to avoid possible problems during conversions of the code
          */
-        public getTasks(): Promise<ITask[]> {
+        public getTasks(filter: string): Promise<ITask[]> {
 
             return new Promise<ITask[]>(
                 (resolve: (data: ITask[]) => void, reject: (reason: ajs.Exception) => void) => {
@@ -102,7 +102,17 @@ namespace ToDos.Models {
                     this._checkInitialized(
                         new DefaultModelNotInitializedException,
                         () => {
-                            resolve(this._tasks);
+                            let filteredItems: ITask[] = [];
+
+                            for (let task of this._tasks) {
+                                if (filter === "All" ||
+                                    (filter === "Done" && task.done) ||
+                                    (filter === "Undone" && !task.done)) {
+                                    filteredItems.push(task);
+                                }
+                            }
+
+                            resolve(filteredItems);
                         }
                     );
 

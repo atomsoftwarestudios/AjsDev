@@ -1,0 +1,94 @@
+﻿html {
+}
+
+body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.textAlignCenter {
+    text-align: center;
+}
+
+.tasksContainer {
+    border: ridge;
+    border-radius: 10px;
+    padding: 1em;
+}
+
+.tasksFilter {
+    width: 100%;
+    height: 2.5em;
+    padding: 0.5em;
+    border: ridge;
+    border-radius: 5px;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.tasksTable {
+    width: 100%;
+    border-bottom: ridge;
+}
+
+.tasksHeader {
+    background-color: darkgray;
+    color: white;
+}
+
+.tasksItem:nth-child(odd) {
+    background-color: #EEEEEE;
+}
+
+.tasksColumn {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.tasksColumnDone {
+    border-top: ridge;
+    width: 0.01em;
+}
+
+.tasksColumnDescription {
+    border-top: ridge;
+    width: auto;
+}
+
+.tasksColumnDelete {
+    border-top: ridge;
+    width: 4em;
+}
+
+.tasksColumnEdit {
+    border-top: ridge;
+    width: 4em;
+}
+
+.button {
+    border: ridge;
+    border-radius: 5px;
+    -webkit-appearance: none;
+}
+
+.taskButton {
+    width: 90%;
+}
+
+.taskDescription {
+    display: block;
+    width: 100%;
+    height: 2.5em;
+    padding: 0.5em;
+    border: ridge;
+    border-radius: 5px;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.addButton {
+    width: 4em;
+}
+
+.cancelButton {
+    width: 4em;
+}
