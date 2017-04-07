@@ -150,12 +150,6 @@ namespace ajs.mvvm.viewmodel {
                 }
             };
 
-            // initialize the component -> it can do some async operations so it have to
-            // set initialized to true once it is done
-            this._initialize();
-
-            this._applyTemplateStylesheets();
-
             // apply passed or default state
             if (state && state !== null) {
                 let newState: IViewStateSet = ajs.utils.DeepMerge.merge(this._defaultState(), state);
@@ -164,6 +158,12 @@ namespace ajs.mvvm.viewmodel {
             } else {
                 this._applyState(this._defaultState());
             }
+
+            // initialize the component -> it can do some async operations so it have to
+            // set initialized to true once it is done
+            this._initialize();
+
+            this._applyTemplateStylesheets();
 
             // indicate the state was changed
             this.ajs.stateChanged = true;
