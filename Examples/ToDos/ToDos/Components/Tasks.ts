@@ -104,6 +104,12 @@ namespace ToDos.Components {
             }
         }
 
+        public submitOnEnter(e: KeyboardEvent): void {
+            if (e.keyCode === 13) {
+                this.addUpdateTask(e);
+            }
+        }
+
         public cancelUpdate(e: Event): void {
             this._currentItem = -1;
             this._descriptionValue = "";

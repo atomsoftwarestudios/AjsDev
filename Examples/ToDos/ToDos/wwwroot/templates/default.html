@@ -21,7 +21,7 @@
         </table>
 
         <p>
-            <input type="text" value="{taskDescription}" oninput="textChanged" />
+            <input type="text" value="{taskDescription}" oninput="textChanged" onkeydown="submitOnEnter" />
             <input type="button" value="{actionLabel}" onclick="addUpdateTask" />
             <input type="button" value="Cancel" onclick="cancelUpdate" if="this._currentItem !== -1" />
         </p>
