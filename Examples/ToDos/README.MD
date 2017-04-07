@@ -8,10 +8,11 @@ Released under the MIT License
 
 Table of Contents
 
-- [Introduction](#Introduction)
-- [Style sheet](#Style-sheet-(Visual-component-style))
-- [Introduction](#Introduction)
-- [Introduction](#Introduction)
+- [Introduction](#introduction)
+- [Style sheet](#style-sheet-visual-component-style)
+- [Template & Visual Components](#template-visual-components)
+- [View Components](#view-components)
+- [Model](#model)
 
 ---
 
@@ -76,5 +77,14 @@ The Visual Studio 2015 solution is consisted of three projects:
 default.css is a standart CSS 2/3.0 file containing the set of CSS classes to be used in the Visual Components
 template.
 
-#### Template (Visual components)
+#### Template & Visual components
 
+tbd
+
+#### View Components
+
+tbd
+
+#### Model
+
+tbd
