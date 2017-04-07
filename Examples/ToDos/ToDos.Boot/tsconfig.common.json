@@ -4,7 +4,7 @@
 
   "compilerOptions": {
     // output file (single js file will be generated)
-    "outFile": "./bin/SimpleApp.js",
+    "outFile": "./bin/SimpleApp.Boot.js",
     // target ECMA version
     "target": "es5",
     // libs to be used during compilation
@@ -22,8 +22,8 @@
   },
   "include": [
     "./**/*",
-    "../Ajs/bin/*.d.ts",
-    "../AjsDoc/bin/*.d.ts"
+    "../../../Ajs/bin/*.d.ts",
+    "../ToDos/bin/*.d.ts"
   ],
   "exclude": [
     "./bin/**/*"

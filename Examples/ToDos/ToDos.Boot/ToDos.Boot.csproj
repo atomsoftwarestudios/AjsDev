@@ -22,13 +22,13 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ajs\Ajs.csproj">
+    <ProjectReference Include="..\..\..\Ajs\Ajs.csproj">
       <Project>{267086da-ab24-4d8d-bd5f-d7d3b3d7db67}</Project>
       <Name>Ajs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SimpleApp\SimpleApp.csproj">
+    <ProjectReference Include="..\ToDos\ToDos.csproj">
       <Project>{eeaf3620-ede3-4ca7-8fa0-1895c05d799a}</Project>
-      <Name>SimpleApp</Name>
+      <Name>ToDos</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,31 @@
+<ajstemplate name="default">
+
+    <component name="Tasks">
+
+        <table border="1">
+
+            <tr>
+                <th>Done</th>
+                <th>Description</th>
+                <th>Delete</th>
+                <th>Edit</th>
+            </tr>
+
+            <tr component="TaskItem" id="tasks">
+                <td><input type="checkbox" key="{key}" checked="{done}" onchange="doneChanged" /></td>
+                <td>{description}</td>
+                <td><input type="button" value="Delete" key="{key}" onclick="deleteTask"/></td>
+                <td><input type="button" value="Edit" key="{key}" onclick="editTask" /></td>
+            </tr>
+
+        </table>
+
+        <p>
+            <input type="text" value="{taskDescription}" oninput="textChanged" />
+            <input type="button" value="{actionLabel}" onclick="addUpdateTask" />
+            <input type="button" value="Cancel" onclick="cancelUpdate" if="this._currentItem !== -1" />
+        </p>
+
+    </component>
+
+</ajstemplate>

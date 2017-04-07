@@ -147,7 +147,7 @@ namespace ajs.boot {
             router: [
                 {
                     paths: [{ base: ".*", params: "" }],
-                    viewComponentName: "Default"
+                    viewComponentName: "Tasks"
                 }
             ],
 
@@ -169,11 +169,11 @@ namespace ajs.boot {
 
     getApplicationInfo = (): ajs.app.IApplicationInfo => {
 
-        let configuration: simpleapp.IApplicationConfig = {
+        let configuration: ToDos.IApplicationConfig = {
         };
 
         return {
-            appConstructor: simpleapp.Application,
+            appConstructor: ToDos.Application,
             config: configuration
         };
 

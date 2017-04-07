@@ -2,24 +2,26 @@
 Copyright (c)Year, Company
 **************************************************************************** */
 
-namespace simpleapp.models {
+namespace ToDos.Models {
 
     "use strict";
 
-    export interface IDefaultModelData {
-        firstName: string;
-        lastName: string;
+    export interface ITask {
+        key: number;
+        done: boolean;
+        description: string;
     }
 
     export class DefaultModelNotInitializedException extends ajs.Exception { }
 
-    export class Default extends ajs.mvvm.model.Model<IDefaultModelData> {
+    export class Tasks extends ajs.mvvm.model.Model<ITask> {
 
         /*
         Model members (such as data types) should be defined here
         */
 
-        protected _people: IDefaultModelData[];
+        protected _lastKey: number;
+        protected _tasks: ITask[];
 
         protected _initialize(): void {
 
@@ -28,7 +30,12 @@ namespace simpleapp.models {
             Mnce the initialization of the model is done the this._initialized flag should be set to true
             */
 
-            this._people = [];
+            this._tasks = [{
+                key: 0,
+                done: false,
+                description: "Test",
+            }];
+            this._lastKey = 1;
             this._loadDataAsync();
 
             /*
@@ -45,11 +52,7 @@ namespace simpleapp.models {
             // promise with the appropriate data type can be here
             let promise: Promise<void> = new Promise<void>(
                 (resolve: () => void, reject: (reason: ajs.Exception) => void) => {
-
-                    this._people.push({ firstName: "Bill", lastName: "Gates" });
-                    this._people.push({ firstName: "Steave", lastName: "Jobs" });
                     resolve();
-
                 }
             );
 
@@ -67,27 +70,80 @@ namespace simpleapp.models {
                 });
         }
 
+        protected _getTaskByKey(key: number): ITask {
+            for (const task of this._tasks) {
+                if (task.key === key) {
+                    return task;
+                }
+            }
+            return null;
+        }
+
+        protected _getTaskIndexByKey(key: number): number {
+            for (let i: number = 0; i < this._tasks.length; i++) {
+                if (this._tasks[i].key === key) {
+                    return i;
+                }
+            }
+            return null;
+        }
+
         /**
          * Returns the data processed by model to the view component (or another caller)
          * This example is for async data loadable from server but the model can also return the data instantly
          * It depends on what the ViewComponent expects but it is recommended to use async code all the time
          * in order to avoid possible problems during conversions of the code
          */
-        public getData(): Promise<IDefaultModelData[]> {
+        public getTasks(): Promise<ITask[]> {
 
-            return new Promise<IDefaultModelData[]>(
-                (resolve: (data: IDefaultModelData[]) => void, reject: (reason: ajs.Exception) => void) => {
+            return new Promise<ITask[]>(
+                (resolve: (data: ITask[]) => void, reject: (reason: ajs.Exception) => void) => {
 
                     this._checkInitialized(
                         new DefaultModelNotInitializedException,
                         () => {
-                            resolve(this._people);
+                            resolve(this._tasks);
                         }
                     );
 
                 }
             );
 
+        }
+
+        public getTaskByKey(key: number): ITask {
+            return this._getTaskByKey(key);
+        }
+
+        public addTask(description: string): void {
+            let task: ITask = {
+                key: this._lastKey,
+                done: false,
+                description: description
+            };
+            this._tasks.push(task);
+            this._lastKey++;
+        }
+
+        public deleteTask(key: number): void {
+            let taskIndex: number = this._getTaskIndexByKey(key);
+            if (taskIndex !== null) {
+                this._tasks.splice(taskIndex, 1);
+            }
+        }
+
+        public updateTaskDescription(key: number, description: string): void {
+            let task: ITask = this._getTaskByKey(key);
+            if (task !== null) {
+                task.description = description;
+            }
+        }
+
+        public taskDone(key: number, done: boolean): void {
+            let task: ITask = this._getTaskByKey(key);
+            if (task !== null) {
+                task.done = done;
+            }
         }
 
     }

@@ -1,4 +1,4 @@
-﻿namespace simpleapp {
+﻿namespace ToDos {
 
     "use strict";
 
