@@ -72,16 +72,18 @@ namespace ajs.routing {
 
         }
 
-        public route(): void {
+        public route(url?: string): void {
 
             ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.routing", this);
 
-            if (this._lastURL !== window.location.href) {
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.routing", this, "Maping route for '" + window.location.href + "'");
+            url = url || window.location.href;
 
-                this._lastURL = window.location.href;
+            if (this._lastURL !== url) {
+                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.routing", this, "Maping route for '" + url + "'");
 
-                let viewComponentName: string = this._getRouteViewComponent();
+                this._lastURL = url;
+
+                let viewComponentName: string = this._getRouteViewComponent(url);
                 ajs.dbg.log(dbg.LogType.Info, 0, "ajs.routing", this, "Routing to " + viewComponentName);
 
                 if (viewComponentName !== null) {
@@ -107,9 +109,13 @@ namespace ajs.routing {
             ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.routing", this);
         }
 
-        protected _getRouteViewComponent(): string {
+        protected _getRouteViewComponent(url?: string): string {
 
             ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.routing", this);
+
+            url = url || window.location.href;
+            let uriParser: HTMLAnchorElement = document.createElement("a");
+            uriParser.href = url;
 
             for (let i: number = 0; i < this._routes.length; i++) {
 
@@ -119,7 +125,7 @@ namespace ajs.routing {
 
                     if (rx.test(window.location.pathname)) {
 
-                        let routeURI: string = window.location.pathname + window.location.search + window.location.hash;
+                        let routeURI: string = uriParser.pathname + uriParser.search + uriParser.hash;
 
                         let base: string = routeURI.match(this._routes[i].paths[j].base)[0];
                         let path: string = routeURI.substr(base.length);

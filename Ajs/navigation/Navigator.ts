@@ -278,7 +278,7 @@ namespace ajs.navigation {
                     // rem by fn - state should not be stored during redirect
                     // window.history.pushState({}, "", this._redirections[i].target);
                     redirected = true;
-                    this._router.route();
+                    this._router.route(this._redirections[i].target);
                     break;
                 }
             }
