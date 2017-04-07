@@ -365,11 +365,12 @@ namespace ajs.doc {
 
             let clonedNode: Node = src.cloneNode(false);
             let adoptedNode: INode = tgt.ownerDocument.adoptNode(clonedNode) as INode;
-            this._adoptStrangeAttributes(adoptedNode);
-            tgt.appendChild(adoptedNode);
 
             this._setNodeMetadata(src, adoptedNode);
+            this._adoptStrangeAttributes(adoptedNode);
             this._registerEventListeners(src, adoptedNode);
+
+            tgt.appendChild(adoptedNode);
 
             ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
 
@@ -392,11 +393,12 @@ namespace ajs.doc {
             // clone, adapt and insert node from shadow dom to target document
             let clonedNode: Node = src.cloneNode(false);
             let adoptedNode: INode = tgt.ownerDocument.adoptNode(clonedNode) as INode;
-            this._adoptStrangeAttributes(adoptedNode);
-            tgt.parentNode.insertBefore(adoptedNode, tgt);
 
             this._setNodeMetadata(src, adoptedNode);
+            this._adoptStrangeAttributes(adoptedNode);
             this._registerEventListeners(src, adoptedNode);
+
+            tgt.parentNode.insertBefore(adoptedNode, tgt);
 
             ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
 
@@ -435,11 +437,12 @@ namespace ajs.doc {
 
             let clonedNode: Node = src.cloneNode(false);
             let adoptedNode: INode = tgt.ownerDocument.adoptNode(clonedNode) as INode;
-            this._adoptStrangeAttributes(adoptedNode);
-            tgt.parentNode.replaceChild(adoptedNode, tgt);
 
+            this._adoptStrangeAttributes(adoptedNode);
             this._setNodeMetadata(src, adoptedNode);
             this._registerEventListeners(src, adoptedNode);
+
+            tgt.parentNode.replaceChild(adoptedNode, tgt);
 
             ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
 
@@ -578,6 +581,10 @@ namespace ajs.doc {
 
         }
 
+        /**
+         * Processes attributes within the adopted node and sets properties of the node which are not updated by setting the attribute
+         * @param adoptedNode Adopted node whose attributes will get processed
+         */
         protected _adoptStrangeAttributes(adoptedNode: Node): void {
             if (adoptedNode.nodeType === Node.ELEMENT_NODE) {
                 for (let i: number = 0; i < adoptedNode.attributes.length; i++) {
@@ -588,10 +595,23 @@ namespace ajs.doc {
 
         /**
          * Sets element properties which are not updated by updating the attribute value
-         * @param element
-         * @param attribute
+         * @param element Element owning the attribute to be processed
+         * @param attribute Attribute to be processed
          */
         protected _processStrangeAttributes(element: HTMLElement, attribute: Attr): void {
+
+            if (element instanceof HTMLElement &&
+                attribute.name.toLowerCase() === "onrender") {
+                if ((<INode><any>element).ajsData &&
+                    (<INode><any>element).ajsData.ownerComponent &&
+                    (<INode><any>element).ajsData.ownerComponent[attribute.value] instanceof Function) {
+
+                    (<INode><any>element).ajsData.ownerComponent[attribute.value](element);
+
+                }
+
+                element.attributes.removeNamedItem(attribute.name);
+            }
 
             if (element instanceof HTMLInputElement &&
                 element.type.toLowerCase() === "text" &&
