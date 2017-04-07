@@ -22,12 +22,6 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ajs Frontend Application\Ajs Frontend Application.csproj">
-      <Project>{0f2a8fb3-1fd1-4480-8d40-8da3eeb11aca}</Project>
-      <Name>Ajs Frontend Application</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
