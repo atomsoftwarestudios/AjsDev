@@ -37,21 +37,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example1-SimpleApp", "Example1-SimpleApp", "{667EEBC0-58B7-4020-8F75-41EB0FD7F03C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ToDos", "ToDos", "{667EEBC0-58B7-4020-8F75-41EB0FD7F03C}"
+	ProjectSection(SolutionItems) = preProject
+		Examples\ToDos\LICENSE = Examples\ToDos\LICENSE
+		Examples\ToDos\README.MD = Examples\ToDos\README.MD
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleApp", "SimpleApp\SimpleApp.csproj", "{EEAF3620-EDE3-4CA7-8FA0-1895C05D799A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDos", "Examples\ToDos\ToDos\ToDos.csproj", "{EEAF3620-EDE3-4CA7-8FA0-1895C05D799A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleApp.Boot", "SimpleApp.Boot\SimpleApp.Boot.csproj", "{E82E6EA6-C947-46DD-98CA-13F0619696F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDos.Boot", "Examples\ToDos\ToDos.Boot\ToDos.Boot.csproj", "{E82E6EA6-C947-46DD-98CA-13F0619696F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project Templates", "Project Templates", "{6CCE7F4A-E916-429B-A0F3-C40EA0C94B99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ajs Frontend Application", "Ajs Frontend Application\Ajs Frontend Application.csproj", "{0F2A8FB3-1FD1-4480-8D40-8DA3EEB11ACA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ajs Frontend Application Boot Configuration", "Ajs Frontend Application Boot Configuration\Ajs Frontend Application Boot Configuration.csproj", "{32746587-57F8-4E89-81BF-EF368ED91F54}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ajs Frontend Application Library", "Ajs Frontend Application Library\Ajs Frontend Application Library.csproj", "{1C2F9CE6-B4BE-45D5-AD9F-457A84B5092B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ajs Web Application", "Ajs Web Application\Ajs Web Application.csproj", "{28EA3628-CE2D-47B9-92B6-A95B0EA719D1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{64E6D9F3-5B99-4D6B-A183-3EC814B29BD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,32 +89,13 @@ Global
 		{E82E6EA6-C947-46DD-98CA-13F0619696F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E82E6EA6-C947-46DD-98CA-13F0619696F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E82E6EA6-C947-46DD-98CA-13F0619696F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0F2A8FB3-1FD1-4480-8D40-8DA3EEB11ACA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F2A8FB3-1FD1-4480-8D40-8DA3EEB11ACA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F2A8FB3-1FD1-4480-8D40-8DA3EEB11ACA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F2A8FB3-1FD1-4480-8D40-8DA3EEB11ACA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32746587-57F8-4E89-81BF-EF368ED91F54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32746587-57F8-4E89-81BF-EF368ED91F54}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32746587-57F8-4E89-81BF-EF368ED91F54}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32746587-57F8-4E89-81BF-EF368ED91F54}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C2F9CE6-B4BE-45D5-AD9F-457A84B5092B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C2F9CE6-B4BE-45D5-AD9F-457A84B5092B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C2F9CE6-B4BE-45D5-AD9F-457A84B5092B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C2F9CE6-B4BE-45D5-AD9F-457A84B5092B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{28EA3628-CE2D-47B9-92B6-A95B0EA719D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28EA3628-CE2D-47B9-92B6-A95B0EA719D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28EA3628-CE2D-47B9-92B6-A95B0EA719D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28EA3628-CE2D-47B9-92B6-A95B0EA719D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{667EEBC0-58B7-4020-8F75-41EB0FD7F03C} = {64E6D9F3-5B99-4D6B-A183-3EC814B29BD0}
 		{EEAF3620-EDE3-4CA7-8FA0-1895C05D799A} = {667EEBC0-58B7-4020-8F75-41EB0FD7F03C}
 		{E82E6EA6-C947-46DD-98CA-13F0619696F8} = {667EEBC0-58B7-4020-8F75-41EB0FD7F03C}
-		{0F2A8FB3-1FD1-4480-8D40-8DA3EEB11ACA} = {6CCE7F4A-E916-429B-A0F3-C40EA0C94B99}
-		{32746587-57F8-4E89-81BF-EF368ED91F54} = {6CCE7F4A-E916-429B-A0F3-C40EA0C94B99}
-		{1C2F9CE6-B4BE-45D5-AD9F-457A84B5092B} = {6CCE7F4A-E916-429B-A0F3-C40EA0C94B99}
-		{28EA3628-CE2D-47B9-92B6-A95B0EA719D1} = {6CCE7F4A-E916-429B-A0F3-C40EA0C94B99}
 	EndGlobalSection
 EndGlobal
