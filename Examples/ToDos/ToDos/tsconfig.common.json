@@ -4,7 +4,7 @@
 
   "compilerOptions": {
     // output file (single js file will be generated)
-    "outFile": "./bin/SimpleApp.js",
+    "outFile": "./bin/ToDos.js",
     // target ECMA version
     "target": "es5",
     // libs to be used during compilation

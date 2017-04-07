@@ -16,7 +16,7 @@ namespace ajs.boot {
 
         return {
             direct: [
-                "/js/SimpleApp.js"
+                "/js/ToDos.js"
             ]
         };
 
@@ -56,6 +56,7 @@ namespace ajs.boot {
             */
 
             boot: {
+                offlineSupport: false,
                 bootResourcesLoadingPreference: ajs.resources.LOADING_PREFERENCE.CACHE
             },
 
