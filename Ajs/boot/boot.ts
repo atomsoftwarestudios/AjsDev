@@ -79,6 +79,7 @@ namespace ajs.boot {
      */
     function _defaultConfig(): IBootConfig {
         return {
+            offlineSupport: false,
             bootResourcesLoadingPreference: resources.LOADING_PREFERENCE.CACHE
         };
     }
@@ -292,12 +293,20 @@ namespace ajs.boot {
 
         // this is fallback if no event is called
         window.addEventListener("load", () => {
-            setTimeout(() => {
-                if (!bootStarted) {
-                    bootStarted = true;
-                    _boot();
-                }
-            }, 500);
+
+            let cfg: IAjsConfig = getAjsConfig();
+            if (cfg && cfg.boot && cfg.boot.offlineSupport) {
+                setTimeout(() => {
+                    if (!bootStarted) {
+                        bootStarted = true;
+                        _boot();
+                    }
+                }, 500);
+            } else {
+                bootStarted = true;
+                _boot();
+            }
+
         });
 
     }

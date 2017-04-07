@@ -34,6 +34,13 @@ namespace ajs.boot {
          * are preferably loaded from server or the cache
          */
         bootResourcesLoadingPreference: resources.LOADING_PREFERENCE;
+
+        /**
+         * Specifies if the offline support is required during the ajs boot
+         * If so it can take 500ms the ajs will get started as there is a fallback to make sure the
+         * application will get started even if Application Cache events will not be fired
+         */
+        offlineSupport: boolean;
     }
 
 }
