@@ -137,6 +137,7 @@ namespace ajs.mvvm.viewmodel {
                     onmouseup: this._attrEventHandler as IAttributeProcessor,
                     onkeydown: this._attrEventHandler as IAttributeProcessor,
                     onkeyup: this._attrEventHandler as IAttributeProcessor,
+                    onkeypress: this._attrEventHandler as IAttributeProcessor,
                     onchange: this._attrEventHandler as IAttributeProcessor,
                     oninput: this._attrEventHandler as IAttributeProcessor,
                     ontouchmove_ajs: this._attrEventHandler as IAttributeProcessor,
