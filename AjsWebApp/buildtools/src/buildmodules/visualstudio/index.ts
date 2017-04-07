@@ -236,6 +236,8 @@ function getAjsWebAppConfig(solutionConfig: config.SolutionConfiguration, projPa
 
         try {
             let awc: string = fs.readFileSync(projPath + fileName, "ASCII");
+            awc = awc.replace(/\/\/.*/g, "");
+            awc = awc.replace(/\/\*[\s\S]*\*\//gm, "");
             return JSON.parse(awc) as config.IAjsWebAppConfig;
         } catch (e) {
             printf("Failed to parse the JSON config: %1", projPath + fileName);
