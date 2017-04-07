@@ -46,6 +46,8 @@ namespace ajs.boot {
             showErrors: true,
 
             boot: {
+                // enable ajs offline support
+                offlineSupport: true,
                 // bootResourcesLoadingPreference: ajs.resources.LOADING_PREFERENCE.SERVER
                 bootResourcesLoadingPreference: ajs.resources.LOADING_PREFERENCE.CACHE
             },
