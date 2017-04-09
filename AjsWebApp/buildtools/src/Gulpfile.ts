@@ -1027,56 +1027,57 @@ function cleanWWWRoot(solutionData: vs.ISolution): void {
     // load the clean.json
     let cleanFileName: string = path.normalize("./buildtools/clean.json");
 
-    if (fs.existsSync(cleanFileName)) {
-
-        printf("Cleaning WWWRoot");
-
-        // load clean file
-        let cleanFile: string = fs.readFileSync(cleanFileName, "utf8");
-        let clean: string[] = JSON.parse(cleanFile);
-
-        // prepare lets
-        let i: number;
-        let dirs: string[] = [];
-
-        // for all records in the clean file
-        for (i = 0; i < clean.length; i++) {
-
-            let file: string = path.normalize(clean[i]);
-
-            if (fs.existsSync(file)) {
-
-                let stat: fs.Stats = fs.statSync(file);
-
-                if (stat.isDirectory()) {
-                    // prepare dir for deletion
-                    dirs.push(file);
-                } else {
-                    // delete file
-                    printf("Removing file %1", file);
-                    fs.unlinkSync(file);
-                }
-
-            }
-        }
-
-        // for all dirs found in clean file
-        for (i = dirs.length - 1; i >= 0; i--) {
-
-            // remove dir
-            printf("Removing dir %1", dirs[i]);
-
-            try {
-                fs.rmdirSync(dirs[i]);
-            } catch (e) {
-                printf("Dir %1 can't be removed: %2", dirs[i], e);
-            }
-
-        }
-
-        // write empty clean file
-        fs.writeFileSync(cleanFileName, "[]", "utf8");
+    if (!fs.existsSync(cleanFileName)) {
+        return;
     }
+
+    printf("Cleaning WWWRoot");
+
+    // load clean file
+    let cleanFile: string = fs.readFileSync(cleanFileName, "utf8");
+    let clean: string[] = JSON.parse(cleanFile);
+
+    // prepare lets
+    let i: number;
+    let dirs: string[] = [];
+
+    // for all records in the clean file
+    for (i = 0; i < clean.length; i++) {
+
+        let file: string = path.normalize(clean[i]);
+
+        if (fs.existsSync(file)) {
+
+            let stat: fs.Stats = fs.statSync(file);
+
+            if (stat.isDirectory()) {
+                // prepare dir for deletion
+                dirs.push(file);
+            } else {
+                // delete file
+                printf("Removing file %1", file);
+                fs.unlinkSync(file);
+            }
+
+        }
+    }
+
+    // for all dirs found in clean file
+    for (i = dirs.length - 1; i >= 0; i--) {
+
+        // remove dir
+        printf("Removing dir %1", dirs[i]);
+
+        try {
+            fs.rmdirSync(dirs[i]);
+        } catch (e) {
+            printf("Dir %1 can't be removed: %2", dirs[i], e);
+        }
+
+    }
+
+    // write empty clean file
+    fs.writeFileSync(cleanFileName, "[]", "utf8");
 }
 
 // *** process helpers ***
@@ -1149,9 +1150,6 @@ function startTask(taskName: string): boolean {
 
 // ****************************** Watcher & Cleaner *********************************
 
-/**
- * Holds wrapper of gulp-watch
- */
 interface IWatchedFileInfo {
     stat?: fs.Stats;
 }
@@ -1212,42 +1210,38 @@ function cleaner(): Promise<void> | void {
 
     let solutionData: vs.ISolution = vs.getSolution();
 
-    if (solutionData !== null) {
-
-        return new Promise<void>(
-
-            function (resolve: () => void, reject: (reason: any) => void): void {
-
-                // pause awatcher and wait until it gets paused
-                pauseWatcher(
-
-                    // awatcher-paused-callback
-                    function (): void {
-
-                        // do the clean work
-                        cleanApplicationHost(solutionData);
-                        cleanJSTargetFolders(solutionData);
-                        cleanWWWRoot(solutionData);
-
-                        // resume the awatcher and wait until it gets resumed
-                        resumeWatcher(
-
-                            // awatcher-resumed-callback
-                            function (): void {
-                                resolve();
-                            });
-                    }
-                );
-            }
-        );
-
-    } else {
-
+    if (solutionData === null) {
         printf("Failed to obtain solution information!");
         printf();
         return process.exit(1);
-
     }
+
+    return new Promise<void>(
+
+        function (resolve: () => void, reject: (reason: any) => void): void {
+
+            // pause awatcher and wait until it gets paused
+            pauseWatcher(
+
+                // awatcher-paused-callback
+                function (): void {
+
+                    // do the clean work
+                    cleanApplicationHost(solutionData);
+                    cleanJSTargetFolders(solutionData);
+                    cleanWWWRoot(solutionData);
+
+                    // resume the awatcher and wait until it gets resumed
+                    resumeWatcher(
+
+                        // awatcher-resumed-callback
+                        function (): void {
+                            resolve();
+                        });
+                }
+            );
+        }
+    );
 
 }
 
@@ -1443,115 +1437,165 @@ function watcher(): Promise<void> | undefined {
     /**
      * load solution during init, reload if solutionInfo file changes (usually on solution rebuild only)
      */
-    function reloadSolution(): void {
+    function reloadSolution(): boolean {
 
         // load solution info
 
         printf("Loading solution info...");
 
-
         let sData: vs.ISolution = vs.getSolution();
 
         if (sData === null) {
 
-            if (solutionData === null) {
-                printf();
-                printf("Unable to monitor file changes for un-built solution (./buildtools/solutionInfo.json is missing or failed to read)!");
-                printf("Build the solution first in order to be possible to collect the solution and projects information!");
-                printf();
-                process.exit(0);
-            } else {
-                printf("Unable to load current solution info. Keeping previous");
-                printf();
-            }
+            printf("Solution info not loaded. Solution is not probably built or can't be read now.");
+            return false;
 
-        } else {
-
-            solutionData = sData;
-
-            // get AjsWebApp project
-            ajsWebAppProj = getProject(
-                solutionData.solutionInfo.ajsWebAppProject,
-                solutionData
-            );
-
-            // get AjsWebApp project configuration (merge the main with Debug or Release)
-            ajsWebAppCfg = getProjectConfig(
-                solutionData.solutionInfo.ajsWebAppProject,
-                cfg.defaultConfig(vs.getSolutionConfiguration(solutionData)),
-                solutionData);
-
-            // prepare project directories object
-
-            /** @type { Object.<string, { jsSrc: string, wwwSrc: string }> } */
-            projectDirs = {};
-
-            // load directories of all projects
-
-            for (let i: number = 0; i < solutionData.projects.length; i++) {
-
-                let p: vs.IProjectInfo = solutionData.projects[i];
-                let pname: string = solutionData.projects[i].projectName;
-                let pcfg: cfg.IAjsWebAppConfig = getProjectConfig(pname, ajsWebAppCfg, solutionData);
-
-                // if project is not ignored
-                if (!pcfg.projectIgnore && ajsWebAppCfg.ignoredProjects.indexOf(solutionData.projects[i].projectName) === -1) {
-                    // get project / dirs info
-                    projectDirs[pname] = {};
-                    projectDirs[pname].project = p;
-                    projectDirs[pname].projectConfig = pcfg;
-                    projectDirs[pname].jsSrc = path.normalize(p.projectDir + pcfg.jsSourceFolder);
-                    projectDirs[pname].wwwSrc = path.normalize(p.projectDir + pcfg.wwwRootSourceFolder);
-                }
-
-            }
         }
+
+        solutionData = sData;
+
+        // get AjsWebApp project
+        ajsWebAppProj = getProject(
+            solutionData.solutionInfo.ajsWebAppProject,
+            solutionData
+        );
+
+        // get AjsWebApp project configuration (merge the main with Debug or Release)
+        ajsWebAppCfg = getProjectConfig(
+            solutionData.solutionInfo.ajsWebAppProject,
+            cfg.defaultConfig(vs.getSolutionConfiguration(solutionData)),
+            solutionData);
+
+        // prepare project directories object
+
+        /** @type { Object.<string, { jsSrc: string, wwwSrc: string }> } */
+        projectDirs = {};
+
+        // load directories of all projects
+
+        for (let i: number = 0; i < solutionData.projects.length; i++) {
+
+            let p: vs.IProjectInfo = solutionData.projects[i];
+            let pname: string = solutionData.projects[i].projectName;
+            let pcfg: cfg.IAjsWebAppConfig = getProjectConfig(pname, ajsWebAppCfg, solutionData);
+
+            // if project is not ignored
+            if (!pcfg.projectIgnore && ajsWebAppCfg.ignoredProjects.indexOf(solutionData.projects[i].projectName) === -1) {
+                // get project / dirs info
+                projectDirs[pname] = {};
+                projectDirs[pname].project = p;
+                projectDirs[pname].projectConfig = pcfg;
+                projectDirs[pname].jsSrc = path.normalize(p.projectDir + pcfg.jsSourceFolder);
+                projectDirs[pname].wwwSrc = path.normalize(p.projectDir + pcfg.wwwRootSourceFolder);
+            }
+
+        }
+
+        return true;
+
+    }
+
+    /** Check if SHA1 hash of the gulp file matches the previously collected value */
+    function checkGulpFileModified(): boolean {
+        let gfs: fs.Stats = fs.statSync(__filename);
+        if (gfs.mtime === gulpfilestats.mtime) {
+            return false;
+        }
+        let gf: string = fs.readFileSync(__filename, "utf8");
+        let sha: string = crypto.createHash("sha1").update(gf).digest("hex");
+        return sha !== gulpfilesha;
+    }
+
+    /** Prints info the gulp file was modified and stops the watcher and exits the process */
+    function gulpFileModified(): void {
+        printf();
+        printf("Gulpfile has changed. Exiting.");
+        /* tslint:disable */
+        printf("To apply changes to the Gulpfile.js restart the watcher by closing and openning the solution or by doubleclicking Task Runner Explorer -> Gulpfile.js -> Tasks -> projectOpen");
+        /* tslint:enable */
+        printf();
+        awatcherInstance.stop();
+        process.exit();
+    }
+
+    /** Tries to reload the solution info and resumes watcher if successfull */
+    function reloadSolutionAndResume(): void {
+
+        if (!reloadSolution()) {
+            setTimeout(reloadSolutionAndResume, 2000);
+            return;
+        }
+
+        awatcherInstance.resume();
+
+        if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.waiting"))) {
+            fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.waiting"));
+        }
+
+        paused = false;
+
+        printf("Watcher is resumed.");
+        printf();
+    }
+
+    /** Starts watching the solution folder if possible, otherwies tries it in 3 seconds */
+    function startWatching(): void {
+
+        if (reloadSolution()) {
+            watchPath = solutionData.solutionInfo.solutionDir;
+        } else {
+            watchPath = path.normalize(__dirname);
+        }
+
+        printf("Watching '%1' for changes...", watchPath);
+        printf();
+
+        awatcherInstance.start(watchPath, {}, fileChanged);
 
     }
 
     /** checks if the watcher should be paused (by existence of the watcher.pause file) and resume if not */
     function checkPausedAndResume(): void {
 
-        if (!fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.pause"))) {
-
-            printf();
-            printf("Resuming the watcher.");
-
-            let gfs: fs.Stats = fs.statSync(__filename);
-            if (gfs.mtime !== gulpfilestats.mtime) {
-
-                let gf: string = fs.readFileSync(__filename, "utf8");
-                let sha: string = crypto.createHash("sha1").update(gf).digest("hex");
-
-                printf(sha, gulpfilesha);
-
-                if (sha !== gulpfilesha) {
-                    printf();
-                    printf("Gulpfile has changed. Exiting.");
-                    /* tslint:disable */
-                    printf("To apply changes to the Gulpfile.js restart the watcher by closing and openning the solution or by doubleclicking Task Runner Explorer -> Gulpfile.js -> Tasks -> projectOpen");
-                    /* tslint:enable */
-                    printf();
-                    awatcherInstance.stop();
-                    return;
-                }
-            }
-
-            reloadSolution();
-            awatcherInstance.resume();
-
-            if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.waiting"))) {
-                fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.waiting"));
-            }
-
-            paused = false;
-
-            printf("Watcher is resumed.");
-            printf();
-
-        } else {
-            setTimeout(checkPausedAndResume, 250);
+        if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.pause"))) {
+            setTimeout(checkPausedAndResume, 500);
+            return;
         }
+
+        printf();
+        printf("Resuming the watcher.");
+
+        if (checkGulpFileModified()) {
+            gulpFileModified();
+            return;
+        }
+
+        reloadSolutionAndResume();
+    }
+
+    function pauseWatcher(): void {
+        printf();
+        printf("Pausing the watcher.");
+        awatcherInstance.pause();
+        paused = true;
+        fs.writeFileSync(path.normalize(__dirname + "/buildtools/watcher.waiting"), ".");
+        printf("Watcher is paused.");
+        printf();
+        checkPausedAndResume();
+    }
+
+    function reloadSolutionInfo(): void {
+        printf("Solution configuration has changed.");
+
+        if (reloadSolution()) {
+            watchPath = solutionData.solutionInfo.solutionDir;
+        } else {
+            watchPath = path.normalize(__dirname);
+        }
+
+        printf();
+        printf("Watching '%1' for changes...", watchPath);
+        printf();
     }
 
     /**
@@ -1561,6 +1605,7 @@ function watcher(): Promise<void> | undefined {
     function fileChanged(file: { event: string, path: string }): void {
 
         /*
+        // debugging -> show modified file
         if (fs.existsSync(file.path)) {
             printf("File changed: " + file.path + " " + fs.statSync(file.path).size + " " + fs.statSync(file.path).mtime);
         }
@@ -1568,56 +1613,29 @@ function watcher(): Promise<void> | undefined {
 
         // gulpfile / if the build tool is modified -> exit watcher (changes needs to be applied by restarting watcher)
 
-        if (file.path === __filename) {
-            let gf: string = fs.readFileSync(__filename, "utf8");
-            let sha: string = crypto.createHash("sha1").update(gf).digest("hex");
-            printf(sha, gulpfilesha);
-            if (sha !== gulpfilesha) {
-                printf();
-                printf("Gulpfile has changed. Exiting.");
-                /* tslint:disable */
-                printf("To apply changes to the Gulpfile.js restart the watcher by closing and openning the solution or by doubleclicking Task Runner Explorer -> Gulpfile.js -> Tasks -> projectOpen");
-                /* tslint:enable */
-                printf();
-                awatcherInstance.stop();
-                return;
-            }
+        if (file.path === __filename && checkGulpFileModified()) {
+            gulpFileModified();
+            return;
         }
 
         // solutionInfo.json modified -> reload solution info
 
         if (file.path.lastIndexOf("solutionInfo.json") !== -1 && !paused) {
-            printf("Solution configuration has changed.");
-            reloadSolution();
-            printf();
-            printf("Watching '%1' for changes...", watchPath);
-            printf();
+            reloadSolutionInfo();
             return;
         }
 
         // watcher.reload file exists -> force watcher to reload solution info
 
         if (file.path.lastIndexOf("watcher.reload") !== -1 && !paused) {
-            printf("Solution configuration has changed.");
-            reloadSolution();
-            fs.unlinkSync(file.path);
-            printf();
-            printf("Watching '%1' for changes...", watchPath);
-            printf();
+            reloadSolutionInfo();
             return;
         }
 
         // watcher pause added / changed -> pause
 
         if (file.path.lastIndexOf("watcher.pause") !== -1 && (file.event === "add" || file.event === "change") && !paused) {
-            printf();
-            printf("Pausing the watcher.");
-            awatcherInstance.pause();
-            paused = true;
-            fs.writeFileSync(path.normalize(__dirname + "/buildtools/watcher.waiting"), ".");
-            printf("Watcher is paused.");
-            printf();
-            checkPausedAndResume();
+            pauseWatcher();
             return;
         }
 
@@ -1775,22 +1793,9 @@ function watcher(): Promise<void> | undefined {
         fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.reload"));
     }
 
-    // init watcher by reloading the solution info
-
-    reloadSolution();
-    printf();
-
-    // start gulp watcher and return its promise
-
-    watchPath = solutionData.solutionInfo.solutionDir;
-
-    printf("Watching '%1' for changes...", watchPath);
-    printf();
-
     let awatch: Promise<void> = awatcher();
-    awatcherInstance.start(watchPath, {}, fileChanged);
+    startWatching();
     return awatch;
-
 }
 
 /**

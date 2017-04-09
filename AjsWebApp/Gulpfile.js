@@ -726,44 +726,45 @@ function cleanWWWRoot(solutionData) {
     "use strict";
     // load the clean.json
     var cleanFileName = path.normalize("./buildtools/clean.json");
-    if (fs.existsSync(cleanFileName)) {
-        index_1.printf("Cleaning WWWRoot");
-        // load clean file
-        var cleanFile = fs.readFileSync(cleanFileName, "utf8");
-        var clean = JSON.parse(cleanFile);
-        // prepare lets
-        var i = void 0;
-        var dirs = [];
-        // for all records in the clean file
-        for (i = 0; i < clean.length; i++) {
-            var file = path.normalize(clean[i]);
-            if (fs.existsSync(file)) {
-                var stat = fs.statSync(file);
-                if (stat.isDirectory()) {
-                    // prepare dir for deletion
-                    dirs.push(file);
-                }
-                else {
-                    // delete file
-                    index_1.printf("Removing file %1", file);
-                    fs.unlinkSync(file);
-                }
-            }
-        }
-        // for all dirs found in clean file
-        for (i = dirs.length - 1; i >= 0; i--) {
-            // remove dir
-            index_1.printf("Removing dir %1", dirs[i]);
-            try {
-                fs.rmdirSync(dirs[i]);
-            }
-            catch (e) {
-                index_1.printf("Dir %1 can't be removed: %2", dirs[i], e);
-            }
-        }
-        // write empty clean file
-        fs.writeFileSync(cleanFileName, "[]", "utf8");
+    if (!fs.existsSync(cleanFileName)) {
+        return;
     }
+    index_1.printf("Cleaning WWWRoot");
+    // load clean file
+    var cleanFile = fs.readFileSync(cleanFileName, "utf8");
+    var clean = JSON.parse(cleanFile);
+    // prepare lets
+    var i;
+    var dirs = [];
+    // for all records in the clean file
+    for (i = 0; i < clean.length; i++) {
+        var file = path.normalize(clean[i]);
+        if (fs.existsSync(file)) {
+            var stat = fs.statSync(file);
+            if (stat.isDirectory()) {
+                // prepare dir for deletion
+                dirs.push(file);
+            }
+            else {
+                // delete file
+                index_1.printf("Removing file %1", file);
+                fs.unlinkSync(file);
+            }
+        }
+    }
+    // for all dirs found in clean file
+    for (i = dirs.length - 1; i >= 0; i--) {
+        // remove dir
+        index_1.printf("Removing dir %1", dirs[i]);
+        try {
+            fs.rmdirSync(dirs[i]);
+        }
+        catch (e) {
+            index_1.printf("Dir %1 can't be removed: %2", dirs[i], e);
+        }
+    }
+    // write empty clean file
+    fs.writeFileSync(cleanFileName, "[]", "utf8");
 }
 // *** process helpers ***
 /**
@@ -825,30 +826,28 @@ var awatcherInstance = null;
 function cleaner() {
     "use strict";
     var solutionData = vs.getSolution();
-    if (solutionData !== null) {
-        return new Promise(function (resolve, reject) {
-            // pause awatcher and wait until it gets paused
-            pauseWatcher(
-            // awatcher-paused-callback
-            function () {
-                // do the clean work
-                cleanApplicationHost(solutionData);
-                cleanJSTargetFolders(solutionData);
-                cleanWWWRoot(solutionData);
-                // resume the awatcher and wait until it gets resumed
-                resumeWatcher(
-                // awatcher-resumed-callback
-                function () {
-                    resolve();
-                });
-            });
-        });
-    }
-    else {
+    if (solutionData === null) {
         index_1.printf("Failed to obtain solution information!");
         index_1.printf();
         return process.exit(1);
     }
+    return new Promise(function (resolve, reject) {
+        // pause awatcher and wait until it gets paused
+        pauseWatcher(
+        // awatcher-paused-callback
+        function () {
+            // do the clean work
+            cleanApplicationHost(solutionData);
+            cleanJSTargetFolders(solutionData);
+            cleanWWWRoot(solutionData);
+            // resume the awatcher and wait until it gets resumed
+            resumeWatcher(
+            // awatcher-resumed-callback
+            function () {
+                resolve();
+            });
+        });
+    });
 }
 /**
  * Wrapper for FS.watch/FSWatcher allowing pause/resume
@@ -981,77 +980,116 @@ function watcher() {
         index_1.printf("Loading solution info...");
         var sData = vs.getSolution();
         if (sData === null) {
-            if (solutionData === null) {
-                index_1.printf();
-                index_1.printf("Unable to monitor file changes for un-built solution (./buildtools/solutionInfo.json is missing or failed to read)!");
-                index_1.printf("Build the solution first in order to be possible to collect the solution and projects information!");
-                index_1.printf();
-                process.exit(0);
+            index_1.printf("Solution info not loaded. Solution is not probably built or can't be read now.");
+            return false;
+        }
+        solutionData = sData;
+        // get AjsWebApp project
+        ajsWebAppProj = getProject(solutionData.solutionInfo.ajsWebAppProject, solutionData);
+        // get AjsWebApp project configuration (merge the main with Debug or Release)
+        ajsWebAppCfg = getProjectConfig(solutionData.solutionInfo.ajsWebAppProject, cfg.defaultConfig(vs.getSolutionConfiguration(solutionData)), solutionData);
+        // prepare project directories object
+        /** @type { Object.<string, { jsSrc: string, wwwSrc: string }> } */
+        projectDirs = {};
+        // load directories of all projects
+        for (var i = 0; i < solutionData.projects.length; i++) {
+            var p = solutionData.projects[i];
+            var pname = solutionData.projects[i].projectName;
+            var pcfg = getProjectConfig(pname, ajsWebAppCfg, solutionData);
+            // if project is not ignored
+            if (!pcfg.projectIgnore && ajsWebAppCfg.ignoredProjects.indexOf(solutionData.projects[i].projectName) === -1) {
+                // get project / dirs info
+                projectDirs[pname] = {};
+                projectDirs[pname].project = p;
+                projectDirs[pname].projectConfig = pcfg;
+                projectDirs[pname].jsSrc = path.normalize(p.projectDir + pcfg.jsSourceFolder);
+                projectDirs[pname].wwwSrc = path.normalize(p.projectDir + pcfg.wwwRootSourceFolder);
             }
-            else {
-                index_1.printf("Unable to load current solution info. Keeping previous");
-                index_1.printf();
-            }
+        }
+        return true;
+    }
+    /** Check if SHA1 hash of the gulp file matches the previously collected value */
+    function checkGulpFileModified() {
+        var gfs = fs.statSync(__filename);
+        if (gfs.mtime === gulpfilestats.mtime) {
+            return false;
+        }
+        var gf = fs.readFileSync(__filename, "utf8");
+        var sha = crypto.createHash("sha1").update(gf).digest("hex");
+        return sha !== gulpfilesha;
+    }
+    /** Prints info the gulp file was modified and stops the watcher and exits the process */
+    function gulpFileModified() {
+        index_1.printf();
+        index_1.printf("Gulpfile has changed. Exiting.");
+        /* tslint:disable */
+        index_1.printf("To apply changes to the Gulpfile.js restart the watcher by closing and openning the solution or by doubleclicking Task Runner Explorer -> Gulpfile.js -> Tasks -> projectOpen");
+        /* tslint:enable */
+        index_1.printf();
+        awatcherInstance.stop();
+        process.exit();
+    }
+    /** Tries to reload the solution info and resumes watcher if successfull */
+    function reloadSolutionAndResume() {
+        if (!reloadSolution()) {
+            setTimeout(reloadSolutionAndResume, 2000);
+            return;
+        }
+        awatcherInstance.resume();
+        if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.waiting"))) {
+            fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.waiting"));
+        }
+        paused = false;
+        index_1.printf("Watcher is resumed.");
+        index_1.printf();
+    }
+    /** Starts watching the solution folder if possible, otherwies tries it in 3 seconds */
+    function startWatching() {
+        if (reloadSolution()) {
+            watchPath = solutionData.solutionInfo.solutionDir;
         }
         else {
-            solutionData = sData;
-            // get AjsWebApp project
-            ajsWebAppProj = getProject(solutionData.solutionInfo.ajsWebAppProject, solutionData);
-            // get AjsWebApp project configuration (merge the main with Debug or Release)
-            ajsWebAppCfg = getProjectConfig(solutionData.solutionInfo.ajsWebAppProject, cfg.defaultConfig(vs.getSolutionConfiguration(solutionData)), solutionData);
-            // prepare project directories object
-            /** @type { Object.<string, { jsSrc: string, wwwSrc: string }> } */
-            projectDirs = {};
-            // load directories of all projects
-            for (var i = 0; i < solutionData.projects.length; i++) {
-                var p = solutionData.projects[i];
-                var pname = solutionData.projects[i].projectName;
-                var pcfg = getProjectConfig(pname, ajsWebAppCfg, solutionData);
-                // if project is not ignored
-                if (!pcfg.projectIgnore && ajsWebAppCfg.ignoredProjects.indexOf(solutionData.projects[i].projectName) === -1) {
-                    // get project / dirs info
-                    projectDirs[pname] = {};
-                    projectDirs[pname].project = p;
-                    projectDirs[pname].projectConfig = pcfg;
-                    projectDirs[pname].jsSrc = path.normalize(p.projectDir + pcfg.jsSourceFolder);
-                    projectDirs[pname].wwwSrc = path.normalize(p.projectDir + pcfg.wwwRootSourceFolder);
-                }
-            }
+            watchPath = path.normalize(__dirname);
         }
+        index_1.printf("Watching '%1' for changes...", watchPath);
+        index_1.printf();
+        awatcherInstance.start(watchPath, {}, fileChanged);
     }
     /** checks if the watcher should be paused (by existence of the watcher.pause file) and resume if not */
     function checkPausedAndResume() {
-        if (!fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.pause"))) {
-            index_1.printf();
-            index_1.printf("Resuming the watcher.");
-            var gfs = fs.statSync(__filename);
-            if (gfs.mtime !== gulpfilestats.mtime) {
-                var gf_1 = fs.readFileSync(__filename, "utf8");
-                var sha = crypto.createHash("sha1").update(gf_1).digest("hex");
-                index_1.printf(sha, gulpfilesha);
-                if (sha !== gulpfilesha) {
-                    index_1.printf();
-                    index_1.printf("Gulpfile has changed. Exiting.");
-                    /* tslint:disable */
-                    index_1.printf("To apply changes to the Gulpfile.js restart the watcher by closing and openning the solution or by doubleclicking Task Runner Explorer -> Gulpfile.js -> Tasks -> projectOpen");
-                    /* tslint:enable */
-                    index_1.printf();
-                    awatcherInstance.stop();
-                    return;
-                }
-            }
-            reloadSolution();
-            awatcherInstance.resume();
-            if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.waiting"))) {
-                fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.waiting"));
-            }
-            paused = false;
-            index_1.printf("Watcher is resumed.");
-            index_1.printf();
+        if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.pause"))) {
+            setTimeout(checkPausedAndResume, 500);
+            return;
+        }
+        index_1.printf();
+        index_1.printf("Resuming the watcher.");
+        if (checkGulpFileModified()) {
+            gulpFileModified();
+            return;
+        }
+        reloadSolutionAndResume();
+    }
+    function pauseWatcher() {
+        index_1.printf();
+        index_1.printf("Pausing the watcher.");
+        awatcherInstance.pause();
+        paused = true;
+        fs.writeFileSync(path.normalize(__dirname + "/buildtools/watcher.waiting"), ".");
+        index_1.printf("Watcher is paused.");
+        index_1.printf();
+        checkPausedAndResume();
+    }
+    function reloadSolutionInfo() {
+        index_1.printf("Solution configuration has changed.");
+        if (reloadSolution()) {
+            watchPath = solutionData.solutionInfo.solutionDir;
         }
         else {
-            setTimeout(checkPausedAndResume, 250);
+            watchPath = path.normalize(__dirname);
         }
+        index_1.printf();
+        index_1.printf("Watching '%1' for changes...", watchPath);
+        index_1.printf();
     }
     /**
      * watched file change callback
@@ -1059,55 +1097,29 @@ function watcher() {
      */
     function fileChanged(file) {
         /*
+        // debugging -> show modified file
         if (fs.existsSync(file.path)) {
             printf("File changed: " + file.path + " " + fs.statSync(file.path).size + " " + fs.statSync(file.path).mtime);
         }
         */
         // gulpfile / if the build tool is modified -> exit watcher (changes needs to be applied by restarting watcher)
-        if (file.path === __filename) {
-            var gf_2 = fs.readFileSync(__filename, "utf8");
-            var sha = crypto.createHash("sha1").update(gf_2).digest("hex");
-            index_1.printf(sha, gulpfilesha);
-            if (sha !== gulpfilesha) {
-                index_1.printf();
-                index_1.printf("Gulpfile has changed. Exiting.");
-                /* tslint:disable */
-                index_1.printf("To apply changes to the Gulpfile.js restart the watcher by closing and openning the solution or by doubleclicking Task Runner Explorer -> Gulpfile.js -> Tasks -> projectOpen");
-                /* tslint:enable */
-                index_1.printf();
-                awatcherInstance.stop();
-                return;
-            }
+        if (file.path === __filename && checkGulpFileModified()) {
+            gulpFileModified();
+            return;
         }
         // solutionInfo.json modified -> reload solution info
         if (file.path.lastIndexOf("solutionInfo.json") !== -1 && !paused) {
-            index_1.printf("Solution configuration has changed.");
-            reloadSolution();
-            index_1.printf();
-            index_1.printf("Watching '%1' for changes...", watchPath);
-            index_1.printf();
+            reloadSolutionInfo();
             return;
         }
         // watcher.reload file exists -> force watcher to reload solution info
         if (file.path.lastIndexOf("watcher.reload") !== -1 && !paused) {
-            index_1.printf("Solution configuration has changed.");
-            reloadSolution();
-            fs.unlinkSync(file.path);
-            index_1.printf();
-            index_1.printf("Watching '%1' for changes...", watchPath);
-            index_1.printf();
+            reloadSolutionInfo();
             return;
         }
         // watcher pause added / changed -> pause
         if (file.path.lastIndexOf("watcher.pause") !== -1 && (file.event === "add" || file.event === "change") && !paused) {
-            index_1.printf();
-            index_1.printf("Pausing the watcher.");
-            awatcherInstance.pause();
-            paused = true;
-            fs.writeFileSync(path.normalize(__dirname + "/buildtools/watcher.waiting"), ".");
-            index_1.printf("Watcher is paused.");
-            index_1.printf();
-            checkPausedAndResume();
+            pauseWatcher();
             return;
         }
         // project related resource resoruce added/modified (i.e. compiled)
@@ -1212,15 +1224,8 @@ function watcher() {
     if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.reload"))) {
         fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.reload"));
     }
-    // init watcher by reloading the solution info
-    reloadSolution();
-    index_1.printf();
-    // start gulp watcher and return its promise
-    watchPath = solutionData.solutionInfo.solutionDir;
-    index_1.printf("Watching '%1' for changes...", watchPath);
-    index_1.printf();
     var awatch = awatcher();
-    awatcherInstance.start(watchPath, {}, fileChanged);
+    startWatching();
     return awatch;
 }
 /**
