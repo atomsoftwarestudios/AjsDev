@@ -22,8 +22,7 @@
   },
   "include": [
     "./**/*",
-    "../../../Ajs/bin/*.d.ts",
-    "../../../AjsDoc/bin/*.d.ts"
+    "../../../Ajs/bin/*.d.ts"
   ],
   "exclude": [
     "./bin/**/*"
