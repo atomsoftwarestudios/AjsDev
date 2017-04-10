@@ -27,3 +27,7 @@ HTMLControls       | Presentation how the HTML contorls can be managed
 ToDos              | Classic, To Do's application showing interactions between user and application, view components and model examples
 ToDosOffline       | Classic, To Do's application with offline & local store support
 BootControls       | Error view, Loading progress bar and Render target examples
+
+To choose what project will be executed (packaged) use the AjsWebApp.json file under the AjsWebApp project. The
+ignoredProjects option allows to set projects which will be skipped during the packaing so remarking only wanted projects
+to be included makes the AjsWebApp packager to use only these projects.
