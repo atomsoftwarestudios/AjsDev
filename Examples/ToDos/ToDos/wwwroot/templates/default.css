@@ -34,6 +34,16 @@ select {
     box-sizing: border-box;
 }
 
+.tasksLabel {
+    background-color: darkgray;
+    border-radius: 10px;
+    margin: -0.5em;
+    margin-bottom: 1em;
+    padding: 0.5em;
+    text-align: center;
+    color: white;
+}
+
 .tasksFilter {
     width: 100%;
     height: 2.5em;
