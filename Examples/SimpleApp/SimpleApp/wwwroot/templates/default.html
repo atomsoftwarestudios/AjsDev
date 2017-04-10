@@ -1,0 +1,10 @@
+<ajstemplate name="AjsApp" stylesheets="/templates/default.css">
+
+    <component name="Clock">
+        <h1>Welcome to Ajs!</h1>
+        Current date &amp; time:
+        <span if="this.time && this.time !== null">{time}</span>
+        <span if="this.time === undefined || this.time === null">Wait a second!</span>
+    </component>
+
+</ajstemplate>
