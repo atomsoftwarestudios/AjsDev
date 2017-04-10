@@ -170,10 +170,10 @@ namespace ajs.boot {
                 }
             ).
             // catch the problem
-            catch((e: Error) => {
+            catch((e: ajs.Exception) => {
                 ajs.dbg.log(dbg.LogType.Error, 0, "ajs.boot", this,
                     "Something went wrong during resource loading " + e, e);
-                throw new ResourcesLoadingFailedException();
+                throw new ResourcesLoadingFailedException(null, e);
             });
 
         ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.boot", this);
