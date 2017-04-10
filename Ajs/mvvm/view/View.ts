@@ -399,8 +399,11 @@ namespace ajs.mvvm.view {
             // create the view component including its component tree with the default state
             this._rootViewComponent = this._viewComponentManager.createViewComponent(rootComponentName, "rootViewComponent", this, null);
 
-            // hopefully the root component sunscribed navigated event
+            // hopefully the root component suscribed navigated event
             this._navigationNotifier.notify(this);
+
+            // render
+            this.render(this._rootViewComponent);
 
             ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
         }
