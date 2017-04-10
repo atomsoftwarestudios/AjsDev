@@ -41,6 +41,7 @@ namespace ajs {
             }
 
             if (parentException) {
+                console.error(parentException);
                 this._parentException = parentException;
             } else {
                 this._parentException = null;
