@@ -12,6 +12,8 @@ Table of Contents
 - [Style sheet](#style-sheet-visual-component-style)
 - [Template & Visual Components](#template-visual-components)
 - [View Components](#view-components)
+  - [Task Visual and View component](#task-visual-and-view-component)
+  - [TaskItem Visual and View component](#taskitem-visual-and-view-component)
 - [Model](#model)
 
 ---
@@ -23,19 +25,7 @@ in TypeScript using the Ajs Frontend Application framework.
 
 The Visual Studio 2015 solution is consisted of three projects:
 
-1) ToDos.boot project
-
-    is the configuration project for the Ajs Framework. It contains only one
-    TypeScript file - bootconfig.ts and tsconfig file for Debug and Release configuration.
-    The project has a pre-build action which takes care of selecting the correct tsconfig
-    configuration file based on the Visual Studio compilation configuration. This action
-    modifies the tsconfig.json file to inherit the correct config file.
-
-    The project is configured to compile TS to a single file - /bin/ToDos.Boot.js which is
-    afterwards collected by the AjsWebApp and placed to /js folder where is accessible by
-    the browser.
-
-2) AjsWebApp project
+1) AjsWebApp project
 
     AjsWebApp project is used as a helper and startup project. It contains the gulp file
     which takes care of collecting resources from other two projects and helping to continuously
@@ -49,10 +39,22 @@ The Visual Studio 2015 solution is consisted of three projects:
 
     See [AjsWebApp](https://github.com/atomsoftwarestudios/AjsWebApp) at GitHub for details.
 
+2) ToDos.boot project
+
+    is the configuration project for the Ajs Framework. It contains only one
+    TypeScript file - bootconfig.ts and tsconfig file for Debug and Release configuration.
+    The project has a pre-build action which takes care of selecting the correct tsconfig
+    configuration file based on the Visual Studio compilation configuration. This action
+    modifies the tsconfig.json file to inherit the correct config file.
+
+    The project is configured to compile TS to a single file - /bin/ToDos.Boot.js which is
+    afterwards collected by the AjsWebApp and placed to /js folder where is accessible by
+    the browser.
+
 3) ToDos
 
     contains implementation of the To Do's application. There are following important files and
-    folders:
+    folders managed by the project:
 
     Folder / File                   | Description
     ------------------------------- | -----------
@@ -72,19 +74,133 @@ The Visual Studio 2015 solution is consisted of three projects:
 
 ---
 
-#### Style sheet (Visual component style)
+### Configuration
 
-default.css is a standart CSS 2/3.0 file containing the set of CSS classes to be used in the Visual Components
+tbd
+
+---
+
+### Style sheet (Visual component style)
+
+default.css is a standart CSS 2/3.0 file containing the set of CSS classes to be used within Visual Components
 template.
 
-#### Template & Visual components
+---
 
-tbd
+### Template & Visual components
 
-#### View Components
+There is only single template file in the project. It can be located in the /wwwroot/templates/default.html file. It is a simple
+HTML file containig two visual component definitions:
 
-tbd
+- Tasks
+- Task Item
 
-#### Model
+Task is the visual component which router opens when the website is navigated. Better said, the Tasks View Component with the
+Tasks Visual Component is instanced and oppened. Tasks visual component contains standard HTML markup (tags and attributes), except:
+
+```
+<tr component="TaskItem" id="tasks" class="tasksItem">
+```
+
+and
+
+```
+<input class="taskDescription" type="text" value="{taskDescription}" oninput="textChanged" onkeydown="submitOnEnter" onrender="setInputField" />
+```
+
+In the first case, the **tr** element is a standard HTML table row element but declared as a reusable Visual Component
+(**component** attribute). Also, it can be seen the TaskItem component (tr element) **id** attribute is set to **tasks**
+value what means it takes its visual state from **tasks** property of its parent visual component object. Because the
+parent property is type of Array the TaskItem component will be repeated as many times as many items will be stored
+in the array. See bellow how the data mapping works.
+
+In second case, the **onrender** attribute is used. This non-standard HTML5 attribute notifies the View Component the input
+field has been rendered to the HTML document and reference to its HTMLInpuElement object can be stored (i.e. the reference
+can be used to set focus to the element programatically). onrender attribute replaces the standard document.getElementBy... or
+$(... constructs to obtain an HTML element reference from the DOM. 
+
+---
+
+### View Components & data mappings
+
+#### Task Visual and View component
+
+
+__Tasks component state properties__
+
+```
+public filter: "All" | "Done" | "Undone";
+```
+
+```
+public taskDescription: string;
+```
+
+```
+public actionLabel: string;
+```
+
+```
+public tasks: ToDos.Models.ITask[];
+```
+
+__Tasks component HTML event handlers__
+
+```
+setInputField(value: HTMLInputElement): void
+```
+
+```
+public textChanged(e: Event): void
+```
+
+```
+public addUpdateTask(e: Event): void
+```
+
+```
+public submitOnEnter(e: KeyboardEvent): void
+```
+
+```
+public cancelUpdate(e: Event): void
+```
+
+```
+public setFilter(e: Event): void
+```
+
+__Tasks child component event handlers__
+
+```
+public onTaskItemEdit(key: number): void
+```
+
+```
+public onTaskItemDelete(key: number): void 
+```
+
+```
+public onTaskItemDoneChanged(key: number, state: boolean): void
+```
+
+
+#### TaskItem Visual and View component
+
+__Task item component state properties__
+
+```
+public key: number;
+```
+
+```
+public done: boolean;
+```
+
+```
+public description: string;
+```
+
+### Model
 
 tbd
