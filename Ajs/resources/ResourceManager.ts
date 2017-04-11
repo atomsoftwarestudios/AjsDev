@@ -497,12 +497,8 @@ namespace ajs.resources {
 
                 (resolve: (resource: IResource) => void) => {
 
-                    // update initial progress bar
-                    if (ajs.ui.progressBar) {
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
-                            "Updating initial progress bar with resource to be loaded: '" + url + "'");
-                        ajs.ui.progressBar.resourceLoading(url);
-                    }
+                    // update progress bar
+                    ajs.ui.ProgressBar.resourceLoading(url);
 
                     // let browser do its stuff like a UI updates
                     setTimeout(
@@ -531,9 +527,7 @@ namespace ajs.resources {
                                     ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
                                         "Updating initial progress bar with resource finished loading '" + url + "'");
 
-                                    if (ajs.ui.progressBar) {
-                                        ajs.ui.progressBar.resourceLoaded(url);
-                                    }
+                                    ajs.ui.ProgressBar.resourceLoaded(url);
 
                                     let resource: IResource = {
                                         url: url,
@@ -877,12 +871,7 @@ namespace ajs.resources {
 
                     if (updateProgressBar) {
                         // update initial progress bar
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
-                            "Updating initial progress bar with resource finished loading '" + resource.url + "'");
-
-                        if (ajs.ui.progressBar) {
-                            ajs.ui.progressBar.resourceLoaded(resource.url);
-                        }
+                        ajs.ui.ProgressBar.resourceLoaded(resource.url);
                     }
 
                     setTimeout(() => {
