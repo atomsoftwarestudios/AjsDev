@@ -3,277 +3,74 @@
 <html lang="en" manifest="/cache.manifest">
     <head>
 
-        <script type="text/javascript" async>
+        <script type="text/javascript">
+            
+            var errorsBeforeLoad = [];
 
-            // Namespace ajs
-            var ajs;
-            (function (ajs) {
+            function pushError(error) {
+                errorsBeforeLoad.push(error);
+            }
 
-                // Namespace ajs.errors
-                var errors;
-                (function (errors) {
-                    "use strict";
-
-                    var beforeOnLoad = []
-                    errors.beforeOnLoad = beforeOnLoad;
-
-                    var _lastError = null;
-                    var _lastErrorShown = false;
-
-                    function uncaughtErrorHandler(msg, url, line, col, error) {
-                        if (_lastError === null) {
-                            
-                            let e = {};
-                            e.label = "AjsDoc fatal error";
-                            e.userAction = "You can try to resolve the problem by reloading the page (F5) at least twice<br />" +
-                                            "If reload does will not help, please report the issue at <a href='https://github.com/atomsoftwarestudios/AjsDoc/issues'>GitHub</a>";
-
-                            if (error.code === undefined) {
-                                e.errorLabel = "Unknown error";
-                                e.errorCode = "0x00000002";
-                                e.errorMessage = error.message;
-                                e.errorTrace = error.stack;
-                            } else {
-                                e.errorLabel = error.label;
-                                e.errorCode = error.code;
-                                e.errorMessage = error.message + "<br />" + url +":" + line + ":" + col;
-                                e.errorTrace = error.stack;
-                            }
-
-                            _lastError = e;
-                            _showLastError();
+            function getErrorMessage(error) {
+                var msg = "";
+                if (error instanceof Error ) {
+                    msg = error.message;
+                } else {
+                    if (error instanceof ErrorEvent) {
+                        msg = error.error;
+                    } else {
+                        if (error instanceof Event) {
+                            msg = "Error on element: " + error.target.outerHTML;
                         }
                     }
+                }
+                return msg;
+            }
 
-                    function _showLastError() {
-                        if (_lastErrorShown) {
-                            return;
-                        }
+            function showErrors() {
+                for (var i = 0; i < errorsBeforeLoad.length; i++) {
+                    var msg = getErrorMessage(errorsBeforeLoad[i]);
+                    console.log("Error occured: " + msg);
+                }
 
-                        if (ajs.ui.errorScreen === undefined) {
-                            setTimeout(_showLastError, 50);
-                            return;
-                        }
-
-                        _lastErrorShown = true;
-                        ajs.ui.errorScreen.show(_lastError);
-                    }
-
-                    window.onerror = uncaughtErrorHandler;
-
-                }(errors = ajs.errors || (ajs.errors = {})));
-
-                // Namespace ajs.ui
-                var ui;
-                (function (ui) {
-
-                    "use strict";
-
-                    // Class ajs.ui.RenderTarget
-                    var RenderTarget = (function() {
-
-                        var _this;
-
-                        function RenderTarget(renderTargetElementId) {
-                            _this = this;
-                            this._renderTarget = document.getElementById(renderTargetElementId);
-                        }
-
-                        RenderTarget.prototype.show = function() {
-                            this._renderTarget.style.display = "";
-                        }
-
-                        RenderTarget.prototype.hide = function () {
-                            this._renderTarget.style.display = "none";
-                        }
-
-                        return RenderTarget;
-
-                    }())
-
-                    ui.RenderTarget = RenderTarget;
-
-                    // Class ajs.ui.ErrorScreen
-
-                    var ErrorScreen = (function () {
-
-                        var _this;
-
-                        function ErrorScreen(errorScreenElementId) {
-
-                            _this = this;
-
-                            this._error = null;
-
-                            this._errorScreen = document.getElementById(errorScreenElementId);
-                            this._label = document.getElementById(errorScreenElementId + "Label");
-                            this._errorLabel = document.getElementById(errorScreenElementId + "ErrorLabel");
-                            this._userAction = document.getElementById(errorScreenElementId + "UserAction");
-                            this._message = document.getElementById(errorScreenElementId + "ErrorMessage");
-                            this._stackTrace = document.getElementById(errorScreenElementId + "StackTrace");
-
-                        }
-
-                        ErrorScreen.prototype.hide = function () {
-                            this._errorScreen.style.display = "none";
-                            this._label.innerHTML = "";
-                            this._label.display = "none";
-                            this._errorLabel.innerHTML = "";
-                            this._errorLabel.display = "none";
-                            this._userAction.innerHTML = "";
-                            this._userAction.display = "none";
-                            this._message.innerHTML = "";
-                            this._message.display = "none";
-                            this._stackTrace.innerHTML = "";
-                            this._stackTrace.display = "none";
-                        }
-
-                        ErrorScreen.prototype.show = function (error) {
-
-                            if (ajs.ui.progressBar) {
-                                ajs.ui.progressBar.hide();
-                            }
-
-                            this.hide();
-                            this._errorScreen.style.display = "";
-
-                            for (var key in error) {
-
-                                switch (key) {
-                                    case "label":
-                                        this._label.style.display = "";
-                                        this._label.innerHTML = error[key];
-                                        break;
-                                    case "errorCode":
-                                    case "errorLabel":
-                                        var cde = error.errorCode ? error.errorCode : "";
-                                        if (cde !== "") {
-                                            var lbl = error.errorLabel ? error.errorLabel + " (" + cde + ")" : cde;
-                                        } else {
-                                            var lbl = error.errorLabel ? error.errorLabel : cde;
-                                        }
-                                        this._errorLabel.style.display = "";
-                                        this._errorLabel.innerHTML = lbl;
-                                        break;
-                                    case "userAction":
-                                        this._userAction.style.display = "";
-                                        this._userAction.innerHTML = error[key];
-                                        break;
-                                    case "errorMessage":
-                                        this._message.style.display = "";
-                                        this._message.innerHTML = error[key];
-                                        break;
-                                    case "errorTrace":
-                                        this._stackTrace.style.display = "";
-                                        this._stackTrace.innerHTML = error[key];
-                                        break;
-                                }
-
-                            }
-
-                        }
-
-                        return ErrorScreen;
-
-                    }());
-
-                    ui.ErrorScreen = ErrorScreen;
-
-                    // Class ajs.ui.ProgressBar
-
-                    var ProgressBar = (function () {
-
-                        var _this;
-
-                        function ProgressBar(progressBarElementId, label) {
-
-                            _this = this;
-
-                            this._label = label || "";
-                            this._queue = [];
-                            this._total = 59;
-                            this._current = 0;
-                            this._pbar = document.getElementById(progressBarElementId);
-                            this._perc = document.getElementById(progressBarElementId + "Perc");
-                            this._lbl = document.getElementById(progressBarElementId + "Label");
-
-                            this._pbar.addEventListener("animationend", function () { _this._hideEnd.call(_this); })
-                            this._pbar.addEventListener("webkitanimationend", function () { _this._hideEnd.call(_this); })
-                        };
-
-                        ProgressBar.prototype._hideEnd = function () {
-                            this._pbar.style.display = "none";
-                        }
-
-                        ProgressBar.prototype.show = function () {
-                            this._pbar.style.display = "";
-                            this._pbar.setAttribute("hidden", "false");
-                        }
-                            
-                        ProgressBar.prototype.hide = function () {
-                            this._pbar.setAttribute("hidden", "true");
-                        }
-
-                        ProgressBar.prototype.resourceLoading = function (label) {
-                            if (this._queue.indexOf(label) === -1) {
-                                this._queue.push(label);
-                                this._update();
-                            }
-                        }
-
-                        ProgressBar.prototype.resourceLoaded = function (label) {
-                            this._current += 1;
-                            if (this._queue.indexOf(label) !== -1) {
-                                this._queue.splice(this._queue.indexOf(label), 1);
-                            }
-                            this._update();
-                        };
-
-                        ProgressBar.prototype._update = function () {
-                            var v = Math.floor((this._current / this._total) * 100);
-                            if (v >= 100) {
-                                v = 100;
-                                this.hide();
-                            }
-                            this._perc.style.width =  v + "%";
-                            if (this._label === "" && this._queue.length > 0) {
-                                this._lbl.innerHTML = this._queue.join("<br />");
-                            } else {
-                                this._lbl.innerHTML = this._label;
-                            }
-                        };
-
-                        return ProgressBar;
-                    }());
-
-                    ui.ProgressBar = ProgressBar;
-
-                })(ui = ajs.ui || (ajs.ui = {}));
-            })(ajs || (ajs = {}));
-
-            function ajsBeforeLoad() {
-
-                ajs.ui.renderTarget = new ajs.ui.RenderTarget("ajsRenderTarget");
-                ajs.ui.progressBar = new ajs.ui.ProgressBar("ajsProgressBar", "AjsDoc is loading...");
-                ajs.ui.errorScreen = new ajs.ui.ErrorScreen("ajsErrorScreen");
-
-                if (ajs.errors.beforeOnLoad.length > 0) {
-
-                    var e = new Error();
-                    e.code = "0x00000001";
-                    e.label = "Failed to load script: " + ajs.errors.beforeOnLoad[0].target.src;
-                    var esc = ajs.errors.beforeOnLoad[0].srcElement.outerHTML
-                        .replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/"/g, "&quot;")
-                        .replace(/'/g, "&#039;");
-                    e.message = esc;
-                    throw e;
-
+                if (window.ajs && window.ajs.ui && window.ajs.ErrorScreen) {
+                } else {
+                    document.write("<h1>We are sorry.</h1>")
+                    document.write("<h4>Fatal Error Occured. Unable to load and start the application.</h4>");
+                    document.write("<p>Please try again later or contact support at support@ajsfw.com</p>");
                 }
 
             }
+
+            function onLoad() {
+
+                if (window.ajs && window.ajs.ui) {
+                    if (ajs.ui.ErrorScreen) {
+                        ajs.ui.ErrorScreen.setDOMElement("ajsErrorScreen");
+                    }
+
+                    if (ajs.ui.RenderTarget) {
+                        ajs.ui.RenderTarget.setDOMElement("ajsRenderTarget");
+                    }
+
+                    if (ajs.ui.RenderTarget) {
+                        ajs.ui.ProgressBar.setDOMElement("ajsProgressBar");
+                        ajs.ui.ProgressBar.setTotal(59);
+                        ajs.ui.ProgressBar.setCurrent(0);
+                        ajs.ui.ProgressBar.setLabel("AjsDoc is loading...");
+                    }
+                }
+
+                if (errorsBeforeLoad.length > 0) {
+                    showErrors();
+                } else {
+                    window.removeEventListener("error", pushError);
+                }
+
+            }
+
+            window.addEventListener("load", onLoad);
+            window.addEventListener("error", pushError);
 
         </script>
 
@@ -286,9 +83,9 @@
         <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
         <link rel="manifest" href="/manifest.json">
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-        <script type="text/javascript" src="/js/ajs.boot.config.js" onerror="ajs.errors.beforeOnLoad.push(event)"></script>
-        <script type="text/javascript" src="/js/ajs.js" onerror="ajs.errors.beforeOnLoad.push(event)"></script>            
-        <script type="text/javascript" src="/js/ajs.lib.js" onerror="ajs.errors.beforeOnLoad.push(event)"></script>
+        <script type="text/javascript" src="/js/ajs.boot.config.js" onerror="errorsBeforeLoad.push(event)"></script>
+        <script type="text/javascript" src="/js/ajs.js" onerror="errorsBeforeLoad.push(event)"></script>            
+        <script type="text/javascript" src="/js/ajs.lib.js" onerror="errorsBeforeLoad.push(event)"></script>
         <title>AjsDoc - The Ajs Framework Documentation</title>
 
         <style>
@@ -313,43 +110,38 @@
         </style>
     </head>
 
-<body>
-    <div id="ajsProgressBar" class="ajsProgressBar">
-        <div class="ajsProgressBarCenter">
-            <div class="ajsProgressBarLogo ajsLogo">
+    <body>
+
+        <div id="ajsProgressBar" class="ajsProgressBar">
+            <div class="ajsProgressBarCenter">
+                <div class="ajsProgressBarLogo ajsLogo">
+                </div>
+                <div class="ajsProgressBarBarContainer">
+                    <div id="ajsProgressBarPerc" class="ajsProgressBarBar"></div>
+                </div>
+                <div id="ajsProgressBarLabel" class="ajsProgressBarLabel">&nbsp;</div>
             </div>
-            <div class="ajsProgressBarBarContainer">
-                <div id="ajsProgressBarPerc" class="ajsProgressBarBar"></div>
-            </div>
-            <div id="ajsProgressBarLabel" class="ajsProgressBarLabel">&nbsp;</div>
         </div>
-    </div>
  
-    <div id="ajsErrorScreen" class="ajsErrorScreen" style="display: none">
+        <div id="ajsErrorScreen" class="ajsErrorScreen" style="display: none">
 
-        <div class="ajsErrorScreenLogo ajsLogo">
-        </div>
+            <div class="ajsErrorScreenLogo ajsLogo">
+            </div>
 
-        <div class="ajsErrorScreenErrorContainer">
-            <h1 id="ajsErrorScreenLabel">AjsDoc Fatal Error</h1>
+            <div class="ajsErrorScreenErrorContainer">
+                <h1 id="ajsErrorScreenLabel">AjsDoc Fatal Error</h1>
 
-            <div class="ajsErrorScreenErrorDetailsContainer">
-                <h4 id="ajsErrorScreenErrorLabel"></h4>
-                <p id="ajsErrorScreenErrorMessage"></p>
-                <pre id="ajsErrorScreenStackTrace"></pre>
-                <p id="ajsErrorScreenUserAction"></p>
+                <div class="ajsErrorScreenErrorDetailsContainer">
+                    <h4 id="ajsErrorScreenErrorLabel"></h4>
+                    <p id="ajsErrorScreenErrorMessage"></p>
+                    <pre id="ajsErrorScreenStackTrace"></pre>
+                    <p id="ajsErrorScreenUserAction"></p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="ajsRenderTarget"></div>
+        <div id="ajsRenderTarget"></div>
 
-    <script type="text/javascript">
-        ajsBeforeLoad();
-    </script>
-
-</body>
-
-
+    </body>
 
 </html>
