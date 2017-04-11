@@ -66,9 +66,19 @@ namespace ajs.app {
          */
         public constructor(config: IApplicationConfig) {
             this._config = config;
-            window.addEventListener("beforeunload", (e: Event) => {
-                this._finalize();
-            });
+            window.addEventListener("error", (e: ErrorEvent) => this._handleError(e));
+            window.addEventListener("beforeunload", (e: Event) => this._finalize());
+        }
+
+        /**
+         * Handles unhandled exceptions on the application level
+         * <p>This handler can be overriden in the user application class to perform custom
+         * unhanlded exceptions handling (i.e. logging to console and sendind exceptions to
+         * server).
+         * @param e ErrorEvent or ajs.Exception to be handled
+         */
+        protected _handleError(e: ErrorEvent | Exception): void {
+            ajs.utils.errorHandler(e);
         }
 
         /**

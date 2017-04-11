@@ -25,15 +25,35 @@ namespace ajs.ui {
 
     "use strict";
 
-    export declare class RenderTarget {
+    export class RenderTarget {
 
-        protected _renderTarget: HTMLElement;
+        protected static _renderTarget: HTMLElement;
 
-        public hide(): void;
-        public show(): void;
+        public static setDOMElement(renderTargetElementId: string): void {
+            RenderTarget._renderTarget = document.getElementById(renderTargetElementId);
+            if (!RenderTarget._checkDOM()) {
+                console.error("Invalid render target DOM specification!");
+            }
+        }
+
+        public static hide(): void {
+            if (!RenderTarget._checkDOM()) {
+                return;
+            }
+            RenderTarget._renderTarget.style.display = "none";
+        }
+
+        public static show(): void {
+            if (!RenderTarget._checkDOM()) {
+                return;
+            }
+            RenderTarget._renderTarget.style.display = "";
+        }
+
+        protected static _checkDOM(): boolean {
+            return !(RenderTarget._renderTarget === undefined || RenderTarget._renderTarget === null);
+        }
 
     }
-
-    export let renderTarget: RenderTarget;
 
 }

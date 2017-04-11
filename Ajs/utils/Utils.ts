@@ -92,6 +92,11 @@ namespace ajs.utils {
         return new Date(8640000000000000);
     }
 
+    /**
+     * Converts the UTC date to string with IE10 in mind
+     * There is problem in IE10 the time zone is not reported correctly
+     * @param date Date to be converted to the correct string date
+     */
     export function ie10UTCDate(date: Date): string {
         let utc: string = date.toUTCString().replace("UTC", "GMT");
         let parts: string[] = utc.split(" ");
@@ -205,5 +210,99 @@ namespace ajs.utils {
     export function replaceAll(str: string, searchValue: string, replaceValue: string): string {
         return str.replace(new RegExp(escapeRegExp(searchValue), "g"), replaceValue);
     }
+
+    /**
+     * Handles an unhandled error and display appropriate message
+     * <p>If the error screen HTML code is properly defined and initialized by calling the
+     * #see [ajs.ui.ErrorScreen.setDOMElement](ajs.ui.ErrorScreen.setDOMElement) in the index.html
+     * the user defined error screen will be shown. Otherwise, the Ajs Error screen will be shown
+     * but it completely rewrites the HTML document code as it is using document.write to generate
+     * the content.</p>
+     * @param exceptionOrErrorEvent unhandled error event processed by i.e. window.error handler or object of class ajs.Exception
+     */
+    export function errorHandler(exceptionOrErrorEvent: ErrorEvent|Exception): void {
+
+        function printException(exception: Exception): void {
+
+            document.write("<h>" + exception.name + "</h4>");
+
+            if (exception.message) {
+                document.write("<h5>Message:</h5>");
+                document.write("<p>" + exception.message + "</p>");
+            }
+
+            if (exception.stack) {
+                document.write("<h5>Stack trace:</h5><pre>");
+                let si: IStackInfo = exception.stack;
+                while (si !== null) {
+                    document.write("   " + si.caller + " at ");
+                    document.write("<a href=\"" + si.file + "?line=" + si.line + "\" target=\"blank\">" + si.file);
+                    document.write(":" + si.line + ":" + si.character + "</a>\n");
+                    si = si.child;
+                }
+                document.write("</pre>");
+            }
+
+        }
+
+        function getStackString(stack: IStackInfo): string {
+            if (stack === undefined || stack === null) {
+                return "";
+            }
+
+            let ss: string = "";
+            let si: IStackInfo = stack;
+            while (si !== null) {
+                ss += si.caller + " at ";
+                ss += "<a href=\"" + si.file + "?line=" + si.line + "\" target=\"blank\">" + si.file;
+                ss += ":" + si.line + ":" + si.character + "</a>\n";
+                si = si.child;
+            }
+
+            return ss;
+        }
+
+        let exception: Exception;
+
+        if (exceptionOrErrorEvent instanceof Exception) {
+            exception = exception;
+        }
+
+        if (exceptionOrErrorEvent instanceof Event) {
+            exception = exceptionOrErrorEvent.error;
+        }
+
+        while (exception.parentException !== null) {
+            exception = exception.parentException;
+        }
+
+        let name: string = exception.name;
+        if (name.substr(0, 4) === "new ") {
+            name = name.substr(4);
+        }
+
+        let epc: ajs.ui.IErrorPageContent = {
+            label: "Ajs Framework unhandled exception",
+            errorCode: "",
+            errorLabel: name,
+            errorMessage: exception.message ? exception.message : "",
+            errorTrace: getStackString(exception.stack),
+            userAction: "",
+        };
+
+        if (!ajs.ui.ErrorScreen.show(epc)) {
+            document.write("<div style=\"font-family: Arial\">");
+            document.write("<h1>Ajs Framework</h1>");
+            document.write("<h2>Unhandled exception occured</h2>");
+            document.write("<p><span style=\"display: table-cell; border: solid 1px black; padding: 0.5em; background-color: FFFBE6\">");
+            document.write("<small>This message is not suppoesed to be shown on the production environments. ");
+            document.write("To hide sensitive data use the showErrors configuration option of the Ajs Framework ");
+            document.write("or configure a HTML error page to be shown in case of unhandled error!</small>");
+            document.write("</span></p>");
+            printException(exception);
+            document.write("</div>");
+        }
+    }
+
 
 }

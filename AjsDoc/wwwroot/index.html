@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <!--offline-->
+
 <html lang="en" manifest="/cache.manifest">
     <head>
 
@@ -33,13 +34,9 @@
                     console.log("Error occured: " + msg);
                 }
 
-                if (window.ajs && window.ajs.ui && window.ajs.ErrorScreen) {
-                } else {
-                    document.write("<h1>We are sorry.</h1>")
-                    document.write("<h4>Fatal Error Occured. Unable to load and start the application.</h4>");
-                    document.write("<p>Please try again later or contact support at support@ajsfw.com</p>");
-                }
-
+                document.write("<h1>We are sorry.</h1>")
+                document.write("<h4>Fatal Error Occured. Unable to load and start the application.</h4>");
+                document.write("<p>Please try again later or contact support at support@ajsfw.com</p>");
             }
 
             function onLoad() {

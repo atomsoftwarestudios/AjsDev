@@ -39,21 +39,6 @@ namespace ajs {
      */
     export class Framework {
 
-        /** Contains last error caused by the framework components
-         *  TODO: Think about the global / application error handler
-         */
-        protected static _lastError: Error;
-        /** Returns the last error caused by the framework component
-         *  TODO: Think about the global / application error handler
-         */
-        public static get lastError(): Error { return Framework._lastError; }
-        /**
-         * Should be used internally by framework components only to set the error value
-         * TODO: Think about the global / application error handler
-         * TODO: Error handling should be done just by triggering and catching exceptions
-         */
-        public static set lastError(value: Error) { Framework._lastError = value; }
-
         /** Stores the framework configuration loaded during the index.html load */
         protected static _config: ajs.IAjsConfig;
         /** Returns the framework configuration object */
@@ -114,8 +99,8 @@ namespace ajs {
 
             ajs.dbg.log(dbg.LogType.Enter, 0, "ajs", this);
 
-            ajs.dbg.log(dbg.LogType.Warning, 0, "ajs", this, "IMPLEMENT: Framework.initialize - global error handler");
-            window.onerror = Framework._errorHandler;
+            // setup framework level error handler - active until the application is created
+            window.addEventListener("error", <any>this._errorHandler);
 
             // store config locally
             Framework._config = config;
@@ -138,7 +123,7 @@ namespace ajs {
         }
 
         /**
-         * Configure the ajs application before it is instanced
+         * Configures the ajs application before it is instanced
          * Called automatically from boot when window.onload event occurs
          * @param config Application configuration file
          */
@@ -153,7 +138,7 @@ namespace ajs {
         }
 
         /**
-         * Instantiate and initialize the user application and start it.
+         * Instantiates and initializes the user application and start it.
          * Called automatically from boot when window.onload event occurs
          * @throws ApplicationNotConfiguredException Thrown when the start is called before the application is configured
          * @throws AppConstructorMustBeAFunctionException Thrown when the passed application constructor is not a function
@@ -171,6 +156,7 @@ namespace ajs {
 
             if (typeof (Framework._appConfig.appConstructor) === typeof (Function)) {
                 Framework._application = new (<any>Framework._appConfig.appConstructor)(Framework._appConfig.config);
+                window.removeEventListener("error", <any>this._errorHandler);
                 ajs.dbg.log(dbg.LogType.Info, 0, "ajs", this, "Initializing the application");
                 Framework._application.initialize();
             } else {
@@ -182,33 +168,19 @@ namespace ajs {
         }
 
         /**
-         * TODO: Think about the global / application error handler
-         * @param msg
-         * @param url
-         * @param line
-         * @param col
-         * @param error
+         * Handles unhandled exceptions on the framework level
+         * <p>The framework error handler is active after the boot stage and before the
+         * application class instatniation. During the boot stage the boot level
+         * error handler is active and after the application class instantiation the
+         * application level error handler (which can be overriden to hanlde unhandled errors
+         * to fit developer needs and requirements) is active.<p>
+         * @param e ErrorEvent or ajs.Exception to be handled
          */
-        protected static _errorHandler(msg: string | Error, url: string, line: number, col: number, error: Error): void {
-
-            let text: string = "";
-            let err: string = "";
-
-            if (msg instanceof Error) {
-                text = ajs.utils.getClassName(error) + ": " + msg.message;
-                err = "<br />name: " + error.name +
-                    "<br />message: " + error.message +
-                    "<br />stacktrace:<br /> " + error.stack.replace(new RegExp("\n", "gm"), "<br />");
-            } else {
-                text = msg;
-            }
-
-            document.write(
-                "Exception: " +
-                "<br />Message: (" + text + ")<br /> At: " + url +
-                "<br />line " + line + " column " + col + err
-            );
+        protected static _errorHandler(e: ErrorEvent | Exception): void {
+            ajs.utils.errorHandler(e);
         }
+
+
 
     }
 }

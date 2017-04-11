@@ -121,7 +121,7 @@
     <TypeScriptCompile Include="templating\Template.ts" />
     <TypeScriptCompile Include="templating\TemplateManager.ts" />
     <TypeScriptCompile Include="ui\RenderTarget.ts" />
-    <TypeScriptCompile Include="ui\ErrorPage.ts" />
+    <TypeScriptCompile Include="ui\ErrorScreen.ts" />
     <TypeScriptCompile Include="ui\IErrorPageContent.ts" />
     <TypeScriptCompile Include="ui\ProgressBar.ts" />
     <TypeScriptCompile Include="utils\Base64.ts" />

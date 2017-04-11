@@ -26,9 +26,9 @@ namespace ajs {
     "use strict";
 
     /** Thrown when the start is called before the application is configured */
-    export class ApplicationNotConfiguredException extends Error { }
+    export class ApplicationNotConfiguredException extends ajs.Exception { }
 
     /** Thrown the passed application constructor is not a function */
-    export class AppConstructorMustBeAFunctionException extends Error { }
+    export class AppConstructorMustBeAFunctionException extends ajs.Exception { }
 
 }

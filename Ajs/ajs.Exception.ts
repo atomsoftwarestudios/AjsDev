@@ -28,26 +28,188 @@ namespace ajs {
 
     "use strict";
 
-    export class Exception extends Error {
+    export class IStackInfo {
+        caller: string;
+        file: string;
+        line: number;
+        character: number;
+        child: IStackInfo;
+        parent: IStackInfo;
+    }
+
+    export class Exception {
 
         protected _parentException: Exception;
+        public get parentException(): Exception { return this._parentException; }
 
-        constructor(message?: string, parentException?: Exception) {
+        protected _name: string;
+        public get name(): string { return this._name; }
 
-            if (!(<any>message instanceof Exception)) {
-                super(message);
-            } else {
-                super();
+        protected _message: string;
+        public get message(): string { return this._message; }
+
+        protected _stack: IStackInfo;
+        public get stack(): IStackInfo { return this._stack; }
+
+        public static throwAsync(exception: Exception): void {
+            setTimeout(() => {
+                throw exception;
+            }, 0);
+
+        }
+
+        public constructor(messageOrParentException?: string | Exception, parentException?: Exception) {
+
+            try {
+                throw new Error("Error");
+            } catch (e) {
+                this._stack = this._getStack(e);
+            }
+
+            if (this._stack !== null) {
+
+                this._name = this._stack.caller;
+
+                if (this._stack.child !== null) {
+                    this._stack = this._stack.child;
+                }
+
             }
 
             if (parentException) {
-                console.error(parentException);
                 this._parentException = parentException;
             } else {
-                this._parentException = null;
+                if (messageOrParentException instanceof Exception) {
+                    this._parentException = messageOrParentException;
+                } else {
+                    this._parentException = null;
+                }
+            }
+
+            if (typeof (messageOrParentException) === "string") {
+                this._message = messageOrParentException;
             }
 
         }
+
+        protected _getStack(e: Error): IStackInfo {
+
+            // no stack information
+            if (e.stack === undefined) {
+                return this._getUnknownStackInfo();
+            }
+
+            // ie10, ie11, edge, chrome, opera, safari
+            let m: RegExpMatchArray;
+
+            m = e.stack.match(/at /gm);
+            if (m !== null && m.length > 0) {
+                return this._getDefaultStackInfo(e.stack);
+            }
+
+            // firefox
+            m = e.stack.match(/\@http/gm);
+            if (m !== null && m.length > 0) {
+                return this._getFirefoxStackInfo(e.stack);
+            }
+
+            return this._getUnknownStackInfo();
+        }
+
+        protected _getUnknownStackInfo(): IStackInfo {
+            return {
+                caller: "unknown",
+                file: "unknown",
+                line: -1,
+                character: -1,
+                parent: null,
+                child: null
+            };
+        }
+
+        protected _getDefaultStackInfo(stack: string): IStackInfo {
+
+            let stackInfo: IStackInfo = null;
+            let lastStackInfo: IStackInfo = null;
+
+            let calls: string[] = stack.split("\n");
+
+            for (let call of calls) {
+                if (call.indexOf("at") !== -1) {
+                    let split1: string[] = call.trim().replace(")", "").substr(3).split("(");
+                    if (split1.length === 1) {
+                        split1 = ["anonymous", split1[0]];
+                    }
+                    let split2: string[] = split1[1].split(":");
+
+                    let si: IStackInfo = {
+                        caller: split1[0].trim(),
+                        file: (split2[0] + ":" + split2[1]).trim(),
+                        line: parseInt(split2[2], 10),
+                        character: parseInt(split2[3], 10),
+                        child: null,
+                        parent: lastStackInfo
+                    };
+
+                    if (lastStackInfo !== null) {
+                        lastStackInfo.child = si;
+                    }
+
+                    lastStackInfo = si;
+
+                    if (stackInfo === null) {
+                        stackInfo = lastStackInfo;
+                    }
+                }
+            }
+
+            if (stackInfo === null) {
+                return this._getUnknownStackInfo();
+            } else {
+                return stackInfo;
+            }
+        }
+
+        protected _getFirefoxStackInfo(stack: string): IStackInfo {
+
+            let stackInfo: IStackInfo = null;
+            let lastStackInfo: IStackInfo = null;
+
+            let calls: string[] = stack.split("\n");
+
+            for (let call of calls) {
+                if (call.indexOf("@") !== -1) {
+                    let split1: string[] = call.split("@");
+                    let split2: string[] = split1[1].split(":");
+
+                    let si: IStackInfo = {
+                        caller: split1[0].trim(),
+                        file: (split2[0] + ":" + split2[1]).trim(),
+                        line: parseInt(split2[2], 10),
+                        character: parseInt(split2[3], 10),
+                        child: null,
+                        parent: lastStackInfo
+                    };
+
+                    if (lastStackInfo !== null) {
+                        lastStackInfo.child = si;
+                    }
+
+                    lastStackInfo = si;
+
+                    if (stackInfo === null) {
+                        stackInfo = lastStackInfo;
+                    }
+                }
+            }
+
+            if (stackInfo === null) {
+                return this._getUnknownStackInfo();
+            } else {
+                return stackInfo;
+            }
+        }
+
 
     }
 

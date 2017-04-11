@@ -25,7 +25,7 @@ namespace ajs.boot {
 
     "use strict";
 
-    getResourceLists = function(): IResourceLists {
+    getResourceLists = function (): IResourceLists {
 
         return {
             localPermanent: [
@@ -42,7 +42,6 @@ namespace ajs.boot {
         // const anyPath: string = "(\\/.*|.*)";
 
         return {
-            logErrors: true,
             showErrors: true,
 
             boot: {
@@ -136,7 +135,7 @@ namespace ajs.boot {
         // const APP_RESOURCES_LOADING_PREFERENCE: ajs.resources.LOADING_PREFERENCE = ajs.resources.LOADING_PREFERENCE.SERVER;
         const APP_RESOURCES_LOADING_PREFERENCE: ajs.resources.LOADING_PREFERENCE = ajs.resources.LOADING_PREFERENCE.CACHE;
 
-        let userConfig: ajsdoc.IAjsDocBrowserConfig = {
+        let appConfig: ajsdoc.IAjsDocBrowserConfig = {
             storageType: ajs.resources.STORAGE_TYPE.LOCAL,
             storagePolicy: ajs.resources.CACHE_POLICY.LASTRECENTLYUSED,
             templateList: "/resources/templates.json",
@@ -154,7 +153,7 @@ namespace ajs.boot {
 
         return {
             appConstructor: ajsdoc.AjsDocBrowser,
-            config: userConfig
+            config: appConfig
         };
 
     };

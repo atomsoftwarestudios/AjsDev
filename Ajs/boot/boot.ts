@@ -85,10 +85,20 @@ namespace ajs.boot {
     }
 
     /**
+     * Handles unhandled errors until framework event handler is assigned
+     * @param e ErrorEvent or ajs.Exception to be handled
+     */
+    function _bootErrorHandler(e: any): void {
+        ajs.utils.errorHandler(e);
+    }
+
+    /**
      * Main entry point (executed on application cache events cahced/noupdate/error or window.onload event)
      * Initializes the framework and initiate loading of configured resources)
      */
     function _boot(): void {
+
+        window.addEventListener("error", _bootErrorHandler);
 
         // get Ajs config
         if (!(getAjsConfig instanceof Function)) {
@@ -115,6 +125,8 @@ namespace ajs.boot {
 
         // initialize config
         ajs.Framework.initialize(config);
+
+        window.removeEventListener("error", _bootErrorHandler);
 
         // continue by loading resources and application configuration
         _loadResources();
@@ -173,7 +185,8 @@ namespace ajs.boot {
             catch((e: ajs.Exception) => {
                 ajs.dbg.log(dbg.LogType.Error, 0, "ajs.boot", this,
                     "Something went wrong during resource loading " + e, e);
-                throw new ResourcesLoadingFailedException(null, e);
+
+                ajs.Exception.throwAsync(new ResourcesLoadingFailedException(e));
             });
 
         ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.boot", this);

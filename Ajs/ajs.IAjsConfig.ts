@@ -48,8 +48,6 @@ namespace ajs {
      */
     export interface IAjsConfig {
 
-        /** TODO: Remove? : Specifies if errors occured should be logged to the console */
-        logErrors?: boolean;
         /** TODO: Remove? : Specifies if errors occured should be shown in the ajs error page to end users */
         showErrors?: boolean;
 
