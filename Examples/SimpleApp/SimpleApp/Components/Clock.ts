@@ -29,9 +29,7 @@ namespace SimpleApp.Components {
 
         protected _navigated(): void {
             if (this._timer === undefined) {
-                this._timer = setInterval(() => {
-                    this._update();
-                }, 25);
+                this._timer = setInterval(() => this._update(), 200);
             }
         }
 
