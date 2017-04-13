@@ -32,7 +32,7 @@ namespace ajs.app {
     export interface IApplicationInfo {
 
         /** Constructor of the user application class derived from the ajs.app.Application class */
-        appConstructor: typeof ajs.app.Application;
+        appConstructor?: typeof ajs.app.Application;
 
         /** User configuration of the application */
         config?: IApplicationConfig;
