@@ -20,17 +20,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
+
 namespace ajs.boot {
 
     "use strict";
 
     /**
-     * Defines the function returning the ajs framework configuration
-     * This function must be implemented in the cofiguration file (namepace ajs.boot)
-     * and loaded by html page. It is expcected to be defined in the ajs.boot namespace.
+     * Defines the function returning the resources required to be loaded during the boot time
+     * This function must be implemented in the cofiguration file (namepace ajs.boot) and loaded
+     * by html page. It is expcected the function will be declred in the ajs.boot namespace.
      */
-    export interface IGetAjsConfig {
-        (): IAjsConfig;
+    export interface IConfigureResources {
+        (resourceLists: IResourceLists): void;
     }
 
 }
