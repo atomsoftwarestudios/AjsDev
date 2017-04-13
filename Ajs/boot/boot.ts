@@ -47,32 +47,31 @@ namespace ajs.boot {
     "use strict";
 
     /**
+     * Holds collected ajs config
+     */
+    let config: IAjsConfig;
+    let bootStarted: boolean = false;
+
+    /**
      * Function returning the Ajs Framework configuration.
      * This function must be declared in the ajs.boot.config file (usually separate
      * VS project) and loaded during the index.html loading
      */
-    export let getAjsConfig: IGetAjsConfig;
+    export let configureAjs: IConfgiureAjs;
 
     /**
      * Function returning the list of application resources to be loaded
      * This function must be declared in the ajs.boot.config file (usually separate
      * VS project) and loaded during the index.html loading
      */
-    export let getResourceLists: IGetResourceLists;
+    export let configureResources: IConfigureResources;
 
     /**
      * Function returning the application configuratopn
      * This function must be declared in the ajs.boot.config file (usually separate
      * VS project) and loaded during the index.html loading
      */
-    export let getApplicationInfo: IGetApplicationInfo;
-
-    /**
-     * Holds collected ajs config
-     */
-    let config: IAjsConfig;
-
-    let bootStarted: boolean = false;
+    export let configureApplication: IConfigureApplication;
 
     /**
      * Return default boot config
@@ -92,28 +91,36 @@ namespace ajs.boot {
         ajs.utils.errorHandler(e);
     }
 
+    function _getAjsConfig(): IAjsConfig {
+        // get Ajs config
+        if (!(configureAjs instanceof Function)) {
+            throw new ConfigureAjsFunctionNotDefinedException();
+        }
+
+        config = {};
+        configureAjs(config);
+
+        if (config.boot === undefined) {
+            config.boot = _defaultConfig();
+        }
+
+        return config;
+    }
+
     /**
      * Main entry point (executed on application cache events cahced/noupdate/error or window.onload event)
      * Initializes the framework and initiate loading of configured resources)
      */
-    function _boot(): void {
+    function _boot(config?: IAjsConfig): void {
 
         window.addEventListener("error", _bootErrorHandler);
 
-        // get Ajs config
-        if (!(getAjsConfig instanceof Function)) {
-            throw new GetAjsConfigFunctionNotDefinedException();
-        }
-
-        config = getAjsConfig();
+        // use passed config or obtain it from configuration function
+        config = config || _getAjsConfig();
 
         // if debugging is configured, start it up
         if (config.debugging) {
             ajs.dbg.init(config.debugging);
-        }
-
-        if (config.boot === undefined) {
-            config.boot = _defaultConfig();
         }
 
         // do some basic logging
@@ -142,11 +149,12 @@ namespace ajs.boot {
 
         ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.boot", this);
 
-        if (!(getResourceLists instanceof Function)) {
-            throw new GetResourceListFunctionNotDefinedException();
+        if (!(configureResources instanceof Function)) {
+            throw new ConfigureResourcesFunctionNotDefinedException();
         }
 
-        let res: IResourceLists = getResourceLists();
+        let res: IResourceLists = {};
+        configureResources(res);
 
         // prepare information about resources to be loaded - always prefer to update resources prior using them from cache
         // review if it is possible to use cached resources rather than server ones
@@ -201,12 +209,14 @@ namespace ajs.boot {
 
         ajs.dbg.log(dbg.LogType.Info, 0, "ajs.boot", this, "Getting the Application config");
 
-        if (!(getApplicationInfo instanceof Function)) {
+        if (!(configureApplication instanceof Function)) {
             ajs.dbg.log(dbg.LogType.Error, 0, this, "GetApplicationConfigFunctionNotDefinedException");
             throw new GetApplicationConfigFunctionNotDefinedException();
         }
 
-        let appConfig: ajs.app.IApplicationInfo = getApplicationInfo();
+        let appConfig: ajs.app.IApplicationInfo = <any>{};
+        configureApplication(appConfig);
+
         ajs.Framework.configureApplication(appConfig);
 
         _start();
@@ -307,17 +317,18 @@ namespace ajs.boot {
         // this is fallback if no event is called
         window.addEventListener("load", () => {
 
-            let cfg: IAjsConfig = getAjsConfig();
+            let cfg: IAjsConfig = _getAjsConfig();
+
             if (cfg && cfg.boot && cfg.boot.offlineSupport) {
                 setTimeout(() => {
                     if (!bootStarted) {
                         bootStarted = true;
-                        _boot();
+                        _boot(cfg);
                     }
                 }, 500);
             } else {
                 bootStarted = true;
-                _boot();
+                _boot(cfg);
             }
 
         });
