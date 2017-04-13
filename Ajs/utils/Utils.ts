@@ -49,15 +49,74 @@ namespace ajs.utils {
         return object !== undefined && object !== null;
     }
 
+    export function isInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLElement;
+    }
+
+    export function isHiddenInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "hidden";
+    }
+
+    export function isTextInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "text";
+    }
+
+    export function isPasswordInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "password";
+    }
+
+    export function isRadioInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "radio";
+    }
+
+    export function isCheckboxInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "checkbox";
+    }
+
+    export function isButtonInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "button";
+    }
+
+    export function isImageInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "image";
+    }
+
+    export function isFileInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "file";
+    }
+
+    export function isResetInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "reset";
+    }
+
+    export function isSubmitInputElement(element: HTMLElement): boolean {
+        return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "submit";
+    }
+
+    export function getDomEventTargetOwnerComponent<T extends ajs.mvvm.viewmodel.ViewComponent<any, any>>(target: EventTarget): T {
+        return <T>(<ajs.doc.INode>target).ajsData.ownerComponent;
+    }
+
+
     /**
-     * Returns name of the constructor of the object
+     * Returns name of the constructor of the object (class name) or the name of function (class)
+     * If object constructor name is Function it returns directly name of the object if possible
      * @param obj Object to be checked
      */
     export function getClassName(obj: Object): string {
         if (obj && obj.constructor && obj.constructor.toString) {
             let arr: RegExpMatchArray = obj.constructor.toString().match(/function\s*(\w+)/);
             if (arr && arr.length === 2) {
-                return arr[1];
+                if (arr[1] === "Function") {
+                    if (obj.toString) {
+                        arr = obj.toString().match(/function\s*(\w+)/);
+                        if (arr && arr.length === 2) {
+                            return arr[1];
+                        }
+                    }
+                } else {
+                    return arr[1];
+                }
             }
         }
 
@@ -211,6 +270,63 @@ namespace ajs.utils {
         return str.replace(new RegExp(escapeRegExp(searchValue), "g"), replaceValue);
     }
 
+    interface IFileMaps {
+        [file: string]: SourceMap.SourceMapConsumer;
+    }
+
+    function mapFile(srcUrl: string, line: number, column: number): Promise<SourceMap.MappedPosition> {
+
+        function getFile(fileUrl: string, callback: EventListener): void {
+            var req: XMLHttpRequest = new XMLHttpRequest();
+            req.addEventListener("load", callback);
+            req.addEventListener("error", (evt: Event): void => {
+                document.write("Failed to load the '" + fileUrl + "' file.");
+            });
+            req.open("GET", fileUrl);
+            req.send();
+        }
+
+        let SourceMap = (<any>window).sourceMap;
+        let maps: IFileMaps = {};
+
+        let mp: Promise<SourceMap.MappedPosition> = new Promise<SourceMap.MappedPosition>(
+            (resolve: (position: SourceMap.MappedPosition) => void, reject: (reason: ajs.Exception) => void) => {
+
+                if (maps.hasOwnProperty(srcUrl)) {
+
+                    resolve(maps[srcUrl].originalPositionFor({ line: line, column: column }));
+
+                } else {
+
+                    getFile(srcUrl, (evt: Event) => {
+                        let request: XMLHttpRequest = <XMLHttpRequest>evt.target;
+                        let content: string = request.response;
+                        let mapFile: RegExpMatchArray = content.match(/\/\/\# sourceMappingURL\=.*/g);
+                        let mapFileUrl: string;
+                        if (mapFile.length > 1) {
+                            mapFileUrl = mapFile[1].split("=")[1];
+                        }
+                        let anchor: HTMLAnchorElement = document.createElement("a");
+                        anchor.href = request.responseURL;
+                        mapFileUrl = anchor.pathname.substr(0, anchor.pathname.lastIndexOf("/") + 1) + mapFileUrl;
+
+                        getFile(mapFileUrl, (evt: Event) => {
+                            let request: XMLHttpRequest = <XMLHttpRequest>evt.target;
+                            let content: string = request.response;
+                            let smc: SourceMap.SourceMapConsumer = new SourceMap.SourceMapConsumer(content);
+                            maps[srcUrl] = smc;
+                            resolve(maps[srcUrl].originalPositionFor({ line: line, column: column }));
+                        });
+                    });
+                }
+
+            }
+        );
+
+        return mp;
+    }
+
+
     /**
      * Handles an unhandled error and display appropriate message
      * <p>If the error screen HTML code is properly defined and initialized by calling the
@@ -222,7 +338,7 @@ namespace ajs.utils {
      */
     export function errorHandler(exceptionOrErrorEvent: ErrorEvent|Exception): void {
 
-        function printException(exception: Exception): void {
+        function printException(exception: Exception, stackString: string): void {
 
             document.write("<h>" + exception.name + "</h4>");
 
@@ -231,35 +347,58 @@ namespace ajs.utils {
                 document.write("<p>" + exception.message + "</p>");
             }
 
-            if (exception.stack) {
-                document.write("<h5>Stack trace:</h5><pre>");
-                let si: IStackInfo = exception.stack;
-                while (si !== null) {
-                    document.write("   " + si.caller + " at ");
-                    document.write("<a href=\"" + si.file + "?line=" + si.line + "\" target=\"blank\">" + si.file);
-                    document.write(":" + si.line + ":" + si.character + "</a>\n");
-                    si = si.child;
-                }
-                document.write("</pre>");
+            if (stackString) {
+                document.write("<h5>Stack trace:</h5>");
+                document.write("<pre>" + stackString + "</pre>");
+
             }
 
         }
 
-        function getStackString(stack: IStackInfo): string {
+        function getStackString(stack: IStackInfo): Promise<string> {
             if (stack === undefined || stack === null) {
-                return "";
+                return Promise.resolve("");
             }
 
             let ss: string = "";
-            let si: IStackInfo = stack;
+            let si: IStackInfo;
+
+            let promises: Promise<SourceMap.MappedPosition>[] = [];
+
+            si = stack;
             while (si !== null) {
-                ss += si.caller + " at ";
-                ss += "<a href=\"" + si.file + "?line=" + si.line + "\" target=\"blank\">" + si.file;
-                ss += ":" + si.line + ":" + si.character + "</a>\n";
+                promises.push(mapFile(si.file, si.line, si.character));
                 si = si.child;
             }
 
-            return ss;
+            return new Promise<string>(
+                (resolve: (stackString: string) => void, reject: (reason: ajs.Exception) => void) => {
+
+                    Promise.all(promises).then(
+                        (mappedPositions: SourceMap.MappedPosition[]) => {
+                            si = stack;
+                            let c: number = 0;
+                            while (si !== null) {
+                                ss += si.caller + " at ";
+                                ss += "<a href=\"showfile.html?file=" + si.file + "&line=" + si.line + "\" target=\"blank\">";
+                                ss += si.file + ":" + si.line + ":" + si.character;
+                                ss += "</a>";
+                                if (mappedPositions[c].source !== null) {
+                                    ss += " mapped to <a href=\"/showfile.html?file=" + mappedPositions[c].source +
+                                        "&line=" + mappedPositions[c].line + "\" target=\"blank\">";
+                                    ss += mappedPositions[c].source + ":" + mappedPositions[c].line + ":" + mappedPositions[c].column;
+                                    ss += "</a>";
+                                }
+                                ss += "\n";
+
+                                si = si.child;
+                                c++;
+                            }
+                            resolve(ss);
+                        }
+                    );
+                }
+            );
         }
 
         let exception: Exception;
@@ -281,27 +420,34 @@ namespace ajs.utils {
             name = name.substr(4);
         }
 
-        let epc: ajs.ui.IErrorPageContent = {
-            label: "Ajs Framework unhandled exception",
-            errorCode: "",
-            errorLabel: name,
-            errorMessage: exception.message ? exception.message : "",
-            errorTrace: getStackString(exception.stack),
-            userAction: "",
-        };
+        getStackString(exception.stack)
 
-        if (!ajs.ui.ErrorScreen.show(epc)) {
-            document.write("<div style=\"font-family: Arial\">");
-            document.write("<h1>Ajs Framework</h1>");
-            document.write("<h2>Unhandled exception occured</h2>");
-            document.write("<p><span style=\"display: table-cell; border: solid 1px black; padding: 0.5em; background-color: FFFBE6\">");
-            document.write("<small>This message is not suppoesed to be shown on the production environments. ");
-            document.write("To hide sensitive data use the showErrors configuration option of the Ajs Framework ");
-            document.write("or configure a HTML error page to be shown in case of unhandled error!</small>");
-            document.write("</span></p>");
-            printException(exception);
-            document.write("</div>");
-        }
+            .then((stackString: string) => {
+                let epc: ajs.ui.IErrorPageContent = {
+                    label: "Ajs Framework unhandled exception",
+                    errorCode: "",
+                    errorLabel: name,
+                    errorMessage: exception.message ? exception.message : "",
+                    errorTrace: stackString,
+                    userAction: "",
+                };
+
+                if (!ajs.ui.ErrorScreen.show(epc)) {
+                    document.write("<div style=\"font-family: Arial\">");
+                    document.write("<h1>Ajs Framework</h1>");
+                    document.write("<h2>Unhandled exception occured</h2>");
+                    document.write("<p>");
+                    document.write("<span ");
+                    document.write("style =\"display: table-cell; border: solid 1px black; padding: 0.5em; background-color: FFFBE6\">");
+                    document.write("<small>This message is not suppoesed to be shown on the production environments. ");
+                    document.write("To hide sensitive data use the showErrors configuration option of the Ajs Framework ");
+                    document.write("or configure a HTML error page to be shown in case of unhandled error!</small>");
+                    document.write("</span></p>");
+                    printException(exception, stackString);
+                    document.write("</div>");
+                }
+            });
+
     }
 
 
