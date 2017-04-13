@@ -28,13 +28,13 @@ namespace ajs.boot {
     "use strict";
 
     /** Fired if the ajs.boot.getAjsConfig function is not defined */
-    export class GetAjsConfigFunctionNotDefinedException extends ajs.Exception { }
+    export class ConfigureAjsFunctionNotDefinedException extends ajs.Exception { }
 
     /** Fired if the ajs.boot.getAjsConfig function is not defined */
     export class GetApplicationConfigFunctionNotDefinedException extends ajs.Exception { }
 
     /** Fired if the ajs.boot.getResourceList function is not defined */
-    export class GetResourceListFunctionNotDefinedException extends ajs.Exception { }
+    export class ConfigureResourcesFunctionNotDefinedException extends ajs.Exception { }
 
     /** Fired when loading resources specified in the configuration file fails */
     export class ResourcesLoadingFailedException extends ajs.Exception { }
