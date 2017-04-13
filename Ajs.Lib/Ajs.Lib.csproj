@@ -24,10 +24,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE" />
+    <Content Include="lib\source-map.js" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="lib\01-es6-promise.js\es6-promise.js" />
+    <Content Include="lib\es6-promise.js" />
     <None Include="README.MD" />
     <None Include="tsconfig.common.json">
       <DependentUpon>tsconfig.json</DependentUpon>
