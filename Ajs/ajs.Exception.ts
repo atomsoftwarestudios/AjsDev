@@ -58,7 +58,7 @@ namespace ajs {
 
         }
 
-        public constructor(messageOrParentException?: string | Exception, parentException?: Exception) {
+        public constructor(messageOrParentException?: string | Exception | Error, parentException?: Exception | Error) {
 
             try {
                 throw new Error("Error");
@@ -76,13 +76,33 @@ namespace ajs {
 
             }
 
+            this._parentException = null;
+
             if (parentException) {
-                this._parentException = parentException;
+
+                if (parentException instanceof Exception) {
+                    this._parentException = parentException;
+                }
+
+                if (parentException instanceof Error) {
+                    let exception: Exception = new Exception(parentException.name);
+                    exception._name = parentException.name;
+                    exception._message = parentException.message;
+                    exception._stack = this._getStack(parentException);
+                    this._parentException = exception;
+                }
+
             } else {
                 if (messageOrParentException instanceof Exception) {
                     this._parentException = messageOrParentException;
-                } else {
-                    this._parentException = null;
+                }
+
+                if (messageOrParentException instanceof Error) {
+                    let exception: Exception = new Exception(messageOrParentException.name);
+                    exception._name = messageOrParentException.name;
+                    exception._message = messageOrParentException.message;
+                    exception._stack = this._getStack(messageOrParentException);
+                    this._parentException = exception;
                 }
             }
 

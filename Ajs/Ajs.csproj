@@ -33,9 +33,9 @@
     <TypeScriptCompile Include="boot\boot.ts" />
     <TypeScriptCompile Include="boot\Exceptions.ts" />
     <TypeScriptCompile Include="boot\IBootConfig.ts" />
-    <TypeScriptCompile Include="boot\IGetAjsApplicationConfig.ts" />
-    <TypeScriptCompile Include="boot\IGetAjsConfig.ts" />
-    <TypeScriptCompile Include="boot\IGetResourceLists.ts" />
+    <TypeScriptCompile Include="boot\IConfigureApplication.ts" />
+    <TypeScriptCompile Include="boot\IConfigureAjs.ts" />
+    <TypeScriptCompile Include="boot\IConfigureResources.ts" />
     <TypeScriptCompile Include="boot\IResourceLists.ts" />
     <TypeScriptCompile Include="dbg\IConsoleConfig.ts" />
     <TypeScriptCompile Include="dbg\IConsoleModuleCollection.ts" />
@@ -60,9 +60,13 @@
     <TypeScriptCompile Include="doc\INode.ts" />
     <TypeScriptCompile Include="doc\DocumentManager.ts" />
     <TypeScriptCompile Include="ajs.Exception.ts" />
+    <TypeScriptCompile Include="lib\source-map.d.ts" />
     <TypeScriptCompile Include="mvvm\!mvvm.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\ITransitionBeginHandler.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\ITransitionType.ts" />
+    <TypeScriptCompile Include="mvvm\viewmodel\IParentViewComponent.ts" />
+    <TypeScriptCompile Include="mvvm\viewmodel\IViewComponent.ts" />
+    <TypeScriptCompile Include="mvvm\viewmodel\IViewComponentState.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\ViewComponentStateManager.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\ViewComponentRenderer.ts" />
     <TypeScriptCompile Include="mvvm\view\IViewConfig.ts" />
@@ -80,8 +84,7 @@
     <TypeScriptCompile Include="mvvm\viewmodel\IFilteredState.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\IInstancedViewComponentsCollection.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\IRegisteredViewComponentsCollection.ts" />
-    <TypeScriptCompile Include="mvvm\viewmodel\IViewStateGet.ts" />
-    <TypeScriptCompile Include="mvvm\viewmodel\IViewStateSet.ts" />
+    <TypeScriptCompile Include="mvvm\viewmodel\IViewComponentFilteredState.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\ViewComponent.ts" />
     <TypeScriptCompile Include="mvvm\viewmodel\ViewComponentManager.ts" />
     <TypeScriptCompile Include="navigation\Navigator.ts" />

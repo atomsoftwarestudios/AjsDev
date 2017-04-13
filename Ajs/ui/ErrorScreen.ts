@@ -53,7 +53,6 @@ namespace ajs.ui {
         public static hide(): void {
 
             if (!ErrorScreen._checkDOM()) {
-                console.error("Invalid error screen DOM  specification!");
                 return;
             }
 
@@ -73,7 +72,6 @@ namespace ajs.ui {
         public static show(error: IErrorPageContent): boolean {
 
             if (!ErrorScreen._checkDOM()) {
-                console.error("Invalid error screen DOM specification!");
                 return false;
             }
 
@@ -135,7 +133,8 @@ namespace ajs.ui {
         }
 
         protected static _checkDOM(): boolean {
-            return !(ErrorScreen._label === undefined || ErrorScreen._errorScreen === null ||
+            return !(ErrorScreen._errorScreen === undefined || ErrorScreen._errorScreen === null ||
+                ErrorScreen._label === undefined || ErrorScreen._label === null ||
                 ErrorScreen._errorLabel === undefined || ErrorScreen._errorLabel === null ||
                 ErrorScreen._userAction === undefined || ErrorScreen._userAction === null ||
                 ErrorScreen._message === undefined || ErrorScreen._message === null ||
