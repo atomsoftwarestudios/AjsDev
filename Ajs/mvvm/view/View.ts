@@ -87,14 +87,14 @@ namespace ajs.mvvm.view {
         public set rootViewComponentName(value: string) { this._rootUpdated(value); }
 
         /** Root view component currently in use */
-        protected _rootViewComponent: ajs.mvvm.viewmodel.ViewComponent;
+        protected _rootViewComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>;
         /** Returns root view component currently in use */
-        public get rootViewComponent(): ajs.mvvm.viewmodel.ViewComponent { return this._rootViewComponent; }
+        public get rootViewComponent(): ajs.mvvm.viewmodel.ViewComponent<any, any> { return this._rootViewComponent; }
 
         /** Specifies the root component for the current state change. Component is then rendered (including its children) if neccessary. */
-        protected _stateChangeRootComponent: ajs.mvvm.viewmodel.ViewComponent;
+        protected _stateChangeRootComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>;
         /** Returns the current change root component. Valid when the stage change is in progress only */
-        public get stateChangeRootComponent(): ajs.mvvm.viewmodel.ViewComponent { return this._stateChangeRootComponent; }
+        public get stateChangeRootComponent(): ajs.mvvm.viewmodel.ViewComponent<any, any> { return this._stateChangeRootComponent; }
 
         /** Used for rendering of view components after the state change and applying the changes to the render target */
         protected _shadowDom: Document;
@@ -184,7 +184,7 @@ namespace ajs.mvvm.view {
          * </p>
          * @param viewComponent
          */
-        public stateChangeBegin(viewComponent: ajs.mvvm.viewmodel.ViewComponent): void {
+        public stateChangeBegin(viewComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>): void {
 
             ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
@@ -210,7 +210,7 @@ namespace ajs.mvvm.view {
          * Called from the view component when it finishes the state change
          * @param viewComponent
          */
-        public stateChangeEnd(viewComponent: ajs.mvvm.viewmodel.ViewComponent): void {
+        public stateChangeEnd(viewComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>): void {
 
             ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
@@ -256,18 +256,20 @@ namespace ajs.mvvm.view {
          * </p>
          * @param viewComponent
          */
-        public notifyParentsChildrenStateChange(viewComponent: ajs.mvvm.viewmodel.ViewComponent): void {
+        public notifyParentsChildrenStateChange(parentViewComponent: ajs.mvvm.viewmodel.IParentViewComponent): void {
 
             ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
-            if (viewComponent !== null && this._stateChangeRootComponent !== null) {
+            let vc: ajs.mvvm.viewmodel.ViewComponent<any, any> = <any>parentViewComponent;
+
+            if (vc !== null && this._stateChangeRootComponent !== null) {
 
                 ajs.dbg.log(dbg.LogType.Info, 0, "ajs.mvvm.view", this,
-                    "Notifying parents about the component change: " + viewComponent.ajs.id + " " + viewComponent.componentViewId);
+                    "Notifying parents about the component change: " + vc.ajs.id + " " + vc.componentViewId);
 
-                while (viewComponent !== this._stateChangeRootComponent.ajs.parentComponent && viewComponent !== null) {
-                    viewComponent.ajs.stateChanged = true;
-                    viewComponent = viewComponent.ajs.parentComponent;
+                while (vc !== this._stateChangeRootComponent.ajs.parentComponent && vc !== null) {
+                    vc.ajs.stateChanged = true;
+                    vc = vc.ajs.parentComponent;
                 }
             }
 
@@ -278,7 +280,7 @@ namespace ajs.mvvm.view {
          * Renders a viewComponent to the view
          * @param viewComponent
          */
-        public render(viewComponent: ajs.mvvm.viewmodel.ViewComponent): Element {
+        public render(viewComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>): Element {
 
             ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 

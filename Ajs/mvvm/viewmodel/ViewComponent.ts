@@ -27,7 +27,7 @@ namespace ajs.mvvm.viewmodel {
 
     import IVisualComponent = ajs.templating.IVisualComponent;
 
-    export interface IViewComponentProperties {
+    export interface IViewComponentProperties<State extends IViewComponentState, ParentViewComponent extends IParentViewComponent> {
 
         // --- dependancies
 
@@ -46,7 +46,7 @@ namespace ajs.mvvm.viewmodel {
 
         // --- parent component and visual component instances
 
-        parentComponent: ViewComponent;
+        parentComponent: ParentViewComponent;
         visualComponent: ajs.templating.IVisualComponent;
         templateElement: HTMLElement;
 
@@ -54,7 +54,7 @@ namespace ajs.mvvm.viewmodel {
 
         stateChangePrevented: boolean;
         stateKeys: string[];
-        stateQueue: IViewStateSet[];
+        stateQueue: State[];
         processingStateQueue: boolean;
         stateChanged: boolean;
 
@@ -73,22 +73,24 @@ namespace ajs.mvvm.viewmodel {
         key: string;
     }
 
-    export class ViewComponent implements ajs.doc.IComponent {
+    export class ViewComponent<State extends IViewComponentState, ParentViewComponent extends IParentViewComponent>
+        implements ajs.doc.IComponent, IViewComponent, IParentViewComponent {
 
         /** Stores the unique instance ID of the component assigned by the view when the component is instantiated */
-        public componentViewId: number;
+        protected _componentViewId: number;
+        public get componentViewId(): number { return this._componentViewId; };
 
         // properties are defined like this to minimize displayed items by the intellisense in user view components
-        public ajs: IViewComponentProperties;
+        public ajs: IViewComponentProperties<State, ParentViewComponent>;
 
         public constructor(
             view: view.View,
             viewComponentManager: ViewComponentManager,
             id: string,
             componentViewId: number,
-            parentComponent: ViewComponent,
+            parentComponent: ParentViewComponent,
             visualComponent: ajs.templating.IVisualComponent,
-            state?: IViewStateSet) {
+            state?: State) {
 
             // throw exception if the visual component was not assigned
             if (visualComponent === null) {
@@ -98,7 +100,7 @@ namespace ajs.mvvm.viewmodel {
             ajs.dbg.log(ajs.dbg.LogType.Constructor, 0, "ajs.mvvm.viewmodel", this);
 
             // initialize properties
-            this.componentViewId = componentViewId;
+            this._componentViewId = componentViewId;
 
             this.ajs = {
                 stylesheetsApplied: false,
@@ -152,7 +154,7 @@ namespace ajs.mvvm.viewmodel {
 
             // apply passed or default state
             if (state && state !== null) {
-                let newState: IViewStateSet = ajs.utils.DeepMerge.merge(this._defaultState(), state);
+                let newState: IViewComponentState = ajs.utils.DeepMerge.merge(this._defaultState(), state);
                 ajs.utils.Obj.assign(state, newState);
                 this._applyState(state);
             } else {
@@ -174,6 +176,54 @@ namespace ajs.mvvm.viewmodel {
 
             ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
 
+        }
+
+        public destroy(): void {
+
+            // remove all children components
+            this.clearState(false);
+
+            // finalize the component
+            this._finalize();
+
+            // if the component was rendered, remove it from the DOM tree
+            this.ajs.view.documentManager.removeNodeByUniqueId(this.componentViewId);
+
+            // unregister component instance from ViewComponent manager
+            ajs.Framework.viewComponentManager.removeComponentInstance(this);
+
+        };
+
+        public setState(state: State): void {
+
+            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
+
+            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
+                "Setting component state: " + ajs.utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId,
+                state
+            );
+
+            if (this.ajs.visualStateTransitionRunning) {
+                this._ajsVisualStateTransitionCancel();
+            }
+
+            this.ajs.stateQueue.push(state);
+            this._processStateQueue();
+
+            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+        }
+
+        protected _initialize(): void {
+            ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this, "_initialize is not overriden");
+        }
+
+        protected _finalize(): void {
+            ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this, "_finalize is not overriden");
+        }
+
+        protected _defaultState(): State {
+            ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this, "_defaultState is not overriden");
+            return <any>{};
         }
 
         protected _applyTemplateStylesheets(): void {
@@ -203,68 +253,7 @@ namespace ajs.mvvm.viewmodel {
             ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
         }
 
-        protected _initialize(): void {
-            return;
-        }
 
-        public destroy(): void {
-
-            // remove all children components
-            this.clearState(false);
-
-            // finalize the component
-            this._finalize();
-
-            // if the component was rendered, remove it from the DOM tree
-            this.ajs.view.documentManager.removeNodeByUniqueId(this.componentViewId);
-
-            // unregister component instance from ViewComponent manager
-            ajs.Framework.viewComponentManager.removeComponentInstance(this);
-
-        };
-
-        protected _finalize(): void {
-
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
-
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
-                "_finalize not overriden. Nothing to do.");
-
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
-
-            return;
-        }
-
-        protected _defaultState(): IViewStateSet {
-
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
-
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
-                "_defaultState not overriden. Setting {}");
-
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
-
-            return {};
-        }
-
-        public setState(state: IViewStateSet): void {
-
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
-
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
-                "Setting component state: " + ajs.utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId,
-                state
-            );
-
-            if (this.ajs.visualStateTransitionRunning) {
-                this._ajsVisualStateTransitionCancel();
-            }
-
-            this.ajs.stateQueue.push(state);
-            this._processStateQueue();
-
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
-        }
 
         protected _setPreventStateChange(value: boolean): void {
 
@@ -276,7 +265,7 @@ namespace ajs.mvvm.viewmodel {
             );
 
             this.ajs.stateChangePrevented = value;
-            let children: ViewComponent[] = this.ajs.viewComponentManager.getChildrenComponentInstances(this);
+            let children: ViewComponent<any, any>[] = this.ajs.viewComponentManager.getChildrenComponentInstances(this);
             for (let i: number = 0; i < children.length; i++) {
                 children[i]._setPreventStateChange(value);
             }
@@ -331,7 +320,7 @@ namespace ajs.mvvm.viewmodel {
                     return;
                 }
 
-                let state: IViewStateSet = this.ajs.stateQueue.shift();
+                let state: State = this.ajs.stateQueue.shift();
 
                 ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
                     "Setting component state: " +
@@ -368,12 +357,12 @@ namespace ajs.mvvm.viewmodel {
 
             while (this.ajs.stateKeys.length > 0) {
                 if (this[this.ajs.stateKeys[0]] instanceof ViewComponent) {
-                    (this[this.ajs.stateKeys[0]] as ViewComponent).destroy();
+                    (this[this.ajs.stateKeys[0]] as ViewComponent<any, any>).destroy();
                 }
                 if (this[this.ajs.stateKeys[0]] instanceof Array) {
                     for (let i: number = 0; i < this[this.ajs.stateKeys[0]].length; i++) {
                         if (this[this.ajs.stateKeys[0]][i] instanceof ViewComponent) {
-                            (this[this.ajs.stateKeys[0]][i] as ViewComponent).destroy();
+                            (this[this.ajs.stateKeys[0]][i] as ViewComponent<any, any>).destroy();
                         }
                     }
                 }
@@ -391,7 +380,7 @@ namespace ajs.mvvm.viewmodel {
          * This method can be overriden to filter the full state before it is applied
          * @param state
          */
-        protected _filterState(state: IViewStateSet): IViewStateGet {
+        protected _filterState(state: State): IViewComponentFilteredState {
             return state;
         }
 
@@ -400,7 +389,7 @@ namespace ajs.mvvm.viewmodel {
          * @param key name of the key
          * @param state state
          */
-        protected _filterStateKey(key: string, state: IViewStateSet): IFilteredState {
+        protected _filterStateKey(key: string, value: any): IFilteredState {
             return {
                 filterApplied: false,
                 key: null,
@@ -412,7 +401,7 @@ namespace ajs.mvvm.viewmodel {
          * This method can be overriden to remap the array state key or modify the state value
          * @param state
          */
-        protected _filterStateArrayItem(key: string, index: number, length: number, state: IViewStateSet): IFilteredState {
+        protected _filterStateArrayItem(key: string, index: number, length: number, state: State): IFilteredState {
             return {
                 filterApplied: false,
                 key: null,
@@ -420,14 +409,18 @@ namespace ajs.mvvm.viewmodel {
             };
         }
 
-        protected _applyState(state: IViewStateSet): void {
+        protected _applyState(state: State): void {
+
             // perform the state filtering
-            state = this._filterState(state);
+            state = <any>this._filterState(state);
 
             // apply the state
             if (state && state !== null) {
-                for (let key in state) {
-                    if (state.hasOwnProperty(key)) {
+                for (let keyOfState in state) {
+
+                    if (state.hasOwnProperty(keyOfState)) {
+
+                        let key: string = keyOfState;
 
                         // perform the state key/value filtering
                         let filteredState: IFilteredState = this._filterStateKey(key, state[key]);
@@ -441,7 +434,7 @@ namespace ajs.mvvm.viewmodel {
                         if (this.hasOwnProperty(key)) {
                             // update children component state
                             if (this[key] instanceof ViewComponent) {
-                                (this[key] as ViewComponent).setState(state[key]);
+                                (this[key] as ViewComponent<any, any>).setState(state[key]);
                             } else {
                                 // set or update array of children components
                                 if (state[key] instanceof Array &&
@@ -463,8 +456,8 @@ namespace ajs.mvvm.viewmodel {
 
                                         // delete component
                                         if (del) {
-                                            (this[key][i] as ViewComponent).destroy();
-                                            this.ajs.view.notifyParentsChildrenStateChange((this[key][i] as ViewComponent).ajs.parentComponent);
+                                            (this[key][i] as ViewComponent<any, any>).destroy();
+                                            this.ajs.view.notifyParentsChildrenStateChange((this[key][i] as ViewComponent<any, any>).ajs.parentComponent);
                                             this[key].splice(i, 1);
                                             if (this[key].length === 0) {
                                                 this.ajs.stateKeys.splice(this.ajs.stateKeys.indexOf(key), 1);
@@ -482,10 +475,10 @@ namespace ajs.mvvm.viewmodel {
                                     for (i = 0; i < state[key].length; i++) {
                                         // update component state
                                         if (this[key].length > i && this[key][i].key === state[key][i].key) {
-                                            (this[key][i] as ViewComponent).setState(state[key][i]);
+                                            (this[key][i] as ViewComponent<any, any>).setState(state[key][i]);
                                         } else {
                                             // create new component
-                                            let newViewComponent: ViewComponent =
+                                            let newViewComponent: ViewComponent<any, any> =
                                                 this._createViewComponent(key, this.ajs.visualComponent.children[key], state[key][i]);
                                             this[key].splice(i, 0, newViewComponent);
                                         }
@@ -523,7 +516,7 @@ namespace ajs.mvvm.viewmodel {
 
                                             let j: number = 0;
                                             while (j < filteredState.state.length) {
-                                                let newViewComponent: ViewComponent;
+                                                let newViewComponent: ViewComponent<any, any>;
                                                 newViewComponent = this._createViewComponent(key, this.ajs.visualComponent.children[key], filteredState.state[j]);
                                                 if (j === 0) {
                                                     this[key][i] = newViewComponent;
@@ -539,7 +532,7 @@ namespace ajs.mvvm.viewmodel {
                                             }
 
                                         } else {
-                                            let newViewComponent: ViewComponent;
+                                            let newViewComponent: ViewComponent<any, any>;
                                             newViewComponent = this._createViewComponent(key, this.ajs.visualComponent.children[key], filteredState.filterApplied && filteredState.key === key ? filteredState.state : state[key][i]);
                                             this[key][i] = newViewComponent;
                                         }
@@ -571,13 +564,13 @@ namespace ajs.mvvm.viewmodel {
                                 // build a new filtered state
                                 if (filteredStates.length > 0) {
 
-                                    let filteredState: IViewStateSet = {};
+                                    let filteredState: IViewComponentState = {};
                                     for (let i: number = 0; i < filteredStates.length; i++) {
                                         if (filteredState[filteredStates[i].key] === undefined) {
                                             filteredState[filteredStates[i].key] = [];
                                         }
                                         if (filteredStates[i].state instanceof Array) {
-                                            for (let j: number = 0; j < (filteredStates[i].state as IViewStateSet[]).length; j++) {
+                                            for (let j: number = 0; j < (filteredStates[i].state as IViewComponentState[]).length; j++) {
                                                 filteredState[filteredStates[i].key].push(filteredStates[i].state[j]);
                                             }
                                         } else {
@@ -586,7 +579,7 @@ namespace ajs.mvvm.viewmodel {
                                     }
 
                                     // try to reapply the filtered state
-                                    this._applyState(filteredState);
+                                    this._applyState(<any>filteredState);
 
                                 } else {
 
@@ -619,7 +612,7 @@ namespace ajs.mvvm.viewmodel {
             return this.ajsProperties.viewComponentManager.createViewComponent(name, id, this.ajsProperties.view, this, state);
         }*/
 
-        protected _createViewComponent(id: string, viewComponentInfo: ajs.templating.IVisualComponentChildInfo, state: IViewStateSet): ViewComponent {
+        protected _createViewComponent(id: string, viewComponentInfo: ajs.templating.IVisualComponentChildInfo, state: IViewComponentState): ViewComponent<any, any> {
 
             let name: string = viewComponentInfo.tagName;
             if (name === "COMPONENT" && viewComponentInfo.nameAttribute) {
@@ -680,14 +673,14 @@ namespace ajs.mvvm.viewmodel {
 
                 // if it is a view component, render it
                 if (this[id] instanceof ViewComponent) {
-                    (this[id] as ViewComponent).render(targetNode as HTMLElement, clearStateChangeOnly, sourceNode.attributes);
+                    (this[id] as ViewComponent<any, any>).render(targetNode as HTMLElement, clearStateChangeOnly, sourceNode.attributes);
                 } else {
                     // if it is an array
                     if (this[id] instanceof Array) {
                         // go through it and render all view components existing in the array
                         for (let i: number = 0; i < this[id].length; i++) {
                             if (this[id][i] instanceof ViewComponent) {
-                                (this[id][i] as ViewComponent).render(targetNode as HTMLElement, clearStateChangeOnly, sourceNode.attributes);
+                                (this[id][i] as ViewComponent<any, any>).render(targetNode as HTMLElement, clearStateChangeOnly, sourceNode.attributes);
                             }
                         }
                     }
@@ -1000,7 +993,7 @@ namespace ajs.mvvm.viewmodel {
         public insertChildComponent(
             viewComponentName: string,
             id: string,
-            state: IViewStateSet,
+            state: IViewComponentState,
             placeholder: string,
             index?: number): void {
 
@@ -1017,7 +1010,7 @@ namespace ajs.mvvm.viewmodel {
 
             this._visualComponentInsertChild(placeholder, viewComponentName, id, index);
 
-            let thisState: IViewStateSet = {};
+            let thisState: State = <any>{};
             thisState[id] = state;
 
             this.setState(thisState);

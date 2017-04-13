@@ -74,8 +74,8 @@ namespace ajs.mvvm.viewmodel {
             name: string,
             id: string,
             view: view.View,
-            parentComponent: ViewComponent,
-            state?: IViewStateSet): ViewComponent {
+            parentComponent: IParentViewComponent,
+            state?: IViewComponentState): ViewComponent<any, any> {
 
             ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
@@ -107,7 +107,7 @@ namespace ajs.mvvm.viewmodel {
                 ajs.utils.getFunctionName(viewComponentConstructor) + "[" + componentViewId + "]:" + id, view, parentComponent, state);
 
             // create view component and store its instance to the collection identified by id
-            let viewComponent: ViewComponent;
+            let viewComponent: ViewComponent<any, any>;
             viewComponent = new viewComponentConstructor(view, this, id, componentViewId, parentComponent, visualComponent, state);
             this._componentInstances[componentViewId] = viewComponent;
 
@@ -116,7 +116,7 @@ namespace ajs.mvvm.viewmodel {
             return viewComponent;
         }
 
-        public removeComponentInstance(component: ViewComponent): void {
+        public removeComponentInstance(component: ViewComponent<any, any>): void {
             delete (this._componentInstances[component.componentViewId]);
         }
 
@@ -127,7 +127,7 @@ namespace ajs.mvvm.viewmodel {
             }
             return null;
         }
-        public getComponentInstanceByComponentId(componentId: number): ViewComponent {
+        public getComponentInstanceByComponentId(componentId: number): ViewComponent<any, any> {
             if (this._componentInstances.hasOwnProperty(componentId.toString())) {
                 return this._componentInstances[componentId];
             }
@@ -157,8 +157,8 @@ namespace ajs.mvvm.viewmodel {
             return false;
         }
 
-        public getChildrenComponentInstances(component: ViewComponent): ViewComponent[] {
-            let childrenInstances: ViewComponent[] = [];
+        public getChildrenComponentInstances(component: ViewComponent<any, any>): ViewComponent<any, any>[] {
+            let childrenInstances: ViewComponent<any, any>[] = [];
             for (let key in this._componentInstances) {
                 if (this._componentInstances.hasOwnProperty(key)) {
                     if (this._componentInstances[key].ajs.parentComponent === component) {
@@ -169,9 +169,9 @@ namespace ajs.mvvm.viewmodel {
             return childrenInstances;
         }
 
-        public getComponentInstance(component: typeof ViewComponent, id?: string, userKey?: string): ViewComponent[] {
+        public getComponentInstance(component: typeof ViewComponent, id?: string, userKey?: string): ViewComponent<any, any>[] {
 
-            let viewComponentInstances: ViewComponent[] = [];
+            let viewComponentInstances: ViewComponent<any, any>[] = [];
 
             let componentConstructorName: string = ajs.utils.getFunctionName(component);
 
@@ -201,7 +201,7 @@ namespace ajs.mvvm.viewmodel {
             return viewComponentInstances;
         }
 
-        public getFirstComponentInstance<T extends ViewComponent>(component: typeof ViewComponent, id?: string, userKey?: string): T {
+        public getFirstComponentInstance<T extends ViewComponent<any, any>>(component: typeof ViewComponent, id?: string, userKey?: string): T {
 
             let componentConstructorName: string = ajs.utils.getFunctionName(component);
 

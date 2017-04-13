@@ -31,7 +31,7 @@ namespace ajs.routing {
 
         protected _lastURL: string;
         protected _lastViewComponentName: string;
-        protected _lastViewComponentInstance: ajs.mvvm.viewmodel.ViewComponent;
+        protected _lastViewComponentInstance: ajs.mvvm.viewmodel.ViewComponent<any, any>;
 
         protected _routes: IRoutes[];
         public get routes(): IRoutes[] { return this._routes; }

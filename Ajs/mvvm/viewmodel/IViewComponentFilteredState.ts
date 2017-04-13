@@ -25,7 +25,7 @@ namespace ajs.mvvm.viewmodel {
 
     "use strict";
 
-    export interface IViewStateGet {
+    export interface IViewComponentFilteredState {
         [key: string]: any;
     }
 

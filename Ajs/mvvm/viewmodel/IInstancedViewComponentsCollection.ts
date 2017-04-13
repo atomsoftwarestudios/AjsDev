@@ -26,7 +26,7 @@ namespace ajs.mvvm.viewmodel {
     "use strict";
 
     export interface IInstancedViewComponentsCollection {
-        [index: number]: ViewComponent;
+        [index: number]: ViewComponent<any, any>;
     }
 
 }

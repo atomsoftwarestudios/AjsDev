@@ -25,8 +25,7 @@ namespace ajs.mvvm.viewmodel {
 
     "use strict";
 
-    export interface IViewStateSet {
-        [key: string]: any;
+    export interface IParentViewComponent {
     }
 
 }
