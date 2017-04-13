@@ -1,6 +1,6 @@
-﻿/*! ************************************************************************
-License
-Copyright (c)Year, Company. All rights reserved.
+﻿/* *************************************************************************
+Released under MIT License
+Copyright (c)2017, Atom Software Studios. All rights reserved.
 **************************************************************************** */
 
 namespace HelloWorld {

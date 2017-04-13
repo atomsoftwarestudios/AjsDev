@@ -9,7 +9,6 @@ Released under the MIT License
 Table of Contents
 
 - [Introduction](#introduction)
-- [Configuration](#configuration)
 - [Style sheet](#style-sheet-visual-component-style)
 - [Template & Visual Components](#template-visual-components)
 - [View Components](#view-components)

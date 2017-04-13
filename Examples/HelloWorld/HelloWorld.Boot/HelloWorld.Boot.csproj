@@ -22,7 +22,9 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="bootconfig.ts" />
+    <TypeScriptCompile Include="appresources.ts" />
+    <TypeScriptCompile Include="appconfig.ts" />
+    <TypeScriptCompile Include="ajsconfig.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="tsconfig.json" />

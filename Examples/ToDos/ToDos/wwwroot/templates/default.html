@@ -1,6 +1,6 @@
 <ajstemplate name="default" stylesheets="/templates/default.css">
 
-    <component name="Tasks">
+    <component name="TasksComponent">
 
 
         <div class="tasksContainer">
@@ -32,7 +32,7 @@
                     <th class="tasksColumn tasksColumnEdit">Edit</th>
                 </tr>
 
-                <tr component="TaskItem" id="tasks" class="tasksItem">
+                <tr component="TaskItemComponent" id="tasks" class="tasksItem">
                     <td class="tasksColumn tasksColumnDone textAlignCenter">
                         <input type="checkbox" key="{key}" checked="{done}" onchange="doneChanged" />
                     </td>

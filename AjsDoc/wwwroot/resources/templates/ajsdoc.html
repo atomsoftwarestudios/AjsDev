@@ -2,11 +2,11 @@
 
     <!-- VIEW COMPONENTS -->
 
-    <component name="AjsDoc" class="ajsDoc">
-        <ajsDocLayout id="ajsDocLayout"></ajsDocLayout>
+    <component name="AjsDocComponent" class="ajsDoc">
+        <AjsDocLayoutComponent id="ajsDocLayout"></AjsDocLayoutComponent>
     </component>
 
-    <component name="AjsDocHeader" role="heading">
+    <component name="AjsDocHeaderComponent" role="heading">
         <div class="ajsDocHeaderLabelContainer">
             <h3 class="ajsDocHeaderLabel">{headerLabel}</h3>
             <br />
@@ -14,7 +14,7 @@
         </div>
     </component>
 
-    <component name="AjsDocFooter">
+    <component name="AjsDocFooterComponent">
         <div>
             AjsDoc browser v. 1.0.0 (<a class="ajsDocLink" href="https://github.com/atomsoftwarestudios/ajsDoc">GitHub</a>)
             Using the Ajs Frontend Application Framework (<a class="ajsDocLink" href="https://github.com/atomsoftwarestudios/ajs">GitHub</a>)<br />
@@ -27,11 +27,11 @@
     <!-- ------------------------------------------------------------------------------------------------------------------------ -->
     <!-- LAYOUT COMPONENT -->
 
-    <component name="AjsDocLayout">
+    <component name="AjsDocLayoutComponent">
 
         <div role="dialog" class="ajsDocLayoutDialog" dialogvisible="{dialogVisible}" onmousedown="dialogClick" ontouchmove="touchMove"></div>
 
-        <div component="AjsDocLayoutMenuButton" id="ajsDocLayoutMenuButton" class="ajsDocLayoutMenuButton" menuvisible="{menuVisible}" onmousedown="toggleMenu">
+        <div component="AjsDocLayoutMenuButtonComponent" id="ajsDocLayoutMenuButton" class="ajsDocLayoutMenuButton" menuvisible="{menuVisible}" onmousedown="toggleMenu">
             <div class="ajsDocLayoutMenuButtonLogo"></div>
             <div class="ajsDocLayoutMenuButtonHamburger"></div>
         </div>
@@ -39,15 +39,15 @@
         <div class="ajsDocLayoutMenuContainer" menuvisible="{menuVisible}" ontouchmove="touchMove">
 
             <div class="ajsDocLayoutHeaderContainer">
-                <ajsDocHeader id="ajsDocHeader"></ajsDocHeader>
+                <AjsDocHeaderComponent id="ajsDocHeader"></AjsDocHeaderComponent>
             </div>
 
-            <div component="AjsDocContextSwitcher" id="ajsDocContextSwitcher" class="ajsDocContextSwitcher">
+            <div component="AjsDocContextSwitcherComponent" id="ajsDocContextSwitcher" class="ajsDocContextSwitcher">
                 <button class="ajsDocContextSwitcherButton" selected="{guides}" onmousedown="onGuidesClick">Guide &amp; Examples</button><!--
-                --><button class="ajsDocContextSwitcherButton" selected="{references}" onmousedown="onReferenceGuideClick">Reference Guide</button>
+             --><button class="ajsDocContextSwitcherButton" selected="{references}" onmousedown="onReferenceGuideClick">Reference Guide</button>
             </div>
 
-            <ajsDocMenu id="ajsDocMenu"></ajsDocMenu>
+            <AjsDocMenuComponent id="ajsDocMenu"></AjsDocMenuComponent>
         </div>
 
         <div class="ajsDocLayoutContentContainer" menuvisible="{menuVisible}">
@@ -55,12 +55,12 @@
                 PageNav
             </div>-->
 
-            <ajsDocNavBar id="ajsDocNavBar"></ajsDocNavBar>
-            <ajsDocArticle id="ajsDocArticle"></ajsDocArticle>
+            <AjsDocNavBarComponent id="ajsDocNavBar"></AjsDocNavBarComponent>
+            <AjsDocArticleComponent id="ajsDocArticle"></AjsDocArticleComponent>
 
 
             <div class="ajsDocLayoutFooterContainer">
-                <ajsDocFooter id="ajsDocFooter"></ajsDocFooter>
+                <AjsDocFooterComponent id="ajsDocFooter"></AjsDocFooterComponent>
             </div>
         </div>
 
@@ -71,9 +71,9 @@
     <!-- ------------------------------------------------------------------------------------------------------------------------ -->
     <!-- NAV BAR COMPONENTS -->
 
-    <component name="AjsDocNavBar">
+    <component name="AjsDocNavBarComponent">
         <div class="ajsDocNavBar" if="this.items">
-            <span component="AjsDocNavBarItem" id="items">
+            <span component="AjsDocNavBarItemComponent" id="items">
                 <span if="!this.firstItem"> / </span>
                 <a class="ajsDocLink" href="{itemPath}" style="white-space: nowrap">{itemType} {itemLabel}</a>
             </span>
@@ -84,7 +84,7 @@
     <!-- ------------------------------------------------------------------------------------------------------------------------ -->
     <!-- MENU COMPONENTS -->
 
-    <div component="AjsDocMenu" class="ajsDocMenu" visible="{visible}" ontouchmove="touchMove" onstatetransitionbegin="stateTransitionBegin" onanimationend="stateTransitionEnd">
+    <div component="AjsDocMenuComponent" class="ajsDocMenu" visible="{visible}" ontouchmove="touchMove" onstatetransitionbegin="stateTransitionBegin" onanimationend="stateTransitionEnd">
         
         <div class="ajsDocMenuLabel" if="this.parentLabel !== undefined && this.parentLabel !== null && this.parentLabel !=='' && this.parentPath !== undefined">
             <a class="ajsDocLink ajsDocMenuItemLinkParent" href="{parentPath}">
@@ -94,14 +94,14 @@
             </a>
         </div>
 
-        <AjsDocMenuItem id="items" class="ajsDocMenuItemLinkNonGrouped"></AjsDocMenuItem>
+        <AjsDocMenuItemComponent id="items" class="ajsDocMenuItemLinkNonGrouped"></AjsDocMenuItemComponent>
 
-        <component name="AjsDocMenuGroup" id="groups">
+        <component name="AjsDocMenuGroupComponent" id="groups">
 
             <div class="ajsDocMenuItemGroupLabel" style="border-bottom: solid 1px #EAF4F8">{label}</div>
 
             <ul class="ajsDocMenuItemGroup">
-                <li component="AjsDocMenuItem" id="items" class="ajsDocMenuItem" ajsmenulabel="{menuLabel}" ajsselected="{selected}" style="border-bottom: solid 1px #EAF4F8">
+                <li component="AjsDocMenuItemComponent" id="items" class="ajsDocMenuItem" ajsmenulabel="{menuLabel}" ajsselected="{selected}" style="border-bottom: solid 1px #EAF4F8">
                     <a class="ajsDocLink ajsDocMenuItemLink" href="{path}">
                         <span if="this.expandable" style="float: right"><strong>&gt;</strong></span>
                         {label}
@@ -117,33 +117,33 @@
     <!-- ------------------------------------------------------------------------------------------------------------------------ -->
     <!-- CODE TEMPLATES -->
 
-    <span component="AjsDocMemberDataType"><!--
+    <span component="AjsDocMemberDataTypeComponent"><!--
      --><span if="this.ajs.parentComponent.kind !== 218">: </span><!--
      --><span class="hljs-built_in" if="this.name !==''">{name}</span><!--
      --><span class="hljs-built_in" if="this.name ===''">any</span><!--
  --></span>
 
-    <component name="AjsDocMemberFunctionParams"><!--
+    <component name="AjsDocMemberFunctionParamsComponent"><!--
      --><span if="this.restParameter">...</span><!--
      -->{name}<!--
      --><span if="this.optional">?</span><!--
      --><span><!--
-         --><ajsDocMemberDataType id="type"></ajsDocMemberDataType><!--
+         --><AjsDocMemberDataTypeComponent id="type"></AjsDocMemberDataTypeComponent><!--
      --></span><!--
      --><span if="this.initializer"> = {initializer}</span><!--
      --><span if="!this.isLast">, </span><!--
  --></component>
 
-    <component name="ajsDocMemberTypeParameters"><!--
+    <component name="ajsDocMemberTypeParametersComponent"><!--
      -->{name}<!--
      --><span if="!this.isLast">, </span><!--
  --></component>
 
-    <component class="hljs-built_in" name="AjsDocMemberExtends">{name}</component>
+    <component name="AjsDocMemberExtendsComponent" class="hljs-built_in">{name}</component>
 
-    <component class="hljs-built_in" name="AjsDocMemberImplements">{name}<span if="!this.isLast">, </span></component>
+    <component name="AjsDocMemberImplementsComponent" class="hljs-built_in">{name}<span if="!this.isLast">, </span></component>
 
-    <div component="AjsDocMember" class="ajsDocMember">
+    <div component="AjsDocMemberComponent" class="ajsDocMember">
 
         <a class="ajsDocLink" href="/ref/{fqdn}">
             <div class="ajsDocMemberStatement ">
@@ -155,15 +155,15 @@
                     <span class="hljs-keyword" if="this.isAbstract">abstract</span>
                     <span class="hljs-keyword" if="this.isStatic">static</span>
                     <span class="hljs-keyword" if="this.translatedKindString !== 'property' && this.translatedKindString !== 'method' && this.translatedKindString !== 'variable'">{translatedKindString} </span>{name}<!--
-                 --><span class="hljs-keyword" if="this.typeParameters">&lt;<ajsDocMemberTypeParameters id="typeParameters"></ajsDocMemberTypeParameters>&gt;</span><!--
-                 --><span class="hljs-keyword" if="this.extends && this.extends.name"> extends <ajsDocMemberExtends id="extends"></ajsDocMemberExtends></span><!--
-                 --><span class="hljs-keyword" if="this.implements"> implements <ajsDocMemberImplements id="implements"></ajsDocMemberImplements></span><!--
+                 --><span class="hljs-keyword" if="this.typeParameters">&lt;<AjsDocMemberTypeParametersComponent id="typeParameters"></AjsDocMemberTypeParametersComponent>&gt;</span><!--
+                 --><span class="hljs-keyword" if="this.extends && this.extends.name"> extends <AjsDocMemberExtendsComponent id="extends"></AjsDocMemberExtendsComponent></span><!--
+                 --><span class="hljs-keyword" if="this.implements"> implements <AjsDocMemberImplementsComponent id="implements"></AjsDocMemberImplementsComponent></span><!--
                  --><span if="this.parameters && this.kindString !== 'IndexSignature'">(</span><!--
                  --><span if="this.parameters && this.kindString === 'IndexSignature'">[</span><!--
-                 --><span if="this.parameters instanceof Array && this.parameters.length > 0"><ajsDocMemberFunctionParams id="parameters"></ajsDocMemberFunctionParams></span><!--
+                 --><span if="this.parameters instanceof Array && this.parameters.length > 0"><AjsDocMemberFunctionParamsComponent id="parameters"></AjsDocMemberFunctionParamsComponent></span><!--
                  --><span if="this.parameters && this.kindString !== 'IndexSignature'">)</span><!--
                  --><span if="this.parameters && this.kindString === 'IndexSignature'">]</span><!--
-                 --><ajsDocMemberDataType class="hljs-built_in" id="type"></ajsDocMemberDataType><!--
+                 --><AjsDocMemberDataTypeComponent class="hljs-built_in" id="type"></AjsDocMemberDataTypeComponent><!--
                  --><span if="this.initializer"> = <pre style="display: inline">{initializer}</pre></span>
                     <!--{body}-->
                 </code>
@@ -179,7 +179,7 @@
 
     </div>
 
-    <component name="AjsDocArticle" role="main" aria-live="assertive">
+    <component name="AjsDocArticleComponent" role="main" aria-live="assertive">
 
         <div style="padding-left: 0.5em; padding-right: 0.5em">
 
@@ -191,16 +191,16 @@
             <div if="this.hasDeclarations">
                 <h3>Declarations</h3>
                 <div class="ajsDocArticleContentMargin">
-                    <ajsDocMember id="declarations"></ajsDocMember>
+                    <AjsDocMemberComponent id="declarations"></AjsDocMemberComponent>
                 </div>
             </div>
 
             <div if="this.hasHierarchy">
                 <h3>Hierarchy</h3>
                 <p>
-                    <ul component="AjsDocHierarchy" id="hierarchy" style="text-decoration: none; list-style: none; margin: 0; padding-left: 1em">
+                    <ul component="AjsDocHierarchyComponent" id="hierarchy" style="text-decoration: none; list-style: none; margin: 0; padding-left: 1em">
                         <li><a class="ajsDocLink" href="/ref/{path}">{name}</a></li>
-                        <ajsDocHierarchy id="extends"></ajsDocHierarchy>
+                        <AjsDocHierarchyComponent id="extends"></AjsDocHierarchyComponent>
                     </ul>
                 </p>
             </div>
@@ -208,7 +208,7 @@
             <div if="this.implements">
                 <h3>Implements</h3>
                 <div class="ajsDocArticleContentMargin">
-                    <div component="AjsDocImplements" id="implements"><a class="ajsDocLink" href="/ref/{path}">{name}</a></div>
+                    <div component="AjsDocImplementsComponent" id="implements"><a class="ajsDocLink" href="/ref/{path}">{name}</a></div>
                 </div>
             </div>
 
@@ -219,57 +219,57 @@
 
             <div if="this.hasModules">
                 <h3>Modules</h3>
-                <ajsDocMember id="modules"></ajsDocMember>
+                <AjsDocMemberComponent id="modules"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasNamespaces">
                 <h3>Namespaces</h3>
-                <ajsDocMember id="namespaces"></ajsDocMember>
+                <AjsDocMemberComponent id="namespaces"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasInterfaces">
                 <h3>Interfaces</h3>
-                <ajsDocMember id="interfaces"></ajsDocMember>
+                <AjsDocMemberComponent id="interfaces"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasClasses">
                 <h3>Classes</h3>
-                <ajsDocMember id="classes"></ajsDocMember>
+                <AjsDocMemberComponent id="classes"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasFunctions">
                 <h3>Functions</h3>
-                <ajsDocMember id="functions"></ajsDocMember>
+                <AjsDocMemberComponent id="functions"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasConstants">
                 <h3>Constants</h3>
-                <ajsDocMember id="constants"></ajsDocMember>
+                <AjsDocMemberComponent id="constants"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasVariables">
                 <h3>Variables</h3>
-                <ajsDocMember id="variables"></ajsDocMember>
+                <AjsDocMemberComponent id="variables"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasEnumerations">
                 <h3>Enumerations</h3>
-                <ajsDocMember id="enumerations"></ajsDocMember>
+                <AjsDocMemberComponent id="enumerations"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasObjectLiterals">
                 <h3>Object literals</h3>
-                <ajsDocMember id="objectLiterals"></ajsDocMember>
+                <AjsDocMemberComponent id="objectLiterals"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasParameters">
                 <h3>Parameters</h3>
-                <ajsDocMember id="parameters"></ajsDocMember>
+                <AjsDocMemberComponent id="parameters"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasReturnValue">
                 <h3>Returns</h3>
-                <ajsDocMember id="returnValue"></ajsDocMember>
+                <AjsDocMemberComponent id="returnValue"></AjsDocMemberComponent>
             </div>
 
             <div if="this.hasMembers">
@@ -280,37 +280,37 @@
 
                     <div if="this.hasConstructors">
                         <h4>Constructors</h4>
-                        <ajsDocMember id="constructors"></ajsDocMember>
+                        <AjsDocMemberComponent id="constructors"></AjsDocMemberComponent>
                     </div>
 
                     <div if="this.hasCallSignatures">
                         <h4>Call signatures</h4>
-                        <ajsDocMember id="callSignatures"></ajsDocMember>
+                        <AjsDocMemberComponent id="callSignatures"></AjsDocMemberComponent>
                     </div>
 
                     <div if="this.hasIndexSignatures">
                         <h4>Index signatures</h4>
-                        <ajsDocMember id="indexSignatures"></ajsDocMember>
+                        <AjsDocMemberComponent id="indexSignatures"></AjsDocMemberComponent>
                     </div>
 
                     <div if="this.hasProperties">
                         <h4>Properties</h4>
-                        <ajsDocMember id="properties"></ajsDocMember>
+                        <AjsDocMemberComponent id="properties"></AjsDocMemberComponent>
                     </div>
 
                     <div if="this.hasAccessors">
                         <h4>Accessors</h4>
-                        <ajsDocMember id="accessors"></ajsDocMember>
+                        <AjsDocMemberComponent id="accessors"></AjsDocMemberComponent>
                     </div>
 
                     <div if="this.hasMethods">
                         <h4>Methods</h4>
-                        <ajsDocMember id="methods"></ajsDocMember>
+                        <AjsDocMemberComponent id="methods"></AjsDocMemberComponent>
                     </div>
 
                     <div if="this.hasEnumMembers">
                         <br />
-                        <ajsDocMember id="enumMembers"></ajsDocMember>
+                        <AjsDocMemberComponent id="enumMembers"></AjsDocMemberComponent>
                     </div>
 
                 </div>
@@ -319,7 +319,7 @@
 
             <div if="this.hasSourceFiles">
                 <h3>Source files</h3>
-                <div component="AjsDocSourceFile" class="ajsDocMember" id="files">
+                <div component="AjsDocSourceFileComponent" class="ajsDocMember" id="files">
                     <a class="ajsDocLink" href="/ref/{fqdn}">
                         <div>{name}</div>
                     </a>

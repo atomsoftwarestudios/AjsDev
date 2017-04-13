@@ -38,9 +38,9 @@ namespace ajsdoc {
     }
 
     export interface IContentDataReadyData {
-        menuState?: IMenuState;
-        navBarState?: INavBarItemsState;
-        articleState?: IAjsDocArticleState;
+        menuState?: IAjsDocMenuComponentState;
+        navBarState?: IAjsDocNavBarComponentState;
+        articleState?: IAjsDocArticleComponentState;
     }
 
     export class ContentModel extends ajs.mvvm.model.Model<IContentDataReadyData> {
@@ -176,7 +176,7 @@ namespace ajsdoc {
                 article = article.parent;
             }
 
-            let menu: IMenuState = {
+            let menu: IAjsDocMenuComponentState = {
                 parentLabel: "",
                 parentPath: "",
                 groups: [],
@@ -195,7 +195,7 @@ namespace ajsdoc {
             }
 
             for (let i: number = 0; i < article.children.length; i++) {
-                let item: IMenuItemState = {
+                let item: IAjsDocMenuItemComponentState = {
                     key: article.navPath,
                     label: article.children[i].label,
                     path: article.children[i].navPath,
@@ -265,13 +265,13 @@ namespace ajsdoc {
         }
 
         protected _getNavBar(path: string): void {
-            let items: INavBarItemsState = [];
+            let items: IAjsDocNavBarItemComponentState[] = [];
 
             let adata: IArticleData = this.navigate(path);
 
             let key: number = 0;
             while (adata !== null) {
-                let navBarItem: INavBarItemState = {
+                let navBarItem: IAjsDocNavBarItemComponentState = {
                     key: key.toString(),
                     firstItem: false,
                     itemPath: adata.navPath,

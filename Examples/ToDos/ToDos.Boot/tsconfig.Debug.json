@@ -9,7 +9,7 @@
     "declaration": false,
     // generate source maps
     "sourceMap": true,
-    "sourceRoot": "/src/SimpleApp.Boot",
+    "sourceRoot": "/src/ToDos.Boot",
     // remove comments
     "removeComments": false
   }

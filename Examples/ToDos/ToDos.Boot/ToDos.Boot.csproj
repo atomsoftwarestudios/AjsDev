@@ -32,7 +32,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="bootconfig.ts" />
+    <TypeScriptCompile Include="ajsconfig.ts" />
+    <TypeScriptCompile Include="appconfig.ts" />
+    <TypeScriptCompile Include="appresources.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="tsconfig.json" />

@@ -73,9 +73,9 @@ namespace ajsdoc {
      * Used to pass data from model to requestor (usually ViewComponent)
      */
     export interface IProgramDataReadyData {
-        menuState?: IMenuState;
-        navBarState?: INavBarItemsState;
-        articleState?: IAjsDocArticleState;
+        menuState?: IAjsDocMenuComponentState;
+        navBarState?: IAjsDocNavBarComponentState;
+        articleState?: IAjsDocArticleComponentState;
     }
 
     /**
@@ -287,8 +287,8 @@ namespace ajsdoc {
          * Sorts menu groups according the MENU_GROUP_SORT definition
          * @param menu Menu of which groups will be sorted
          */
-        protected _sortMenuGroups(menu: IMenuState): void {
-            menu.groups.sort((a: IMenuItemGroupState, b: IMenuItemGroupState): number => {
+        protected _sortMenuGroups(menu: IAjsDocMenuComponentState): void {
+            menu.groups.sort((a: IAjsDocMenuGroupComponentState, b: IAjsDocMenuGroupComponentState): number => {
                 let aa: number = MENU_GROUP_SORT.indexOf(a.label);
                 let bb: number = MENU_GROUP_SORT.indexOf(b.label);
                 if (aa === -1) {
@@ -306,8 +306,8 @@ namespace ajsdoc {
          * Sorts items in the group from A to Z
          * @param group
          */
-        protected _sortGroupItems(group: IMenuItemGroupState): void {
-            group.items.sort((a: IMenuItemState, b: IMenuItemState): number => {
+        protected _sortGroupItems(group: IAjsDocMenuGroupComponentState): void {
+            group.items.sort((a: IAjsDocMenuItemComponentState, b: IAjsDocMenuItemComponentState): number => {
                 let nameA: string = a.label.toUpperCase();
                 let nameB: string = b.label.toUpperCase();
                 if (nameA < nameB) {
@@ -325,7 +325,7 @@ namespace ajsdoc {
          * @param menu Menu to be searched for a group with specified name
          * @param groupName Name of the group to be searched
          */
-        protected _getMenuGroupByName(menu: IMenuState, groupName: string): IMenuItemGroupState {
+        protected _getMenuGroupByName(menu: IAjsDocMenuComponentState, groupName: string): IAjsDocMenuGroupComponentState {
             for (let g of menu.groups) {
                 if (g.label === groupName) {
                     return g;
@@ -341,8 +341,8 @@ namespace ajsdoc {
          * @param label Label of the menu group (usually doc node kind + doc node name)
          * @param items Items to be added to the group (usually [])
          */
-        protected _addMenuGroup(menu: IMenuState, key: any, label: string, items: IMenuItemState[]): IMenuItemGroupState {
-            let group: IMenuItemGroupState = {
+        protected _addMenuGroup(menu: IAjsDocMenuComponentState, key: any, label: string, items: IAjsDocMenuItemComponentState[]): IAjsDocMenuGroupComponentState {
+            let group: IAjsDocMenuGroupComponentState = {
                 key: key,
                 label: label,
                 items: items
@@ -356,7 +356,7 @@ namespace ajsdoc {
          * @param group Group to be checked
          * @param path Path of the item to be searched
          */
-        protected _menuGroupItemPathExists(group: IMenuItemGroupState, path: string): boolean {
+        protected _menuGroupItemPathExists(group: IAjsDocMenuGroupComponentState, path: string): boolean {
             for (let i of group.items) {
                 if (i.path === path) {
                     return true;
@@ -389,7 +389,7 @@ namespace ajsdoc {
             let parentPath: string = node.parent !== null && (node.parent.kind !== -1 || allowRoot) ? node.parent.fqdn : "";
 
             // prepare menu state
-            let menu: IMenuState = {
+            let menu: IAjsDocMenuComponentState = {
                 parentLabel: parentLabel,
                 parentPath: "/ref/" + parentPath,
                 groups: [],
@@ -412,7 +412,7 @@ namespace ajsdoc {
 
                     // translate the node kind to name in plural and locate an existing menu group
                     let groupName: string = this._getGroupNameFromNodeKind(children);
-                    let group: IMenuItemGroupState = this._getMenuGroupByName(menu, groupName);
+                    let group: IAjsDocMenuGroupComponentState = this._getMenuGroupByName(menu, groupName);
 
                     // create a new menu group if group with given name does not exist
                     if (group === null) {
@@ -468,7 +468,7 @@ namespace ajsdoc {
          */
         protected _getNavBar(path: string): void {
 
-            let items: INavBarItemsState = [];
+            let items: IAjsDocNavBarItemComponentState[] = [];
 
             let node: atsdoc.IATsDocNode = this.navigateDocNode(path);
 
@@ -490,7 +490,7 @@ namespace ajsdoc {
                 pth += s;
                 let n: atsdoc.IATsDocNode = this.navigateDocNode(pth);
 
-                let navBarItem: INavBarItemState = {
+                let navBarItem: IAjsDocNavBarItemComponentState = {
                     key: n.fqdn,
                     firstItem: index === 0,
                     itemPath: "/ref/" + n.fqdn,
@@ -504,7 +504,7 @@ namespace ajsdoc {
             }
 
             if (node !== this._data) {
-                let navBarItem: INavBarItemState = {
+                let navBarItem: IAjsDocNavBarItemComponentState = {
                     key: "root",
                     firstItem: true,
                     itemPath: "/ref/",
@@ -526,7 +526,7 @@ namespace ajsdoc {
 
             let node: atsdoc.IATsDocNode = this.navigateDocNode(path);
 
-            let articleState: IAjsDocArticleState = {};
+            let articleState: IAjsDocArticleComponentState = {};
             articleState.caption = translateNodeKind(node) + " " + node.name;
             this._getExtends(node, articleState);
             this._getImplements(node, articleState);
@@ -571,7 +571,7 @@ namespace ajsdoc {
 
         }
 
-        protected _getDeclarations(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+        protected _getDeclarations(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleComponentState): void {
 
             const noSyntax: atsdoc.SyntaxKind[] = [
                 -1,
@@ -584,7 +584,7 @@ namespace ajsdoc {
             }
         }
 
-        protected _getImplements(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+        protected _getImplements(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleComponentState): void {
             if (!node.implements || !(node.implements.length === 0)) {
                 return;
             }
@@ -600,7 +600,7 @@ namespace ajsdoc {
             }
         }
 
-        protected _getExtends(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+        protected _getExtends(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleComponentState): void {
 
             if (!node.extends || !node.extends.name) {
                 return;
@@ -631,14 +631,14 @@ namespace ajsdoc {
 
         }
 
-        protected _addMember(articleState: IAjsDocArticleState, kind: string, n: atsdoc.IATsDocNode): void {
+        protected _addMember(articleState: IAjsDocArticleComponentState, kind: string, n: atsdoc.IATsDocNode): void {
             if (!(articleState[kind] instanceof Array)) {
                 articleState[kind] = [];
             }
             articleState[kind].push(n);
         }
 
-        protected _addMembers_childrenNodes(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+        protected _addMembers_childrenNodes(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleComponentState): void {
 
             if (!(node.children instanceof Array) || !(node.children.length > 0)) {
                 return;
@@ -718,7 +718,7 @@ namespace ajsdoc {
 
         }
 
-        protected _addMembers_nodeParameters(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+        protected _addMembers_nodeParameters(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleComponentState): void {
             if (!(node.parameters instanceof Array) || !(node.parameters.length > 0)) {
                 return;
             }
@@ -728,7 +728,7 @@ namespace ajsdoc {
             }
         }
 
-        protected _addMembers_returnValue(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+        protected _addMembers_returnValue(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleComponentState): void {
 
             if ((node.kind !== atsdoc.SyntaxKind.FunctionDeclaration) && (node.kind !== atsdoc.SyntaxKind.MethodDeclaration)) {
                 return;
@@ -764,7 +764,7 @@ namespace ajsdoc {
 
         }
 
-        protected _addMembers_sourceFiles(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+        protected _addMembers_sourceFiles(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleComponentState): void {
 
             if (!node.children) {
                 return;
@@ -785,7 +785,7 @@ namespace ajsdoc {
             }
         }
 
-        protected _getMembers(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleState): void {
+        protected _getMembers(node: atsdoc.IATsDocNode, articleState: IAjsDocArticleComponentState): void {
 
             this._addMembers_childrenNodes(node, articleState);
             this._addMembers_nodeParameters(node, articleState);

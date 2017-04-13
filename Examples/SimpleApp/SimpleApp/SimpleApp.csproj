@@ -39,7 +39,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Components\Clock.ts" />
+    <TypeScriptCompile Include="Components\ClockComponent.ts" />
     <TypeScriptCompile Include="IApplicationConfig.ts" />
     <TypeScriptCompile Include="Application.ts" />
     <TypeScriptCompile Include="TemplatesLoadingFailedException.ts" />

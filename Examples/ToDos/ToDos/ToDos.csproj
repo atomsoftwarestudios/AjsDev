@@ -45,11 +45,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Components\Tasks.ts" />
-    <TypeScriptCompile Include="Components\TaskItem.ts" />
+    <TypeScriptCompile Include="Components\TasksComponent.ts" />
+    <TypeScriptCompile Include="Components\TaskItemComponent.ts" />
     <TypeScriptCompile Include="IApplicationConfig.ts" />
     <TypeScriptCompile Include="Application.ts" />
-    <TypeScriptCompile Include="Models\Tasks.ts" />
+    <TypeScriptCompile Include="Models\TasksModel.ts" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

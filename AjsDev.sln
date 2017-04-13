@@ -52,10 +52,18 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{64E6D9F3-5B99-4D6B-A183-3EC814B29BD0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01-HelloWorld", "01-HelloWorld", "{6A624A6A-50B4-4176-BD7B-BAF8BC529E92}"
+	ProjectSection(SolutionItems) = preProject
+		Examples\HelloWorld\LICENSE = Examples\HelloWorld\LICENSE
+		Examples\HelloWorld\README.MD = Examples\HelloWorld\README.MD
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03-AjsHTMLControls", "03-AjsHTMLControls", "{25DC5603-7B0E-4A28-9C02-F9AD619519CD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02-SimpleApp", "02-SimpleApp", "{EDBD45AE-9C24-42F6-8913-295A3C656049}"
+	ProjectSection(SolutionItems) = preProject
+		Examples\SimpleApp\LICENSE = Examples\SimpleApp\LICENSE
+		Examples\SimpleApp\README.MD = Examples\SimpleApp\README.MD
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06-ToDosOffline", "06-ToDosOffline", "{5B2941E5-A68E-44B4-BE25-580DB474CC5E}"
 EndProject
