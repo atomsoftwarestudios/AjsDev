@@ -53,6 +53,11 @@
     <TypeScriptCompile Include="Dbg\Modules\logger\LoggerToolbar.tsx" />
     <TypeScriptCompile Include="Dbg\Tsx\IViewComponent.ts" />
     <TypeScriptCompile Include="Dbg\Tsx\Tsx.ts" />
+    <TypeScriptCompile Include="DI\Container.ts" />
+    <TypeScriptCompile Include="DI\Decorators.ts" />
+    <TypeScriptCompile Include="DI\IContainer.ts" />
+    <TypeScriptCompile Include="DI\IService.ts" />
+    <TypeScriptCompile Include="DI\IServiceInstance.ts" />
     <TypeScriptCompile Include="Doc\Exceptions.ts" />
     <TypeScriptCompile Include="Doc\IComponent.ts" />
     <TypeScriptCompile Include="Doc\INodeEventListenerInfo.ts" />
