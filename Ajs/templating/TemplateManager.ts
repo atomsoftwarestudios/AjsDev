@@ -21,14 +21,14 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.templating {
+namespace Ajs.Templating {
 
     "use strict";
 
     export class TemplateManager {
 
-        protected _resourceManager: resources.ResourceManager;
-        public get resourceManager(): resources.ResourceManager { return this._resourceManager; }
+        protected _resourceManager: Resources.ResourceManager;
+        public get resourceManager(): Resources.ResourceManager { return this._resourceManager; }
 
         protected _templates: ITemplatesCollection;
         public get templates(): ITemplatesCollection { return this._templates; }
@@ -36,7 +36,7 @@ namespace ajs.templating {
         protected _visualComponents: IVisualComponentCollection;
         public get VisualComponents(): IVisualComponentCollection { return this._visualComponents; }
 
-        public constructor(resourceManager: resources.ResourceManager) {
+        public constructor(resourceManager: Resources.ResourceManager) {
             this._resourceManager = resourceManager;
             this._templates = {};
             this._visualComponents = {};
@@ -44,14 +44,14 @@ namespace ajs.templating {
 
         public loadTemplates(
             paths: string[],
-            storageType: resources.STORAGE_TYPE,
-            cachePolicy: resources.CACHE_POLICY,
-            loadingPreference?: resources.LOADING_PREFERENCE
+            storageType: Resources.STORAGE_TYPE,
+            cachePolicy: Resources.CACHE_POLICY,
+            loadingPreference?: Resources.LOADING_PREFERENCE
         ): Promise<Template[]> {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.templating", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.templating", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.templating", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.templating", this);
 
             return new Promise<Template[]>(
 
@@ -61,13 +61,13 @@ namespace ajs.templating {
 
                     try {
                         // load all template resources
-                        let resourcePromises: Promise<resources.IResource>[] = [];
+                        let resourcePromises: Promise<Resources.IResource>[] = [];
                         for (let i: number = 0; i < paths.length; i++) {
                             resourcePromises.push(this._resourceManager.getResource(paths[i], storageType, cachePolicy, loadingPreference));
                         }
 
                         // wait for all resources to be loaded
-                        let resources: resources.IResource[] = await Promise.all(resourcePromises);
+                        let resources: Resources.IResource[] = await Promise.all(resourcePromises);
 
                         // create templates from loaded resources
                         let styleSheetLoaders: Promise<void>[] = [];

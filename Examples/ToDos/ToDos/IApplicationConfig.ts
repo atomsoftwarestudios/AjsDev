@@ -2,7 +2,7 @@
 
     "use strict";
 
-    export interface IApplicationConfig extends ajs.app.IApplicationConfig {
+    export interface IApplicationConfig extends Ajs.App.IApplicationConfig {
     }
 
 }

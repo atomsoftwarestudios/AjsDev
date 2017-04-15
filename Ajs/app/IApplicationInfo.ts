@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.app {
+namespace Ajs.App {
 
     "use strict";
 
@@ -32,7 +32,7 @@ namespace ajs.app {
     export interface IApplicationInfo {
 
         /** Constructor of the user application class derived from the ajs.app.Application class */
-        appConstructor?: typeof ajs.app.Application;
+        appConstructor?: typeof Ajs.App.Application;
 
         /** User configuration of the application */
         config?: IApplicationConfig;

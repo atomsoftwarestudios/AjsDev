@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.resources {
+namespace Ajs.Resources {
 
     "use strict";
 
@@ -160,7 +160,7 @@ namespace ajs.resources {
          */
         public constructor(config?: IResourceManagerConfig) {
 
-            ajs.dbg.log(dbg.LogType.Constructor, 0, "ajs.resources", this, "", config);
+            Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.resources", this, "", config);
 
             // store config locally
             if (config === undefined) {
@@ -177,28 +177,28 @@ namespace ajs.resources {
             this._managedResources = this._getManagedResources();
 
             // do some logging
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Local storage used space: " + this._storageLocal.usedSpace + "/" + this._storageLocal.cacheSize);
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Local storage managed resources count: " + this._storageLocal.resources.length);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Session storage used space: " + this._storageSession.usedSpace + "/" + this._storageSession.cacheSize);
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Session storage managed resources count: " + this._storageSession.resources.length);
 
             // this will be always 0/max/0, just for sure everything works fine
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Memory storage used space: " + this._storageMemory.usedSpace + "/" + this._storageMemory.cacheSize);
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Memory storage managed resources count: " + this._storageMemory.resources.length);
 
             if (this._config.removeResourcesOlderThan !== undefined) {
-                ajs.dbg.log(dbg.LogType.Warning, 0, "ajs.resources", this,
+                Ajs.Dbg.log(Dbg.LogType.Warning, 0, "ajs.resources", this,
                     "IMPLEMENT: ResourceManager.constructor - removeResourcesOlderThan functionality");
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
         }
 
         /**
@@ -206,12 +206,12 @@ namespace ajs.resources {
          */
         protected _defaultConfig(): IResourceManagerConfig {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "ResourceManager configuration not provided, fallback to default");
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return {
                 memoryCacheSize: MEMORY_CACHE_SIZE,
@@ -227,9 +227,9 @@ namespace ajs.resources {
          */
         protected _getManagedResources(): IManagedResource[] {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Getting list of previously managed resources");
 
             let managedResources: IManagedResource[] = [];
@@ -244,7 +244,7 @@ namespace ajs.resources {
                 });
             }
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Number of previously managed resources [local storage]: " + tmp.length);
 
             // get managed resources for the session storage
@@ -257,15 +257,15 @@ namespace ajs.resources {
                 });
             }
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Number of previously managed resources [session storage]: " + tmp.length);
 
             // there are no managed resources stored in memory storage for sure as open/reload occured
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Number of previously managed resources [memory storage]: 0");
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return managedResources;
         }
@@ -293,9 +293,9 @@ namespace ajs.resources {
          */
         public registerManagedResources(managedResources: IManagedResource[]): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Restering managed resources (" + managedResources.length + ")", managedResources);
 
             // go through all managed resources to be registered
@@ -308,7 +308,7 @@ namespace ajs.resources {
                 // regisret it if not
                 if (managedResource === null) {
 
-                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                         "Registering a managed resource: " +
                         managedResources[i].url +
                         " [" + STORAGE_TYPE[managedResources[i].storageType] +
@@ -322,7 +322,7 @@ namespace ajs.resources {
                     });
 
                 } else {
-                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                         "Resource is managed already: " + managedResource.url +
                         " [" + STORAGE_TYPE[managedResource.storageType] +
                         ":" + CACHE_POLICY[managedResource.cachePolicy] +
@@ -331,7 +331,7 @@ namespace ajs.resources {
 
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
         }
 
         /**
@@ -341,18 +341,18 @@ namespace ajs.resources {
          */
         public getCachedResource(url: string, storageType: STORAGE_TYPE): ICachedResource {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Getting cached resource '" + url + "', Storage: " + STORAGE_TYPE[storageType]);
 
             let storage: AjsStorage = this._getStorageFromType(storageType);
 
             if (storage !== null) {
-                ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+                Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
                 return storage.getResource(url);
             } else {
-                ajs.dbg.log(dbg.LogType.Error, 0, "ajs.resources", this, "Invalid storage type");
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this, "Invalid storage type");
                 throw new InvalidStorageTypeException();
             }
         }
@@ -367,9 +367,9 @@ namespace ajs.resources {
          */
         public setCachedResource(url: string, data: any, storageType: STORAGE_TYPE, cachePolicy: CACHE_POLICY): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Setting / Updating the cached resource " + url + " " + STORAGE_TYPE[storageType] + " " + CACHE_POLICY[cachePolicy]);
 
             let storage: AjsStorage = this._getStorageFromType(storageType);
@@ -393,11 +393,11 @@ namespace ajs.resources {
                 storage.updateResource(resource);
 
             } else {
-                ajs.dbg.log(dbg.LogType.Error, 0, "ajs.resources", this, "Invalid storage type");
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this, "Invalid storage type");
                 throw new InvalidStorageTypeException();
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
         }
 
@@ -408,9 +408,9 @@ namespace ajs.resources {
          */
         public removeCachedResource(url: string, storageType: STORAGE_TYPE): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Removing the cached resource " + url + " " + STORAGE_TYPE[storageType]);
 
             let storage: AjsStorage = this._getStorageFromType(storageType);
@@ -428,11 +428,11 @@ namespace ajs.resources {
                 storage.removeResource(url);
 
             } else {
-                ajs.dbg.log(dbg.LogType.Error, 0, "ajs.resources", this, "Invalid storage type");
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this, "Invalid storage type");
                 throw new InvalidStorageTypeException();
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
         }
 
         /**
@@ -470,14 +470,14 @@ namespace ajs.resources {
             loadingPreference?: LOADING_PREFERENCE,
             runScript?: boolean): Promise<IResource> {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             // set default preference if not set by caller
             if (loadingPreference === undefined) {
                 loadingPreference = LOADING_PREFERENCE.CACHE;
             }
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Getting a resource '" + url + "', Loading preference: " + LOADING_PREFERENCE[loadingPreference]);
 
             // determine if the resource is local only or from the server
@@ -498,7 +498,7 @@ namespace ajs.resources {
                 (resolve: (resource: IResource) => void) => {
 
                     // update progress bar
-                    ajs.ui.ProgressBar.resourceLoading(url);
+                    Ajs.UI.ProgressBar.resourceLoading(url);
 
                     // let browser do its stuff like a UI updates
                     setTimeout(
@@ -520,14 +520,14 @@ namespace ajs.resources {
                                 // and if it was found, return it to caller
                                 if (cachedResource !== null) {
 
-                                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                                         "Cached resource found: " + cachedResource.url);
 
                                     // update initial progress bar
-                                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                                         "Updating initial progress bar with resource finished loading '" + url + "'");
 
-                                    ajs.ui.ProgressBar.resourceLoaded(url);
+                                    Ajs.UI.ProgressBar.resourceLoaded(url);
 
                                     let resource: IResource = {
                                         url: url,
@@ -546,18 +546,18 @@ namespace ajs.resources {
 
                                     }, WAIT);
 
-                                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                                         "Updating cached resource '" + url + "'");
 
                                     // try to update the resource from the server -> promise can be thrown out
                                     this._load(url, managedResource.storageType, managedResource.cachePolicy, runScript, false);
 
-                                    ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+                                    Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
                                 } else {
                                     // if its a local resource, ready with null as it was not found in cache
                                     if (localResource) {
 
-                                        ajs.dbg.log(dbg.LogType.Warning, 0, "ajs.resources", this,
+                                        Ajs.Dbg.log(Dbg.LogType.Warning, 0, "ajs.resources", this,
                                             "Local resource requested but not exists in cache");
 
                                         resourcePromise = new Promise<IResource>(
@@ -569,7 +569,7 @@ namespace ajs.resources {
                                     } else {
 
                                         // otherwise try to load it from the server
-                                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                                             "Resource not cached, trying to load it from server");
 
                                         resourcePromise = this._load(url, storageType, cachePolicy, runScript, true);
@@ -578,7 +578,7 @@ namespace ajs.resources {
 
                                 // this should never occur on managed resources
                             } else {
-                                ajs.dbg.log(dbg.LogType.Error, 0, "ajs.resources", this,
+                                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this,
                                     "Invalid storage type");
 
                                 resourcePromise = new Promise<IResource>(
@@ -591,7 +591,7 @@ namespace ajs.resources {
                         } else {
                             if (localResource) {
 
-                                ajs.dbg.log(dbg.LogType.Warning, 0, "ajs.resources", this,
+                                Ajs.Dbg.log(Dbg.LogType.Warning, 0, "ajs.resources", this,
                                     "Local resource requested but not exists in cache");
 
                                 resourcePromise = new Promise<IResource>(
@@ -603,7 +603,7 @@ namespace ajs.resources {
                             }
 
                             // otherwise try to load it from the server
-                            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                                 "Resource not managed, trying to load it from server");
 
                             // if storage type or caching policy was not added don't create managed resource
@@ -629,7 +629,7 @@ namespace ajs.resources {
 
             });
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return resourcePromise;
         }
@@ -659,7 +659,7 @@ namespace ajs.resources {
             loadingPreference?: LOADING_PREFERENCE,
             runScripts?: boolean): Promise<IResource[]> {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             // don't process anything else than array of urls
             if (!(urls instanceof Array)) {
@@ -676,7 +676,7 @@ namespace ajs.resources {
                 runScripts = true;
             }
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Getting multiple resources (" + urls.length + "), Storage: " + STORAGE_TYPE[storageType] +
                 ", Cache Policy: " + CACHE_POLICY[cachePolicy], urls);
 
@@ -702,7 +702,7 @@ namespace ajs.resources {
                             for (let i: number = 0; i < gettedResources.length; i++) {
 
                                 if (gettedResources[i].type === RESOURCE_TYPE.SCRIPT) {
-                                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                                         "Executing the getted script (load multiple): " + gettedResources[i].url);
 
                                     // use eval or insert the script tag to the code
@@ -726,7 +726,7 @@ namespace ajs.resources {
                 }
             );
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return resourcesPromise;
 
@@ -768,7 +768,7 @@ namespace ajs.resources {
             updateProgressBar?: boolean
         ): Promise<IResource> {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             if (runScript === undefined) {
                 runScript = true;
@@ -779,7 +779,7 @@ namespace ajs.resources {
                 // promise code
                 async (resolve: (resource: IResource) => void, reject: (reason: any) => void) => {
 
-                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                         "Loading resource: '" + url +
                         "', Storage: " + STORAGE_TYPE[storageType] +
                         ", Cache Policy: " + CACHE_POLICY[cachePolicy]);
@@ -790,16 +790,16 @@ namespace ajs.resources {
                     // basic checks and parameters update
                     if (storage !== null) {
                         if (!storage.supported) {
-                            ajs.dbg.log(dbg.LogType.Error, 0, "ajs.resources", this, "Storage type not supported");
+                            Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this, "Storage type not supported");
                             reject(new StorageTypeNotSupportedException());
                         }
 
                         if (cachePolicy === undefined || cachePolicy === CACHE_POLICY.NONE) {
-                            ajs.dbg.log(dbg.LogType.Error, 0, "ajs.resources", this, "Cache policy not set");
+                            Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this, "Cache policy not set");
                             reject(new CachePolicyMustBeSetException());
                         }
                     } else {
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Fallback to CACHE_POLICY.NONE");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Fallback to CACHE_POLICY.NONE");
                         cachePolicy = CACHE_POLICY.NONE;
                     }
 
@@ -841,7 +841,7 @@ namespace ajs.resources {
                     // setup resource info anyway, even if the resource was not in cache or its not a managed resource
                     if (resource === null) {
 
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Resource not cached");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Resource not cached");
 
                         resource = {
                             url: url,
@@ -871,7 +871,7 @@ namespace ajs.resources {
 
                     if (updateProgressBar) {
                         // update initial progress bar
-                        ajs.ui.ProgressBar.resourceLoaded(resource.url);
+                        Ajs.UI.ProgressBar.resourceLoaded(resource.url);
                     }
 
                     setTimeout(() => {
@@ -881,7 +881,7 @@ namespace ajs.resources {
                 }
             );
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return resourcePromise;
 
@@ -904,7 +904,7 @@ namespace ajs.resources {
             cachePolicy: CACHE_POLICY,
             runScripts?: boolean): Promise<IResource[]> {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             // don't process anything else than array of urls
             if (!(urls instanceof Array)) {
@@ -916,7 +916,7 @@ namespace ajs.resources {
                 runScripts = true;
             }
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Loading resources (" + urls.length + "), Storage: " + STORAGE_TYPE[storageType] +
                 ", Cache Policy: " + CACHE_POLICY[cachePolicy], urls);
 
@@ -942,7 +942,7 @@ namespace ajs.resources {
                             for (let i: number = 0; i < loadedResources.length; i++) {
 
                                 if (loadedResources[i].type === RESOURCE_TYPE.SCRIPT) {
-                                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                                         "Executing the loaded script (load multiple): " + loadedResources[i].url);
 
                                     // use eval or insert the script tag to the code
@@ -964,7 +964,7 @@ namespace ajs.resources {
                 }
             );
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
             return resourcesPromise;
 
         }
@@ -977,9 +977,9 @@ namespace ajs.resources {
          */
         protected _processResourceResponse(resource: IResource, response: IResourceResponseData, runScript?: boolean): IResource {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Processing loaded resource '" + resource.url + "'");
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Processing loaded resource '" + resource.url + "'");
 
             let loaded: boolean;
 
@@ -993,18 +993,18 @@ namespace ajs.resources {
                 // based on the resource type, get the data
                 switch (resource.type) {
                     case RESOURCE_TYPE.BINARY:
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Binary file loaded");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Binary file loaded");
                         resource.data = new Uint8Array(response.data);
                         break;
                     default:
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Text file loaded");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Text file loaded");
                         resource.data = response.data;
                 }
 
                 // update cached resource
                 if (resource.storage !== null) {
 
-                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                         "Loaded resource is requested to be cached. Caching/Updating." + resource.url);
 
                     let cachedResource: ICachedResource = {
@@ -1024,10 +1024,10 @@ namespace ajs.resources {
             } else {
                 // not modified / failed (the resource loaded from cache is already set in the resource parameter)
                 if (resource.cached) {
-                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Not modified, using cached resource" + resource.url);
+                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Not modified, using cached resource" + resource.url);
                     loaded = true;
                 } else {
-                    ajs.dbg.log(dbg.LogType.Warning, 0, "ajs.resources", this,
+                    Ajs.Dbg.log(Dbg.LogType.Warning, 0, "ajs.resources", this,
                         "Resource failed to load and is not cached " + resource.url);
                     loaded = false;
                 }
@@ -1041,7 +1041,7 @@ namespace ajs.resources {
             // if the resource is script and should be executed, do it
             if (resource.type === RESOURCE_TYPE.SCRIPT && runScript) {
 
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Executing the loaded script");
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Executing the loaded script");
 
                 // use eval or insert the script tag to the code
                 if (USE_EVAL) {
@@ -1051,7 +1051,7 @@ namespace ajs.resources {
                 }
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return resource;
         }
@@ -1067,9 +1067,9 @@ namespace ajs.resources {
          */
         protected _getManagedResourceInfo(url: string, storageType: STORAGE_TYPE): IManagedResource {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this,
                 "Looking for managed resource '" + url + "'");
 
             for (let i: number = 0; i < this._managedResources.length; i++) {
@@ -1077,14 +1077,14 @@ namespace ajs.resources {
                 if (this._managedResources[i].url === url &&
                     this._managedResources[i].storageType === storageType) {
 
-                    ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+                    Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
                     return this._managedResources[i];
                 }
 
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return null;
         }
@@ -1095,23 +1095,23 @@ namespace ajs.resources {
          */
         protected _getStorageFromType(storageType: STORAGE_TYPE): AjsStorage {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             switch (storageType) {
                 case STORAGE_TYPE.LOCAL:
-                    ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+                    Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
                     return this._storageLocal;
 
                 case STORAGE_TYPE.SESSION:
-                    ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+                    Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
                     return this._storageSession;
 
                 case STORAGE_TYPE.MEMORY:
-                    ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+                    Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
                     return this._storageMemory;
 
                 default:
-                    ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+                    Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
                     return null;
 
             }
@@ -1123,7 +1123,7 @@ namespace ajs.resources {
          */
         protected _getResourceTypeFromURL(url: string): RESOURCE_TYPE {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             let ext: string = url.substring(url.lastIndexOf("."));
             if (RESOURCE_TYPES.script.indexOf(ext) >= 0) { return RESOURCE_TYPE.SCRIPT; }
@@ -1131,7 +1131,7 @@ namespace ajs.resources {
             if (RESOURCE_TYPES.text.indexOf(ext) >= 0) { return RESOURCE_TYPE.TEXT; }
             if (RESOURCE_TYPES.binary.indexOf(ext) >= 0) { return RESOURCE_TYPE.BINARY; }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return RESOURCE_TYPE.UNKNOWN;
         }
@@ -1143,9 +1143,9 @@ namespace ajs.resources {
          */
         protected _evalScript(resource: IResource): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Evaluating sript resource", resource);
 
             if (resource !== null && resource.data != null) {
@@ -1159,7 +1159,7 @@ namespace ajs.resources {
                 eval.call(null, content);
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
         }
 
@@ -1169,16 +1169,16 @@ namespace ajs.resources {
          */
         protected _addScriptTag(resource: IResource): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Adding a script resource to the HEAD as a tag", resource);
 
             // first check if the script was not added already
             let nodeList: NodeList = document.head.getElementsByTagName("script");
             for (let i: number = 0; i < nodeList.length; i++) {
                 if ((nodeList.item(i) as HTMLScriptElement).id === resource.url) {
-                    ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+                    Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
                     return;
                 }
             }
@@ -1190,7 +1190,7 @@ namespace ajs.resources {
             script.innerText = resource.data;
             document.head.appendChild(script);
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
         }
 
     }

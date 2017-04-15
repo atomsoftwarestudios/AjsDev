@@ -15,7 +15,7 @@ namespace ToDos.Components {
     }
 
     export class TasksComponent
-        extends ajs.mvvm.viewmodel.ViewComponent<ITasksState, ITaskItemComponentEvents>
+        extends Ajs.MVVM.ViewModel.ViewComponent<ITasksState, ITaskItemComponentEvents>
         implements ITasksState, ITaskItemComponentEvents {
 
         protected _tasksModel: ToDos.Models.TasksModel;
@@ -40,7 +40,7 @@ namespace ToDos.Components {
         }
 
         protected _initialize(): void {
-            this._tasksModel = <ToDos.Models.TasksModel>ajs.Framework.modelManager.getModelInstance(ToDos.Models.TasksModel);
+            this._tasksModel = <ToDos.Models.TasksModel>Ajs.Framework.modelManager.getModelInstance(ToDos.Models.TasksModel);
 
             this._currentItem = -1;
             this._inputField = null;
@@ -49,7 +49,7 @@ namespace ToDos.Components {
         }
 
         protected _finalize(): void {
-            ajs.Framework.modelManager.freeModelInstance(ToDos.Models.TasksModel);
+            Ajs.Framework.modelManager.freeModelInstance(ToDos.Models.TasksModel);
             delete this._tasksModel;
         }
 
@@ -92,8 +92,8 @@ namespace ToDos.Components {
                     }
 
                 })
-                .catch((reason: ajs.Exception) => {
-                    throw new ajs.Exception("Unable to get the model data", reason);
+                .catch((reason: Ajs.Exception) => {
+                    throw new Ajs.Exception("Unable to get the model data", reason);
                 });
         }
 
@@ -140,6 +140,6 @@ namespace ToDos.Components {
 
     }
 
-    ajs.Framework.viewComponentManager.registerComponents(TasksComponent);
+    Ajs.Framework.viewComponentManager.registerComponents(TasksComponent);
 
 }

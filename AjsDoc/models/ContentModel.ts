@@ -18,7 +18,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
@@ -43,54 +43,54 @@ namespace ajsdoc {
         articleState?: IAjsDocArticleComponentState;
     }
 
-    export class ContentModel extends ajs.mvvm.model.Model<IContentDataReadyData> {
+    export class ContentModel extends Ajs.MVVM.Model.Model<IContentDataReadyData> {
 
         protected _data: IContentData;
 
         public getMenu(path: string): void {
             this._checkInitialized(
-                new ajs.Exception("Documentation contents loading timeout"),
+                new Ajs.Exception("Documentation contents loading timeout"),
                 () => { this._getMenu(path); }
             );
         }
 
         public getNavBar(path: string): void {
             this._checkInitialized(
-                new ajs.Exception("Program data loading timeout"),
+                new Ajs.Exception("Program data loading timeout"),
                 () => { this._getNavBar(path); }
             );
         }
 
         public getContent(path: string): void {
             this._checkInitialized(
-                new ajs.Exception("Documentation contents loading timeout"),
+                new Ajs.Exception("Documentation contents loading timeout"),
                 () => { this._getContent(path); }
             );
         }
 
         protected _initialize(): void {
 
-            let resPromise: Promise<ajs.resources.IResource> = ajs.Framework.resourceManager.getResource(
+            let resPromise: Promise<Ajs.Resources.IResource> = Ajs.Framework.resourceManager.getResource(
                 config.dataSources.toc,
                 config.storageType,
-                ajs.resources.CACHE_POLICY.PERMANENT,
-                ajs.resources.LOADING_PREFERENCE.CACHE
+                Ajs.Resources.CACHE_POLICY.PERMANENT,
+                Ajs.Resources.LOADING_PREFERENCE.CACHE
             );
 
             resPromise.then(
-                async (resource: ajs.resources.IResource) => {
+                async (resource: Ajs.Resources.IResource) => {
 
                     try {
                         this._data = JSON.parse(resource.data);
 
                         // get all links from the data and load them
-                        let contents: Promise<ajs.resources.IResource>[] = [];
+                        let contents: Promise<Ajs.Resources.IResource>[] = [];
                         contents.push(
-                            ajs.Framework.resourceManager.getResource(
+                            Ajs.Framework.resourceManager.getResource(
                                 this._data.defaultPath,
                                 config.storageType,
-                                ajs.resources.CACHE_POLICY.PERMANENT,
-                                ajs.resources.LOADING_PREFERENCE.CACHE
+                                Ajs.Resources.CACHE_POLICY.PERMANENT,
+                                Ajs.Resources.LOADING_PREFERENCE.CACHE
                             )
                         );
 
@@ -112,14 +112,14 @@ namespace ajsdoc {
 
         }
 
-        protected _getResourcesFromData(article: IArticleData, contents: Promise<ajs.resources.IResource>[]): void {
+        protected _getResourcesFromData(article: IArticleData, contents: Promise<Ajs.Resources.IResource>[]): void {
             if (article.path) {
                 contents.push(
-                    ajs.Framework.resourceManager.getResource(
+                    Ajs.Framework.resourceManager.getResource(
                         article.path,
                         config.storageType,
-                        ajs.resources.CACHE_POLICY.PERMANENT,
-                        ajs.resources.LOADING_PREFERENCE.CACHE
+                        Ajs.Resources.CACHE_POLICY.PERMANENT,
+                        Ajs.Resources.LOADING_PREFERENCE.CACHE
                     )
                 );
             }
@@ -225,14 +225,14 @@ namespace ajsdoc {
 
             if (article.path) {
 
-                let resource: Promise<ajs.resources.IResource> = ajs.Framework.resourceManager.getResource(
+                let resource: Promise<Ajs.Resources.IResource> = Ajs.Framework.resourceManager.getResource(
                     article.path,
                     config.storageType,
-                    ajs.resources.CACHE_POLICY.PERMANENT,
-                    ajs.resources.LOADING_PREFERENCE.CACHE);
+                    Ajs.Resources.CACHE_POLICY.PERMANENT,
+                    Ajs.Resources.LOADING_PREFERENCE.CACHE);
 
                 resource
-                    .then((resource: ajs.resources.IResource) => {
+                    .then((resource: Ajs.Resources.IResource) => {
 
                         let htmlData: string = resource.data;
 

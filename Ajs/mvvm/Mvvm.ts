@@ -25,7 +25,7 @@ IN THE SOFTWARE.
  * Model View View Component Model namespace
  * asd
  */
-namespace ajs.mvvm.model {
+namespace Ajs.MVVM.Model {
 
     "use strict";
 

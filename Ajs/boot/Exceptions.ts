@@ -23,20 +23,20 @@ IN THE SOFTWARE.
 
 ///<reference path="../ajs.Exception.ts" />
 
-namespace ajs.boot {
+namespace Ajs.Boot {
 
     "use strict";
 
     /** Fired if the ajs.boot.getAjsConfig function is not defined */
-    export class ConfigureAjsFunctionNotDefinedException extends ajs.Exception { }
+    export class ConfigureAjsFunctionNotDefinedException extends Ajs.Exception { }
 
     /** Fired if the ajs.boot.getAjsConfig function is not defined */
-    export class GetApplicationConfigFunctionNotDefinedException extends ajs.Exception { }
+    export class GetApplicationConfigFunctionNotDefinedException extends Ajs.Exception { }
 
     /** Fired if the ajs.boot.getResourceList function is not defined */
-    export class ConfigureResourcesFunctionNotDefinedException extends ajs.Exception { }
+    export class ConfigureResourcesFunctionNotDefinedException extends Ajs.Exception { }
 
     /** Fired when loading resources specified in the configuration file fails */
-    export class ResourcesLoadingFailedException extends ajs.Exception { }
+    export class ResourcesLoadingFailedException extends Ajs.Exception { }
 
 }

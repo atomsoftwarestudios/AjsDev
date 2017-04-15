@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
@@ -29,7 +29,7 @@ namespace ajsdoc {
     }
 
     export class AjsDocMemberTypeParametersComponent
-        extends ajs.mvvm.viewmodel.ViewComponent<IAjsDocMemberTypeParametersState, any>
+        extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocMemberTypeParametersState, any>
         implements IAjsDocMemberTypeParametersState {
 
         public get isLast(): boolean {
@@ -41,6 +41,6 @@ namespace ajsdoc {
     }
 
     /** Register the component to ViewComponentManager */
-    ajs.Framework.viewComponentManager.registerComponents(AjsDocMemberTypeParametersComponent);
+    Ajs.Framework.viewComponentManager.registerComponents(AjsDocMemberTypeParametersComponent);
 
 }

@@ -21,16 +21,16 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
-    export interface IAjsDocComponentState extends ajs.mvvm.viewmodel.IViewComponentState {
+    export interface IAjsDocComponentState extends Ajs.MVVM.ViewModel.IViewComponentState {
         ajsDocLayout?: IAjsDocLayoutComponentState;
     }
 
     export class AjsDocComponent
-        extends ajs.mvvm.viewmodel.ViewComponent<IAjsDocComponentState, any>
+        extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocComponentState, any>
         implements IAjsDocComponentState {
 
         /** Layout view component state */
@@ -43,13 +43,13 @@ namespace ajsdoc {
         protected _contentModel: ContentModel;
 
         /** Listener to the browser navigation event */
-        protected _navigatedListener: ajs.events.IListener<void>;
+        protected _navigatedListener: Ajs.Events.IListener<void>;
 
         /** Program data ready listener */
-        protected _programDataReady: ajs.events.IListener<IProgramDataReadyData>;
+        protected _programDataReady: Ajs.Events.IListener<IProgramDataReadyData>;
 
         /** Content data ready listener */
-        protected _contentDataReady: ajs.events.IListener<IContentDataReadyData>;
+        protected _contentDataReady: Ajs.Events.IListener<IContentDataReadyData>;
 
 
         protected _defaultState(): IAjsDocComponentState {
@@ -76,8 +76,8 @@ namespace ajsdoc {
         protected _initialize(): void {
 
             // create models
-            this._progModel = ajs.Framework.modelManager.getModelInstance<IProgramDataReadyData>(ProgramModel) as ProgramModel;
-            this._contentModel = ajs.Framework.modelManager.getModelInstance<IContentDataReadyData>(ContentModel) as ContentModel;
+            this._progModel = Ajs.Framework.modelManager.getModelInstance<IProgramDataReadyData>(ProgramModel) as ProgramModel;
+            this._contentModel = Ajs.Framework.modelManager.getModelInstance<IContentDataReadyData>(ContentModel) as ContentModel;
 
             // subscribe to program model data ready notifier
             this._programDataReady = (sender: ProgramModel, data: IProgramDataReadyData) => {
@@ -94,7 +94,7 @@ namespace ajsdoc {
             this._contentModel.dataReadyNotifier.subscribe(this._contentDataReady);
 
             // subscribe to _navigated event
-            this._navigatedListener = (sender: ajs.mvvm.viewmodel.ViewComponent<any, any>) => {
+            this._navigatedListener = (sender: Ajs.MVVM.ViewModel.ViewComponent<any, any>) => {
                 this._navigated();
                 return true;
             };
@@ -108,8 +108,8 @@ namespace ajsdoc {
             this.ajs.view.navigationNotifier.unsubscribe(this._navigatedListener);
             this._progModel.dataReadyNotifier.unsubscribe(this._programDataReady);
             this._contentModel.dataReadyNotifier.unsubscribe(this._contentDataReady);
-            ajs.Framework.modelManager.freeModelInstance(ProgramModel);
-            ajs.Framework.modelManager.freeModelInstance(ContentModel);
+            Ajs.Framework.modelManager.freeModelInstance(ProgramModel);
+            Ajs.Framework.modelManager.freeModelInstance(ContentModel);
         }
 
         /**
@@ -127,7 +127,7 @@ namespace ajsdoc {
         protected _updateView(): void {
 
             let path: string;
-            let routeInfo: ajs.routing.IRouteInfo = ajs.Framework.router.currentRoute;
+            let routeInfo: Ajs.Routing.IRouteInfo = Ajs.Framework.router.currentRoute;
 
             if (routeInfo.base.substr(0, 3) === "ref") {
 
@@ -199,7 +199,7 @@ namespace ajsdoc {
     }
 
     /** Register the component to ViewComponentManager */
-    ajs.Framework.viewComponentManager.registerComponents(AjsDocComponent);
+    Ajs.Framework.viewComponentManager.registerComponents(AjsDocComponent);
 
 
 }

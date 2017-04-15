@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.mvvm.model {
+namespace Ajs.MVVM.Model {
 
     "use strict";
 
@@ -36,15 +36,15 @@ namespace ajs.mvvm.model {
         public get initialized(): boolean { return this._initialized; }
 
         /** Holds the data ready notifier which notifies ViewModels the requested data is ready */
-        protected _dataReadyNotifier: ajs.events.Notifier<T>;
+        protected _dataReadyNotifier: Ajs.Events.Notifier<T>;
         /** Returns the data ready notifier which notifies ViewModels the requested data is ready */
-        public get dataReadyNotifier(): ajs.events.Notifier<T> { return this._dataReadyNotifier; }
+        public get dataReadyNotifier(): Ajs.Events.Notifier<T> { return this._dataReadyNotifier; }
 
         /** Constructs the model */
         public constructor(modelManager: ModelManager) {
             this._initialized = false;
             this._modelManager = modelManager;
-            this._dataReadyNotifier = new ajs.events.Notifier();
+            this._dataReadyNotifier = new Ajs.Events.Notifier();
             this._initialize();
         }
 

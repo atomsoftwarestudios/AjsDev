@@ -23,34 +23,34 @@ IN THE SOFTWARE.
 
 ///<reference path="../ajs.Exception.ts" />
 
-namespace ajs.resources {
+namespace Ajs.Resources {
 
     "use strict";
 
     /** The required storage type is not supported by the browser */
-    export class StorageTypeNotSupportedException extends ajs.Exception { }
+    export class StorageTypeNotSupportedException extends Ajs.Exception { }
 
     /** Storage type requested is not valid */
-    export class InvalidStorageTypeException extends ajs.Exception { }
+    export class InvalidStorageTypeException extends Ajs.Exception { }
 
     /** If the storage is chosen the caching policy must be set */
-    export class CachePolicyMustBeSetException extends ajs.Exception { }
+    export class CachePolicyMustBeSetException extends Ajs.Exception { }
 
     /** Resource was not found in the storage */
-    export class ResourceNotFoundException extends ajs.Exception { }
+    export class ResourceNotFoundException extends Ajs.Exception { }
 
     /** Storage is out of space or the resource can't fit the storage */
-    export class NotEnoughSpaceInStorageException extends ajs.Exception { }
+    export class NotEnoughSpaceInStorageException extends Ajs.Exception { }
 
     /** Load end handler passed must be a function */
-    export class LoadEndHandlerIsNotFunctionException extends ajs.Exception { }
+    export class LoadEndHandlerIsNotFunctionException extends Ajs.Exception { }
 
     /** Invalid callback specified for getResource function */
-    export class InvalidResourceReadyCallbackException extends ajs.Exception { }
+    export class InvalidResourceReadyCallbackException extends Ajs.Exception { }
 
     /** Requested local resource does not exist */
-    export class LocalResourceRequestedDoesNotExistException extends ajs.Exception { }
+    export class LocalResourceRequestedDoesNotExistException extends Ajs.Exception { }
 
     /** Thrown when resource failed to load and was not located in the cache */
-    export class ResourceFailedToLoadException extends ajs.Exception { }
+    export class ResourceFailedToLoadException extends Ajs.Exception { }
 }

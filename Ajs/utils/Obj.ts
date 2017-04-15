@@ -23,7 +23,7 @@ IN THE SOFTWARE.
 Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 **************************************************************************** */
 
-namespace ajs.utils {
+namespace Ajs.Utils {
 
     "use strict";
 

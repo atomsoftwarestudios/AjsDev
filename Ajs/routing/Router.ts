@@ -21,17 +21,17 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.routing {
+namespace Ajs.Routing {
 
     "use strict";
 
     export class Router {
 
-        protected _view: ajs.mvvm.view.View;
+        protected _view: Ajs.MVVM.View.View;
 
         protected _lastURL: string;
         protected _lastViewComponentName: string;
-        protected _lastViewComponentInstance: ajs.mvvm.viewmodel.ViewComponent<any, any>;
+        protected _lastViewComponentInstance: Ajs.MVVM.ViewModel.ViewComponent<any, any>;
 
         protected _routes: IRoutes[];
         public get routes(): IRoutes[] { return this._routes; }
@@ -39,10 +39,10 @@ namespace ajs.routing {
         protected _currentRoute: IRouteInfo;
         public get currentRoute(): IRouteInfo { return this._currentRoute; }
 
-        public constructor(view: ajs.mvvm.view.View, routes?: IRoutes[]) {
+        public constructor(view: Ajs.MVVM.View.View, routes?: IRoutes[]) {
 
-            ajs.dbg.log(dbg.LogType.Constructor, 0, "ajs.routing", this);
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.routing", this,
+            Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.routing", this);
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this,
                 "Registering routes (" + (routes ? routes.length : 0) + ")", routes);
 
             this._view = view;
@@ -55,63 +55,63 @@ namespace ajs.routing {
 
             this._currentRoute = { base: "", path: "", search: "", hash: "" };
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.routing", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.routing", this);
         }
 
         public registerRoute(paths: IRoute[], viewComponentName: string): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.routing", this);
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.routing", this, "Registering route", paths);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.routing", this);
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Registering route", paths);
 
             this._routes.push({
                 paths: paths,
                 viewComponentName: viewComponentName
             });
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.routing", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.routing", this);
 
         }
 
         public route(url?: string): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.routing", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.routing", this);
 
             url = url || window.location.href;
 
             if (this._lastURL !== url) {
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.routing", this, "Maping route for '" + url + "'");
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Maping route for '" + url + "'");
 
                 this._lastURL = url;
 
                 let viewComponentName: string = this._getRouteViewComponent(url);
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.routing", this, "Routing to " + viewComponentName);
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Routing to " + viewComponentName);
 
                 if (viewComponentName !== null) {
 
                     if (this._lastViewComponentName !== viewComponentName) {
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.routing", this, "Routing to a different than previous component");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Routing to a different than previous component");
 
                         this._lastViewComponentName = viewComponentName;
                         this._view.rootViewComponentName = viewComponentName;
 
                     } else {
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.routing", this, "Notifying component the navigation occured");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Notifying component the navigation occured");
                         this._view.onNavigate();
                     }
 
                 } else {
-                    ajs.dbg.log(dbg.LogType.Error, 0, "ajs.routing", this, "ViewComponent not found for the path specified");
+                    Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.routing", this, "ViewComponent not found for the path specified");
                     throw new RouteNotFoundException();
                 }
 
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.routing", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.routing", this);
         }
 
         protected _getRouteViewComponent(url?: string): string {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.routing", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.routing", this);
 
             url = url || window.location.href;
             let uriParser: HTMLAnchorElement = document.createElement("a");
@@ -162,9 +162,9 @@ namespace ajs.routing {
 
             }
 
-            ajs.dbg.log(dbg.LogType.Warning, 0, "ajs.routing", this, "Route not found");
+            Ajs.Dbg.log(Dbg.LogType.Warning, 0, "ajs.routing", this, "Route not found");
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.routing", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.routing", this);
 
             return null;
         }

@@ -7,24 +7,24 @@ namespace SimpleApp {
 
     "use strict";
 
-    export class Application extends ajs.app.Application {
+    export class Application extends Ajs.App.Application {
 
         public initialize(): void {
 
             // implement initialization and when its done call this._initDone() in order to be possible to continue
             // with application starting
 
-            let templates: Promise<ajs.templating.Template[]> = ajs.Framework.templateManager.loadTemplates(
+            let templates: Promise<Ajs.Templating.Template[]> = Ajs.Framework.templateManager.loadTemplates(
                 ["/templates/default.html"],
-                ajs.resources.STORAGE_TYPE.NONE,
-                ajs.resources.CACHE_POLICY.NONE,
-                ajs.resources.LOADING_PREFERENCE.SERVER);
+                Ajs.Resources.STORAGE_TYPE.NONE,
+                Ajs.Resources.CACHE_POLICY.NONE,
+                Ajs.Resources.LOADING_PREFERENCE.SERVER);
 
             templates
-                .then((templates: ajs.templating.Template[]) => {
+                .then((templates: Ajs.Templating.Template[]) => {
                     this._initDone();
                 })
-                .catch((reason: ajs.Exception) => {
+                .catch((reason: Ajs.Exception) => {
                     throw new TemplatesLoadingFailedException("Failed to load templates", reason);
                 });
 

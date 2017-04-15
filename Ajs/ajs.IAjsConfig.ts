@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs {
+namespace Ajs {
 
     "use strict";
 
@@ -55,33 +55,33 @@ namespace ajs {
          * Configuration of the debugging console and its modules
          * If ommited, no debugging will be performed
          */
-        debugging?: ajs.dbg.IConsoleConfig;
+        debugging?: Ajs.Dbg.IConsoleConfig;
 
-        boot?: ajs.boot.IBootConfig;
+        boot?: Ajs.Boot.IBootConfig;
 
         /**
          * Configuration of the resource manager
          * For additional details #see {ajs.resources.IResourceManagerConfig}
          */
-        resourceManager?: ajs.resources.IResourceManagerConfig;
+        resourceManager?: Ajs.Resources.IResourceManagerConfig;
 
         /**
          * Redirections configuration
          * For additional details #see {ajs.navigation.IRedirection}
          */
-        navigator?: ajs.navigation.IRedirection[];
+        navigator?: Ajs.Navigation.IRedirection[];
 
         /**
          * Routes configuration
          * For additional details #see {ajs.routing.IRoutes}
          */
-        router?: ajs.routing.IRoutes[];
+        router?: Ajs.Routing.IRoutes[];
 
         /**
          * View configuration
          * For additional details #see {ajs.mvvm.view.IViewConfig}
          */
-        view?: ajs.mvvm.view.IViewConfig;
+        view?: Ajs.MVVM.View.IViewConfig;
     }
 
 }

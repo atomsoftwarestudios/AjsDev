@@ -21,14 +21,14 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs {
+namespace Ajs {
 
     "use strict";
 
     /** Thrown when the start is called before the application is configured */
-    export class ApplicationNotConfiguredException extends ajs.Exception { }
+    export class ApplicationNotConfiguredException extends Ajs.Exception { }
 
     /** Thrown the passed application constructor is not a function */
-    export class AppConstructorMustBeAFunctionException extends ajs.Exception { }
+    export class AppConstructorMustBeAFunctionException extends Ajs.Exception { }
 
 }

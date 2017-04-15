@@ -23,11 +23,11 @@ IN THE SOFTWARE.
 
 ///<reference path="../../ajs.Exception.ts" />
 
-namespace ajs.mvvm.viewmodel {
+namespace Ajs.MVVM.ViewModel {
 
     "use strict";
 
-    export class VisualComponentNotRegisteredException extends ajs.Exception { }
+    export class VisualComponentNotRegisteredException extends Ajs.Exception { }
 
-    export class InvalidAttributeIfValueException extends ajs.Exception { }
+    export class InvalidAttributeIfValueException extends Ajs.Exception { }
 }

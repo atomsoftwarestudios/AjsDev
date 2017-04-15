@@ -13,9 +13,9 @@ namespace ToDos.Models {
         description: string;
     }
 
-    export class DefaultModelNotInitializedException extends ajs.Exception { }
+    export class DefaultModelNotInitializedException extends Ajs.Exception { }
 
-    export class TasksModel extends ajs.mvvm.model.Model<ITask> {
+    export class TasksModel extends Ajs.MVVM.Model.Model<ITask> {
 
         /*
         Model members (such as data types) should be defined here
@@ -52,7 +52,7 @@ namespace ToDos.Models {
             // in a real application the request to server resource or data cache returning the 
             // promise with the appropriate data type can be here
             let dataResolverPromise: Promise<void> = new Promise<void>(
-                (resolve: () => void, reject: (reason: ajs.Exception) => void) => {
+                (resolve: () => void, reject: (reason: Ajs.Exception) => void) => {
                     resolve();
                 }
             );
@@ -66,8 +66,8 @@ namespace ToDos.Models {
                 })
 
                 // failed from whatever reason (i.e. server down)
-                .catch((reason: ajs.Exception): void => {
-                    throw new ajs.Exception("Unable to initialize default model", reason);
+                .catch((reason: Ajs.Exception): void => {
+                    throw new Ajs.Exception("Unable to initialize default model", reason);
                 });
 
         }
@@ -108,7 +108,7 @@ namespace ToDos.Models {
         public getTasks(filter: "All" | "Done" | "Undone"): Promise<ITask[]> {
 
             return new Promise<ITask[]>(
-                (resolve: (data: ITask[]) => void, reject: (reason: ajs.Exception) => void) => {
+                (resolve: (data: ITask[]) => void, reject: (reason: Ajs.Exception) => void) => {
 
                     this._checkInitialized(
                         new DefaultModelNotInitializedException,

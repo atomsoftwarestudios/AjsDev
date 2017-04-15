@@ -21,17 +21,17 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.mvvm.viewmodel {
+namespace Ajs.MVVM.ViewModel {
 
     "use strict";
 
-    import IVisualComponent = ajs.templating.IVisualComponent;
+    import IVisualComponent = Ajs.Templating.IVisualComponent;
 
     export interface IViewComponentProperties<State extends IViewComponentState, ParentViewComponent extends IParentViewComponent> {
 
         // --- dependancies
 
-        view: mvvm.view.View;
+        view: MVVM.View.View;
         viewComponentManager: ViewComponentManager;
 
         // --- identification properties
@@ -47,7 +47,7 @@ namespace ajs.mvvm.viewmodel {
         // --- parent component and visual component instances
 
         parentComponent: ParentViewComponent;
-        visualComponent: ajs.templating.IVisualComponent;
+        visualComponent: Ajs.Templating.IVisualComponent;
         templateElement: HTMLElement;
 
         // --- state related properties
@@ -74,7 +74,7 @@ namespace ajs.mvvm.viewmodel {
     }
 
     export class ViewComponent<State extends IViewComponentState, ParentViewComponent extends IParentViewComponent>
-        implements ajs.doc.IComponent, IViewComponent, IParentViewComponent {
+        implements Ajs.Doc.IComponent, IViewComponent, IParentViewComponent {
 
         /** Stores the unique instance ID of the component assigned by the view when the component is instantiated */
         protected _componentViewId: number;
@@ -84,20 +84,20 @@ namespace ajs.mvvm.viewmodel {
         public ajs: IViewComponentProperties<State, ParentViewComponent>;
 
         public constructor(
-            view: view.View,
+            view: View.View,
             viewComponentManager: ViewComponentManager,
             id: string,
             componentViewId: number,
             parentComponent: ParentViewComponent,
-            visualComponent: ajs.templating.IVisualComponent,
+            visualComponent: Ajs.Templating.IVisualComponent,
             state?: State) {
 
             // throw exception if the visual component was not assigned
             if (visualComponent === null) {
-                throw new ajs.mvvm.view.VisualComponentNotRegisteredException(null);
+                throw new Ajs.MVVM.View.VisualComponentNotRegisteredException(null);
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Constructor, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Constructor, 0, "ajs.mvvm.viewmodel", this);
 
             // initialize properties
             this._componentViewId = componentViewId;
@@ -154,8 +154,8 @@ namespace ajs.mvvm.viewmodel {
 
             // apply passed or default state
             if (state && state !== null) {
-                let newState: IViewComponentState = ajs.utils.DeepMerge.merge(this._defaultState(), state);
-                ajs.utils.Obj.assign(state, newState);
+                let newState: IViewComponentState = Ajs.Utils.DeepMerge.merge(this._defaultState(), state);
+                Ajs.Utils.Obj.assign(state, newState);
                 this._applyState(state);
             } else {
                 this._applyState(this._defaultState());
@@ -174,7 +174,7 @@ namespace ajs.mvvm.viewmodel {
             // this.ajsProperties.view.notifyParentsChildrenStateChange(this._ajsParentComponent);
             // ???????????????????????????????????????????????????????????????
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
 
         }
 
@@ -190,16 +190,16 @@ namespace ajs.mvvm.viewmodel {
             this.ajs.view.documentManager.removeNodeByUniqueId(this.componentViewId);
 
             // unregister component instance from ViewComponent manager
-            ajs.Framework.viewComponentManager.removeComponentInstance(this);
+            Ajs.Framework.viewComponentManager.removeComponentInstance(this);
 
         };
 
         public setState(state: State): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
-                "Setting component state: " + ajs.utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
+                "Setting component state: " + Ajs.Utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId,
                 state
             );
 
@@ -210,25 +210,25 @@ namespace ajs.mvvm.viewmodel {
             this.ajs.stateQueue.push(state);
             this._processStateQueue();
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
         }
 
         protected _initialize(): void {
-            ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this, "_initialize is not overriden");
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this, "_initialize is not overriden");
         }
 
         protected _finalize(): void {
-            ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this, "_finalize is not overriden");
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this, "_finalize is not overriden");
         }
 
         protected _defaultState(): State {
-            ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this, "_defaultState is not overriden");
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this, "_defaultState is not overriden");
             return <any>{};
         }
 
         protected _applyTemplateStylesheets(): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
             // asynchronously apply style sheets from the view component template to the target document
             this.ajs.view.documentManager.applyStyleSheetsFromTemplate(this.ajs.visualComponent.template).then(
@@ -240,7 +240,7 @@ namespace ajs.mvvm.viewmodel {
                 // if adding of stylesheets failed, log it and re-throw the exception
                 (reason: Error) => {
 
-                    ajs.dbg.log(ajs.dbg.LogType.Error, 0, "ajs.mvvm.view", this,
+                    Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.mvvm.view", this,
                         "Adding of template stylesheets failed: " +
                         ", Template: " + this.ajs.visualComponent.template.name,
                         reason, this);
@@ -250,18 +250,18 @@ namespace ajs.mvvm.viewmodel {
 
             );
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
         }
 
 
 
         protected _setPreventStateChange(value: boolean): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
                 "Setting prevent state change to " + value +
-                " (" + ajs.utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId + ")"
+                " (" + Ajs.Utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId + ")"
             );
 
             this.ajs.stateChangePrevented = value;
@@ -274,64 +274,64 @@ namespace ajs.mvvm.viewmodel {
                 this._processStateQueue();
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
         }
 
         protected _processStateQueue(): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
             if (this.ajs.stateQueue.length === 0) {
-                ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
                 return;
             }
 
             if (this.ajs.processingStateQueue) {
-                ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this,
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this,
                     "Processing state already running!");
-                ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
                 return;
             }
 
             if (this.ajs.stateChangePrevented) {
-                ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this,
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this,
                     "State change is prevented: " +
-                    ajs.utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId);
-                ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+                    Ajs.Utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId);
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
                 return;
             }
 
             this.ajs.processingStateQueue = true;
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
                 "Processing state queue: " +
-                ajs.utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId + ", " +
+                Ajs.Utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId + ", " +
                 this.ajs.stateQueue.length + " state changes queued",
-                state
+                State
             );
 
             while (this.ajs.stateQueue.length > 0) {
 
                 if (this.ajs.stateChangePrevented) {
-                    ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this,
+                    Ajs.Dbg.log(Ajs.Dbg.LogType.Warning, 0, "ajs.mvvm.viewmodel", this,
                         "State change is prevented: " +
-                        ajs.utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId);
-                    ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+                        Ajs.Utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId);
+                    Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
                     return;
                 }
 
                 let state: State = this.ajs.stateQueue.shift();
 
-                ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
                     "Setting component state: " +
-                    ajs.utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId + ", " +
+                    Ajs.Utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId + ", " +
                     this.ajs.stateQueue.length + " state changes queued",
                     state
                 );
 
                 if (this.ajs.hasVisualStateTransition) {
 
-                    let node: doc.INode = this.ajs.view.documentManager.getTargetNodeByUniqueId(this.componentViewId);
+                    let node: Doc.INode = this.ajs.view.documentManager.getTargetNodeByUniqueId(this.componentViewId);
                     this.ajs.transitionOldElement = node.cloneNode(true) as HTMLElement;
                 }
 
@@ -343,7 +343,7 @@ namespace ajs.mvvm.viewmodel {
 
             this.ajs.processingStateQueue = false;
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
         }
 
         /**
@@ -612,7 +612,7 @@ namespace ajs.mvvm.viewmodel {
             return this.ajsProperties.viewComponentManager.createViewComponent(name, id, this.ajsProperties.view, this, state);
         }*/
 
-        protected _createViewComponent(id: string, viewComponentInfo: ajs.templating.IVisualComponentChildInfo, state: IViewComponentState): ViewComponent<any, any> {
+        protected _createViewComponent(id: string, viewComponentInfo: Ajs.Templating.IVisualComponentChildInfo, state: IViewComponentState): ViewComponent<any, any> {
 
             let name: string = viewComponentInfo.tagName;
             if (name === "COMPONENT" && viewComponentInfo.nameAttribute) {
@@ -643,7 +643,7 @@ namespace ajs.mvvm.viewmodel {
             if (!clearStateChangeOnly) {
                 if (node instanceof HTMLElement) {
 
-                    let componentNode: doc.INode = (node as Node) as doc.INode;
+                    let componentNode: Doc.INode = (node as Node) as Doc.INode;
                     componentNode.ajsData = componentNode.ajsData || {} as any;
                     componentNode.ajsData.component = this;
                     componentNode.ajsData.ownerComponent = this;
@@ -703,8 +703,8 @@ namespace ajs.mvvm.viewmodel {
                 let skip: boolean = sourceNode === this.ajs.visualComponent.component && !this.ajs.stateChanged;
 
                 if (addedNode !== null && skip) {
-                    (addedNode as doc.INode).ajsData = (addedNode as doc.INode).ajsData || {} as any;
-                    (addedNode as doc.INode).ajsData.skipUpdate = true;
+                    (addedNode as Doc.INode).ajsData = (addedNode as Doc.INode).ajsData || {} as any;
+                    (addedNode as Doc.INode).ajsData.skipUpdate = true;
                 }
 
                 // if the node was added, go through all its children
@@ -741,8 +741,8 @@ namespace ajs.mvvm.viewmodel {
             let processedNode: Node = this._processNode(adoptedNode);
             if (processedNode && processedNode !== null) {
                 if (processedNode instanceof HTMLElement) {
-                    ((processedNode as Node) as doc.INode).ajsData = ((processedNode as Node) as doc.INode).ajsData || {} as any;
-                    ((processedNode as Node) as doc.INode).ajsData.ownerComponent = this;
+                    ((processedNode as Node) as Doc.INode).ajsData = ((processedNode as Node) as Doc.INode).ajsData || {} as any;
+                    ((processedNode as Node) as Doc.INode).ajsData.ownerComponent = this;
                 }
                 targetNode.appendChild(processedNode);
             }
@@ -829,7 +829,7 @@ namespace ajs.mvvm.viewmodel {
         }
 
         protected _linkMouseDown(e: MouseEvent): void {
-            e.returnValue = ajs.Framework.navigator.linkClicked(e);
+            e.returnValue = Ajs.Framework.navigator.linkClicked(e);
             if (!e.returnValue) {
                 e.cancelBubble = true;
                 e.preventDefault();
@@ -851,13 +851,13 @@ namespace ajs.mvvm.viewmodel {
                     let href: string = element.getAttribute("href");
                     if (href.substr(0, 4) !== "http") {
 
-                        let domEventListenerInfo: doc.INodeEventListenerInfo = {
-                            source: (this.ajs.templateElement as Node) as doc.INode,
+                        let domEventListenerInfo: Doc.INodeEventListenerInfo = {
+                            source: (this.ajs.templateElement as Node) as Doc.INode,
                             eventType: "mousedown",
                             eventListener: (e: MouseEvent): void => { this._linkMouseDown(e); }
                         };
 
-                        let node: doc.INode = (element as Node) as doc.INode;
+                        let node: Doc.INode = (element as Node) as Doc.INode;
                         node.ajsData = node.ajsData || {} as any;
 
                         if (!(node.ajsData.eventListeners instanceof Array)) {
@@ -867,7 +867,7 @@ namespace ajs.mvvm.viewmodel {
                         node.ajsData.eventListeners.push(domEventListenerInfo);
 
                         domEventListenerInfo = {
-                            source: (this.ajs.templateElement as Node) as doc.INode,
+                            source: (this.ajs.templateElement as Node) as Doc.INode,
                             eventType: "click",
                             eventListener: (e: MouseEvent): void => {
                                 e.returnValue = false;
@@ -962,13 +962,13 @@ namespace ajs.mvvm.viewmodel {
                     this[eventHandlerName](e);
                 };
 
-                let domEventListenerInfo: doc.INodeEventListenerInfo = {
-                    source: (this.ajs.templateElement as Node) as doc.INode,
+                let domEventListenerInfo: Doc.INodeEventListenerInfo = {
+                    source: (this.ajs.templateElement as Node) as Doc.INode,
                     eventType: eventType,
                     eventListener: listener
                 };
 
-                let node: doc.INode = (attr.ownerElement as Node) as doc.INode;
+                let node: Doc.INode = (attr.ownerElement as Node) as Doc.INode;
                 node.ajsData = node.ajsData || {} as any;
 
                 if (!(node.ajsData.eventListeners instanceof Array)) {
@@ -1005,7 +1005,7 @@ namespace ajs.mvvm.viewmodel {
             visualComponent = this.ajs.viewComponentManager.templateManager.getVisualComponent(viewComponentName);
 
             if (visualComponent === null) {
-                throw new ajs.mvvm.view.VisualComponentNotRegisteredException(viewComponentName);
+                throw new Ajs.MVVM.View.VisualComponentNotRegisteredException(viewComponentName);
             }
 
             this._visualComponentInsertChild(placeholder, viewComponentName, id, index);

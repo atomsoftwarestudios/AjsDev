@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.dbg.modules.logger {
+namespace Ajs.Dbg.modules.logger {
 
     "use strict";
 
@@ -34,7 +34,7 @@ namespace ajs.dbg.modules.logger {
         /** Number of occurence of the same type of the log records from the log beginning */
         occurence: number;
         /** Type of the log record #see {ajs.debug.LogType} */
-        type: dbg.LogType;
+        type: Dbg.LogType;
         /** Level (importance) of the log record */
         level: number;
         /** Module creating the log record */

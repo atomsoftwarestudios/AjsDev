@@ -18,14 +18,14 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
     /**
      * The AjsDocBrowser application
      */
-    export class AjsDocBrowser extends ajs.app.Application {
+    export class AjsDocBrowser extends Ajs.App.Application {
 
         protected _config: IAjsDocBrowserConfig;
 
@@ -34,7 +34,7 @@ namespace ajsdoc {
          */
         public initialize(): void {
 
-            ajsdoc.config = this._config;
+            AjsDoc.config = this._config;
             this._loadTemplatesList();
 
         }
@@ -45,21 +45,21 @@ namespace ajsdoc {
         protected _loadTemplatesList(): void {
 
             // load template list (JSON file)
-            let templateList: Promise<ajs.resources.IResource> = ajs.Framework.resourceManager.getResource(
+            let templateList: Promise<Ajs.Resources.IResource> = Ajs.Framework.resourceManager.getResource(
                 this._config.templateList,
                 this._config.storageType,
-                ajs.resources.CACHE_POLICY.PERMANENT,
+                Ajs.Resources.CACHE_POLICY.PERMANENT,
                 this._config.templateLoadingPreference
             );
 
             templateList
                 // on success parse the templates list and load templates
-                .then((resource: ajs.resources.IResource) => {
+                .then((resource: Ajs.Resources.IResource) => {
                     this._loadTemplates(JSON.parse(resource.data));
                 })
                 // otherwise crash
-                .catch((reason: ajs.Exception) => {
-                    throw new ajs.Exception("Failed to load template list.", reason);
+                .catch((reason: Ajs.Exception) => {
+                    throw new Ajs.Exception("Failed to load template list.", reason);
                 });
         }
 
@@ -68,19 +68,19 @@ namespace ajsdoc {
          */
         protected _loadTemplates(templateUrls: string[]): void {
 
-            let templatePromise: Promise<ajs.templating.Template[]> = ajs.Framework.templateManager.loadTemplates(
+            let templatePromise: Promise<Ajs.Templating.Template[]> = Ajs.Framework.templateManager.loadTemplates(
                 templateUrls,
                 config.storageType,
-                ajs.resources.CACHE_POLICY.PERMANENT,
+                Ajs.Resources.CACHE_POLICY.PERMANENT,
                 this._config.templateLoadingPreference
             );
 
             templatePromise
-                .then((templates: ajs.templating.Template[]) => {
+                .then((templates: Ajs.Templating.Template[]) => {
                     this._loadResourcesList();
                 })
-                .catch((reason: ajs.Exception) => {
-                    throw new ajs.Exception("Failed to load templates", reason);
+                .catch((reason: Ajs.Exception) => {
+                    throw new Ajs.Exception("Failed to load templates", reason);
                 }
             );
 
@@ -92,21 +92,21 @@ namespace ajsdoc {
         protected _loadResourcesList(): void {
 
             // load template list (JSON file)
-            let resourceList: Promise<ajs.resources.IResource> = ajs.Framework.resourceManager.getResource(
+            let resourceList: Promise<Ajs.Resources.IResource> = Ajs.Framework.resourceManager.getResource(
                 this._config.resourceList,
                 this._config.storageType,
-                ajs.resources.CACHE_POLICY.PERMANENT,
+                Ajs.Resources.CACHE_POLICY.PERMANENT,
                 this._config.resourceLoadingPreference
             );
 
             resourceList
                 // on success parse the templates list and load templates
-                .then((resource: ajs.resources.IResource) => {
+                .then((resource: Ajs.Resources.IResource) => {
                     this._loadResources(JSON.parse(resource.data));
                 })
                 // otherwise crash
-                .catch((reason?: ajs.Exception) => {
-                    throw new ajs.Exception("Failed to load resources configuration", reason);
+                .catch((reason?: Ajs.Exception) => {
+                    throw new Ajs.Exception("Failed to load resources configuration", reason);
                 });
 
         }
@@ -120,18 +120,18 @@ namespace ajsdoc {
             resourceUrls.push(config.dataSources.program);
             resourceUrls.push(config.dataSources.toc);
 
-            let resourcesPromise: Promise<ajs.resources.IResource[]> = ajs.Framework.resourceManager.getMultipleResources(
+            let resourcesPromise: Promise<Ajs.Resources.IResource[]> = Ajs.Framework.resourceManager.getMultipleResources(
                 resourceUrls,
                 (this._config as IAjsDocBrowserConfig).storageType,
-                ajs.resources.CACHE_POLICY.PERMANENT,
+                Ajs.Resources.CACHE_POLICY.PERMANENT,
                 this._config.resourceLoadingPreference);
 
             resourcesPromise
-                .then((resources: ajs.resources.IResource[]): void => {
+                .then((resources: Ajs.Resources.IResource[]): void => {
                     this._initDone();
                 })
-                .catch((reason: ajs.Exception): void => {
-                    throw new ajs.Exception("Failed to load application resources", reason);
+                .catch((reason: Ajs.Exception): void => {
+                    throw new Ajs.Exception("Failed to load application resources", reason);
                 });
         }
 

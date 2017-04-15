@@ -24,7 +24,7 @@ IN THE SOFTWARE.
 ///<reference path="Console.ts" />
 ///<reference path="modules/logger/Logger.ts" />
 
-namespace ajs.dbg {
+namespace Ajs.Dbg {
 
     "use strict";
 
@@ -43,17 +43,17 @@ namespace ajs.dbg {
     }
 
     export function log(type: LogType, level: number, module: string, object: any, message?: string, ...data: any[]): void {
-        if (ajs.dbg.console !== null) {
+        if (Ajs.Dbg.console !== null) {
             if (message) {
                 if (data instanceof Array) {
-                    (ajs.dbg.console.getModule("logger") as ajs.dbg.modules.logger.Logger).
+                    (Ajs.Dbg.console.getModule("logger") as Ajs.Dbg.modules.logger.Logger).
                         log(type, level, module, object, message, data);
                 } else {
-                    (ajs.dbg.console.getModule("logger") as ajs.dbg.modules.logger.Logger).
+                    (Ajs.Dbg.console.getModule("logger") as Ajs.Dbg.modules.logger.Logger).
                         log(type, level, module, object, message);
                 }
             } else {
-                (ajs.dbg.console.getModule("logger") as ajs.dbg.modules.logger.Logger).
+                (Ajs.Dbg.console.getModule("logger") as Ajs.Dbg.modules.logger.Logger).
                     log(type, level, module, object);
             }
         }

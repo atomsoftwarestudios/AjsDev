@@ -3,21 +3,21 @@ Released under MIT License
 Copyright (c)2017, Atom Software Studios. All rights reserved.
 **************************************************************************** */
 
-namespace ajs.boot {
+namespace Ajs.Boot {
 
     "use strict";
 
     /*
     Application information and configuration
     */
-    configureApplication = (appInfo: ajs.app.IApplicationInfo) => {
+    configureApplication = (appInfo: Ajs.App.IApplicationInfo) => {
 
         // const APP_RESOURCES_LOADING_PREFERENCE: ajs.resources.LOADING_PREFERENCE = ajs.resources.LOADING_PREFERENCE.SERVER;
-        const APP_RESOURCES_LOADING_PREFERENCE: ajs.resources.LOADING_PREFERENCE = ajs.resources.LOADING_PREFERENCE.CACHE;
+        const APP_RESOURCES_LOADING_PREFERENCE: Ajs.Resources.LOADING_PREFERENCE = Ajs.Resources.LOADING_PREFERENCE.CACHE;
 
-        let appConfig: ajsdoc.IAjsDocBrowserConfig = {
-            storageType: ajs.resources.STORAGE_TYPE.LOCAL,
-            storagePolicy: ajs.resources.CACHE_POLICY.LASTRECENTLYUSED,
+        let appConfig: AjsDoc.IAjsDocBrowserConfig = {
+            storageType: Ajs.Resources.STORAGE_TYPE.LOCAL,
+            storagePolicy: Ajs.Resources.CACHE_POLICY.LASTRECENTLYUSED,
             templateList: "/resources/templates.json",
             templateLoadingPreference: APP_RESOURCES_LOADING_PREFERENCE,
             resourceList: "/resources/appresources.json",
@@ -31,7 +31,7 @@ namespace ajs.boot {
             headerDescription: "Developer's guide"
         };
 
-        appInfo.appConstructor = ajsdoc.AjsDocBrowser;
+        appInfo.appConstructor = AjsDoc.AjsDocBrowser;
         appInfo.config = appConfig;
 
     };

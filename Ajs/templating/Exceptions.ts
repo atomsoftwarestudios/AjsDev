@@ -23,16 +23,16 @@ IN THE SOFTWARE.
 
 ///<reference path="../ajs.Exception.ts" />
 
-namespace ajs.templating {
+namespace Ajs.Templating {
 
     "use strict";
 
-    export class FailedToLoadTemplatesException extends ajs.Exception { }
+    export class FailedToLoadTemplatesException extends Ajs.Exception { }
 
-    export class MissingTemplateNameException extends ajs.Exception { }
+    export class MissingTemplateNameException extends Ajs.Exception { }
 
-    export class MissingVisualComponentNameException extends ajs.Exception { }
+    export class MissingVisualComponentNameException extends Ajs.Exception { }
 
-    export class FailedToLoadTemplateStylesheetsException extends ajs.Exception { }
+    export class FailedToLoadTemplateStylesheetsException extends Ajs.Exception { }
 
 }

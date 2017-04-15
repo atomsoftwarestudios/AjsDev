@@ -18,7 +18,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
@@ -54,7 +54,7 @@ namespace ajsdoc {
         let examplesDefaultExtension: string = ".ts";
 
         let examples: RegExpMatchArray = text.match(/#example.*/g);
-        let resourcePromises: Promise<ajs.resources.IResource>[] = [];
+        let resourcePromises: Promise<Ajs.Resources.IResource>[] = [];
 
         if(examples && examples !== null) {
 
@@ -74,11 +74,11 @@ namespace ajsdoc {
                 text = text.replace(new RegExp("#example " + example + ".*", "g"), "#example " + examplePath);
 
                 resourcePromises.push(
-                    ajs.Framework.resourceManager.getResource(
+                    Ajs.Framework.resourceManager.getResource(
                         examplePath,
                         config.storageType,
-                        ajs.resources.CACHE_POLICY.PERMANENT,
-                        ajs.resources.LOADING_PREFERENCE.CACHE
+                        Ajs.Resources.CACHE_POLICY.PERMANENT,
+                        Ajs.Resources.LOADING_PREFERENCE.CACHE
                     )
                 );
             }
@@ -87,7 +87,7 @@ namespace ajsdoc {
                 async (resolve: (text: string) => void, reject: (reason?: any) => void) => {
 
                     try {
-                        let resources: ajs.resources.IResource[] = await Promise.all(resourcePromises);
+                        let resources: Ajs.Resources.IResource[] = await Promise.all(resourcePromises);
 
                         for (let i: number = 0; i < resources.length; i++) {
                             text = text.replace(new RegExp("#example " + resources[i].url + ".*", "g"),
@@ -114,7 +114,7 @@ namespace ajsdoc {
     function includeCharts(text: string): Promise < string > {
 
         let charts: RegExpMatchArray = text.match(/#chart.*/g);
-        let resourcePromises: Promise<ajs.resources.IResource>[] = [];
+        let resourcePromises: Promise<Ajs.Resources.IResource>[] = [];
 
         if(charts && charts !== null) {
 
@@ -122,11 +122,11 @@ namespace ajsdoc {
                 let chart: string = charts[i].substring(7, charts[i].length);
 
                 resourcePromises.push(
-                    ajs.Framework.resourceManager.getResource(
+                    Ajs.Framework.resourceManager.getResource(
                         chart,
                         config.storageType,
-                        ajs.resources.CACHE_POLICY.PERMANENT,
-                        ajs.resources.LOADING_PREFERENCE.CACHE
+                        Ajs.Resources.CACHE_POLICY.PERMANENT,
+                        Ajs.Resources.LOADING_PREFERENCE.CACHE
                     )
                 );
             }
@@ -136,7 +136,7 @@ namespace ajsdoc {
 
                     try {
 
-                        let resources: ajs.resources.IResource[] = await Promise.all(resourcePromises);
+                        let resources: Ajs.Resources.IResource[] = await Promise.all(resourcePromises);
 
                         for (let i: number = 0; i < resources.length; i++) {
                             text = text.replace(new RegExp("#chart " + resources[i].url + ".*", "g"),

@@ -46,7 +46,7 @@ IN THE SOFTWARE.
  * removed from the resulting Ajs and Application JavaScript code using the post-processor.
  * </p>
  */
-namespace ajs.dbg.tsx {
+namespace Ajs.Dbg.Tsx {
 
     "use strict";
 
@@ -64,7 +64,7 @@ namespace ajs.dbg.tsx {
      */
     function renderStyle(style: string): HTMLElement {
         style = style.replace(/\^/g, "{").replace(/\$/g, "}");
-        let element: HTMLElement = ajs.dbg.console.config.styleRenderTarget.ownerDocument.createElement("style");
+        let element: HTMLElement = Ajs.Dbg.console.config.styleRenderTarget.ownerDocument.createElement("style");
         element.setAttribute("type", "text/css");
         element.textContent = style;
         return element;
@@ -80,8 +80,8 @@ namespace ajs.dbg.tsx {
 
         let element: HTMLElement = null;
 
-        if (ajs.utils.HTMLTags.indexOf(tag.toUpperCase()) !== -1) {
-            element = ajs.dbg.console.config.styleRenderTarget.ownerDocument.createElement(tag);
+        if (Ajs.Utils.HTMLTags.indexOf(tag.toUpperCase()) !== -1) {
+            element = Ajs.Dbg.console.config.styleRenderTarget.ownerDocument.createElement(tag);
             if (children instanceof Array) {
                 processChildren(element, children);
             }
@@ -119,7 +119,7 @@ namespace ajs.dbg.tsx {
 
             if (typeof child === "string" || typeof child === "number") {
                 child = "" + child;
-                let node: Text = ajs.dbg.console.config.styleRenderTarget.ownerDocument.createTextNode(child);
+                let node: Text = Ajs.Dbg.console.config.styleRenderTarget.ownerDocument.createTextNode(child);
                 element.appendChild(node);
             }
         }
@@ -180,7 +180,6 @@ namespace ajs.dbg.tsx {
 
 }
 
-/* tslint:disable:no-unused-variable */
 /**
  * Replaces the React.js by ajs.dbg.tsx to process tsx files
  * <p>
@@ -197,4 +196,6 @@ namespace ajs.dbg.tsx {
  * removed from the library
  * </p>
  */
-let AjsDebugTsxFactory: typeof ajs.dbg.tsx = ajs.dbg.tsx;
+/* tslint:disable:no-unused-variable */
+let AjsDebugTsxFactory: typeof Ajs.Dbg.Tsx = Ajs.Dbg.Tsx;
+/* tslint:enable:no-unused-variable */

@@ -21,11 +21,11 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
-    export interface IAjsDocNavBarItemComponentState extends ajs.mvvm.viewmodel.IViewComponentState {
+    export interface IAjsDocNavBarItemComponentState extends Ajs.MVVM.ViewModel.IViewComponentState {
         key?: string;
         firstItem?: boolean;
         itemPath?: string;
@@ -34,7 +34,7 @@ namespace ajsdoc {
     };
 
     export class AjsDocNavBarItemComponent
-        extends ajs.mvvm.viewmodel.ViewComponent<IAjsDocNavBarItemComponentState, any>
+        extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocNavBarItemComponentState, any>
         implements IAjsDocNavBarItemComponentState {
 
         public key: string;
@@ -46,6 +46,6 @@ namespace ajsdoc {
     }
 
     /** Register the component to ViewComponentManager */
-    ajs.Framework.viewComponentManager.registerComponents(AjsDocNavBarComponent);
+    Ajs.Framework.viewComponentManager.registerComponents(AjsDocNavBarComponent);
 
 }

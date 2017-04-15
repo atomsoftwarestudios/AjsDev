@@ -23,11 +23,11 @@ IN THE SOFTWARE.
 
 ///<reference path="../tsx/tsx.ts" />
 
-namespace ajs.dbg.view {
+namespace Ajs.Dbg.View {
 
     "use strict";
 
-    export class StyleSheet implements tsx.IViewComponent {
+    export class StyleSheet implements Tsx.IViewComponent {
 
         public render(): HTMLElement {
             return (

@@ -26,7 +26,7 @@ IN THE SOFTWARE.
  * Contains the static Framework class, Framework exceptions and Ajs
  * configuration template
  */
-namespace ajs {
+namespace Ajs {
 
     "use strict";
 
@@ -40,64 +40,64 @@ namespace ajs {
     export class Framework {
 
         /** Stores the framework configuration loaded during the index.html load */
-        protected static _config: ajs.IAjsConfig;
+        protected static _config: Ajs.IAjsConfig;
         /** Returns the framework configuration object */
-        public static get config(): ajs.IAjsConfig { return Framework._config; }
+        public static get config(): Ajs.IAjsConfig { return Framework._config; }
 
         /** Stores the application configuration */
-        protected static _appConfig: ajs.app.IApplicationInfo;
+        protected static _appConfig: Ajs.App.IApplicationInfo;
         /** Returns the application configuration */
-        public static get appConfig(): ajs.app.IApplicationInfo { return Framework._appConfig; }
+        public static get appConfig(): Ajs.App.IApplicationInfo { return Framework._appConfig; }
 
         /** Stores the application object automatically instantiated from the constructor passed in the configuration */
-        protected static _application: ajs.app.Application;
+        protected static _application: Ajs.App.Application;
         /** Returns the application object */
-        public static get application(): ajs.app.Application { return Framework._application; }
+        public static get application(): Ajs.App.Application { return Framework._application; }
 
         /** Stores the ResourceManager object instantiated automatically during the framework intitialization */
-        protected static _resourceManager: ajs.resources.ResourceManager;
+        protected static _resourceManager: Ajs.Resources.ResourceManager;
         /** Returns the ResourceManager object */
-        public static get resourceManager(): ajs.resources.ResourceManager { return Framework._resourceManager; }
+        public static get resourceManager(): Ajs.Resources.ResourceManager { return Framework._resourceManager; }
 
         /** Stores the StateManager object instantiated automatically during the framework intitialization */
-        protected static _stateManager: ajs.state.StateManager;
+        protected static _stateManager: Ajs.State.StateManager;
         /** Returns the StateManager object */
-        public static get stateManager(): ajs.state.StateManager { return Framework._stateManager; }
+        public static get stateManager(): Ajs.State.StateManager { return Framework._stateManager; }
 
         /** Stores the ResourceManager object instantiated automatically during the framework intitialization */
-        protected static _router: ajs.routing.Router;
+        protected static _router: Ajs.Routing.Router;
         /** Returns the ResourceManager object */
-        public static get router(): ajs.routing.Router { return Framework._router; }
+        public static get router(): Ajs.Routing.Router { return Framework._router; }
 
         /** Stores the Navigator object instantiated automatically during the framework intitialization */
-        protected static _navigator: ajs.navigation.Navigator;
+        protected static _navigator: Ajs.Navigation.Navigator;
         /** Returns the Navigator object */
-        public static get navigator(): ajs.navigation.Navigator { return Framework._navigator; }
+        public static get navigator(): Ajs.Navigation.Navigator { return Framework._navigator; }
 
         /** Stores the ViewComponentManager object instantiated automatically during the framework intitialization */
-        protected static _viewComponentManager: ajs.mvvm.viewmodel.ViewComponentManager;
+        protected static _viewComponentManager: Ajs.MVVM.ViewModel.ViewComponentManager;
         /** Returns the ViewComponentManager object */
-        public static get viewComponentManager(): ajs.mvvm.viewmodel.ViewComponentManager { return Framework._viewComponentManager; }
+        public static get viewComponentManager(): Ajs.MVVM.ViewModel.ViewComponentManager { return Framework._viewComponentManager; }
 
         /** Stores the TemplateManager object instantiated automatically during the framework intitialization */
-        protected static _templateManager: ajs.templating.TemplateManager;
+        protected static _templateManager: Ajs.Templating.TemplateManager;
         /** Returns the TemplateManager object */
-        public static get templateManager(): ajs.templating.TemplateManager { return Framework._templateManager; }
+        public static get templateManager(): Ajs.Templating.TemplateManager { return Framework._templateManager; }
 
         /** Stores the ModelManager object instantiated automatically during the framework initialization */
-        protected static _modelManager: ajs.mvvm.model.ModelManager;
+        protected static _modelManager: Ajs.MVVM.Model.ModelManager;
         /** Returns the ModuleManager object */
-        public static get modelManager(): ajs.mvvm.model.ModelManager { return Framework._modelManager; }
+        public static get modelManager(): Ajs.MVVM.Model.ModelManager { return Framework._modelManager; }
 
         /** Stores the View object instantiated automatically during the framework intitialization */
-        protected static _view: ajs.mvvm.view.View;
+        protected static _view: Ajs.MVVM.View.View;
         /** Returns the View object */
-        public static get view(): ajs.mvvm.view.View { return Framework._view; }
+        public static get view(): Ajs.MVVM.View.View { return Framework._view; }
 
         /** Basic framework initialization is called automatically from the boot when window.onload event occurs */
         public static initialize(config: IAjsConfig): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs", this);
 
             // setup framework level error handler - active until the application is created
             window.addEventListener("error", <any>this._errorHandler);
@@ -110,16 +110,16 @@ namespace ajs {
             Framework._application = null;
 
             // create framework components
-            Framework._resourceManager = new ajs.resources.ResourceManager(config.resourceManager);
-            Framework._stateManager = new ajs.state.StateManager(Framework._resourceManager);
-            Framework._templateManager = new ajs.templating.TemplateManager(Framework._resourceManager);
-            Framework._viewComponentManager = new ajs.mvvm.viewmodel.ViewComponentManager(Framework._templateManager);
-            Framework._modelManager = new ajs.mvvm.model.ModelManager();
-            Framework._view = new ajs.mvvm.view.View(Framework._viewComponentManager, config.view);
-            Framework._router = new ajs.routing.Router(Framework._view, Framework._config.router);
-            Framework._navigator = new ajs.navigation.Navigator(Framework._router, Framework._config.navigator);
+            Framework._resourceManager = new Ajs.Resources.ResourceManager(config.resourceManager);
+            Framework._stateManager = new Ajs.State.StateManager(Framework._resourceManager);
+            Framework._templateManager = new Ajs.Templating.TemplateManager(Framework._resourceManager);
+            Framework._viewComponentManager = new Ajs.MVVM.ViewModel.ViewComponentManager(Framework._templateManager);
+            Framework._modelManager = new Ajs.MVVM.Model.ModelManager();
+            Framework._view = new Ajs.MVVM.View.View(Framework._viewComponentManager, config.view);
+            Framework._router = new Ajs.Routing.Router(Framework._view, Framework._config.router);
+            Framework._navigator = new Ajs.Navigation.Navigator(Framework._router, Framework._config.navigator);
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs", this);
         }
 
         /**
@@ -127,14 +127,14 @@ namespace ajs {
          * Called automatically from boot when window.onload event occurs
          * @param config Application configuration file
          */
-        public static configureApplication(config: ajs.app.IApplicationInfo): void {
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs", this);
+        public static configureApplication(config: Ajs.App.IApplicationInfo): void {
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs", this, "Configuring application");
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs", this, "Configuring application");
 
             Framework._appConfig = config;
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs", this);
         }
 
         /**
@@ -145,26 +145,26 @@ namespace ajs {
          */
         public static start(): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs", this, "Frameowrk is starting the application");
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs", this, "Frameowrk is starting the application");
 
             if (Framework._appConfig === undefined || Framework._appConfig === null) {
-                ajs.dbg.log(dbg.LogType.Error, 0, "ajs", this, "Application not configured");
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs", this, "Application not configured");
                 throw new ApplicationNotConfiguredException();
             }
 
             if (typeof (Framework._appConfig.appConstructor) === typeof (Function)) {
                 Framework._application = new (<any>Framework._appConfig.appConstructor)(Framework._appConfig.config);
                 window.removeEventListener("error", <any>this._errorHandler);
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs", this, "Initializing the application");
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs", this, "Initializing the application");
                 Framework._application.initialize();
             } else {
-                ajs.dbg.log(dbg.LogType.Error, 0, "ajs", this, "Application constructor is not a function!");
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs", this, "Application constructor is not a function!");
                 throw new AppConstructorMustBeAFunctionException();
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs", this);
         }
 
         /**
@@ -177,7 +177,7 @@ namespace ajs {
          * @param e ErrorEvent or ajs.Exception to be handled
          */
         protected static _errorHandler(e: ErrorEvent | Exception): void {
-            ajs.utils.errorHandler(e);
+            Ajs.Utils.errorHandler(e);
         }
 
 

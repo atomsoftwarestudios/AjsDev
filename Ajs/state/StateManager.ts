@@ -93,19 +93,19 @@ IN THE SOFTWARE.
  * web site. There is a very nice guide regarding secure application design and development.
  * </p>
  */
-namespace ajs.state {
+namespace Ajs.State {
 
     "use strict";
 
     /**
      * Prefix for the key used to store the Application state value
      */
-    const APP_STATE_PREFIX: string = resources.LOCAL_ONLY_PREFIX + "APPSTATE.";
+    const APP_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "APPSTATE.";
 
     /**
      * Prefix for the key used to store the Session state value
      */
-    const SESS_STATE_PREFIX: string = resources.LOCAL_ONLY_PREFIX + "SESSTATE.";
+    const SESS_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "SESSTATE.";
 
     /**
      * State manager is used for the application and session state persistance
@@ -115,19 +115,19 @@ namespace ajs.state {
     export class StateManager {
 
         /** Resource manager to be used to access the local and session storages */
-        protected _resourceManager: ajs.resources.ResourceManager;
+        protected _resourceManager: Ajs.Resources.ResourceManager;
 
         /**
          * Constructs the state manager object
          * @param resourceManager Resource manager to be used to access the local and session storages
          */
-        public constructor(resourceManager: ajs.resources.ResourceManager) {
+        public constructor(resourceManager: Ajs.Resources.ResourceManager) {
 
-            ajs.dbg.log(ajs.dbg.LogType.Constructor, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Constructor, 0, "ajs.state", this);
 
             this._resourceManager = resourceManager;
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
 
         /**
@@ -137,18 +137,18 @@ namespace ajs.state {
          */
         public setAppState(key: string, value: string): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.state", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Setting the application state: " + key + " : " + value);
 
             this._resourceManager.setCachedResource(
                 APP_STATE_PREFIX + key,
                 value,
-                ajs.resources.STORAGE_TYPE.LOCAL,
-                ajs.resources.CACHE_POLICY.PERMANENT);
+                Ajs.Resources.STORAGE_TYPE.LOCAL,
+                Ajs.Resources.CACHE_POLICY.PERMANENT);
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
 
         /**
@@ -157,21 +157,21 @@ namespace ajs.state {
          */
         public getAppState(key: string): string {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.state", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Retrieving the application state " + key);
 
-            let resource: ajs.resources.ICachedResource = this._resourceManager.getCachedResource(
+            let resource: Ajs.Resources.ICachedResource = this._resourceManager.getCachedResource(
                 APP_STATE_PREFIX + key,
-                ajs.resources.STORAGE_TYPE.LOCAL
+                Ajs.Resources.STORAGE_TYPE.LOCAL
             );
             if (resource !== null) {
-                ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.state", this);
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
                 return resource.data;
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
             return null;
         }
 
@@ -181,14 +181,14 @@ namespace ajs.state {
          */
         public removeAppState(key: string): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.state", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Removing the application state " + key);
 
-            this._resourceManager.removeCachedResource(key, ajs.resources.STORAGE_TYPE.LOCAL);
+            this._resourceManager.removeCachedResource(key, Ajs.Resources.STORAGE_TYPE.LOCAL);
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
 
         /**
@@ -198,18 +198,18 @@ namespace ajs.state {
          */
         public setSessionState(key: string, value: string): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.state", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Setting the session state " + key + " : " + value);
 
             this._resourceManager.setCachedResource(
                 SESS_STATE_PREFIX + key,
                 value,
-                ajs.resources.STORAGE_TYPE.SESSION,
-                ajs.resources.CACHE_POLICY.PERMANENT);
+                Ajs.Resources.STORAGE_TYPE.SESSION,
+                Ajs.Resources.CACHE_POLICY.PERMANENT);
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
 
         /**
@@ -218,22 +218,22 @@ namespace ajs.state {
          */
         public getSessionState(key: string): string {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.state", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Retireving the session state " + key);
 
-            let resource: ajs.resources.ICachedResource = this._resourceManager.getCachedResource(
+            let resource: Ajs.Resources.ICachedResource = this._resourceManager.getCachedResource(
                 SESS_STATE_PREFIX + key,
-                ajs.resources.STORAGE_TYPE.SESSION
+                Ajs.Resources.STORAGE_TYPE.SESSION
             );
 
             if (resource !== null) {
-                ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.state", this);
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
                 return resource.data;
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
             return null;
         }
 
@@ -242,14 +242,14 @@ namespace ajs.state {
          * @param key Key to be removed
          */
         public removeSessionState(key: string): void {
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.state", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Removing the session state " + key);
 
-            this._resourceManager.removeCachedResource(key, ajs.resources.STORAGE_TYPE.SESSION);
+            this._resourceManager.removeCachedResource(key, Ajs.Resources.STORAGE_TYPE.SESSION);
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.state", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
 
     }

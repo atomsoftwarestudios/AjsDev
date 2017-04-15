@@ -24,7 +24,7 @@ THE SOFTWARE.
 Source: https://github.com/beatgammit/base64-js
 **************************************************************************** */
 
-namespace ajs.utils {
+namespace Ajs.Utils {
 
     "use strict";
 

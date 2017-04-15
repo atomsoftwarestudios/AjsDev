@@ -23,18 +23,18 @@ IN THE SOFTWARE.
 
 ///<reference path="../ajs.Exception.ts" />
 
-namespace ajs.app {
+namespace Ajs.App {
 
     "use strict";
 
     /**
      * Thrown when the application recognizes it was not initialized before calling the _run method
      */
-    export class NotInitializedException extends ajs.Exception { }
+    export class NotInitializedException extends Ajs.Exception { }
 
     /**
      * Thrown when the inherited application does not implement required functionality
      */
-    export class NotImplementedException extends ajs.Exception { }
+    export class NotImplementedException extends Ajs.Exception { }
 
 }

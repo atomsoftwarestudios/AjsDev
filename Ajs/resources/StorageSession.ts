@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.resources {
+namespace Ajs.Resources {
 
     "use strict";
 
@@ -36,22 +36,22 @@ namespace ajs.resources {
         /** Constructs the StorageSession object */
         protected _initialize(): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             this._supported = window.sessionStorage !== undefined;
 
             if (this._supported) {
 
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Session storage is supported.");
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Session storage is supported.");
 
                 this._storageProvider = window.sessionStorage;
                 this._usedSpace = 0;
                 this._resources = this._getResourcesInfo();
             } else {
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Session storage is not supported!");
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Session storage is not supported!");
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
         }
 
     }

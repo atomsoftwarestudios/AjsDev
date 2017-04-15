@@ -18,7 +18,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
@@ -88,7 +88,7 @@ namespace ajsdoc {
     /**
      * Loading of the program data and providing data to appropriate requestors (mainly AjsDoc view component)`1
      */
-    export class ProgramModel extends ajs.mvvm.model.Model<IProgramDataReadyData> {
+    export class ProgramModel extends Ajs.MVVM.Model.Model<IProgramDataReadyData> {
 
         /** Stores the program data in String form */
         protected _jsonDataString: string;
@@ -101,21 +101,21 @@ namespace ajsdoc {
 
         public getMenu(path: string): void {
             this._checkInitialized(
-                new ajs.Exception("Program data loading timeout"),
+                new Ajs.Exception("Program data loading timeout"),
                 () => { this._getMenu(path); }
             );
         }
 
         public getNavBar(path: string): void {
             this._checkInitialized(
-                new ajs.Exception("Program data loading timeout"),
+                new Ajs.Exception("Program data loading timeout"),
                 () => { this._getNavBar(path); }
             );
         }
 
         public getContent(path: string): void {
             this._checkInitialized(
-                new ajs.Exception("Program data loading timeout"),
+                new Ajs.Exception("Program data loading timeout"),
                 () => { this._getContent(path); }
             );
         }
@@ -154,16 +154,16 @@ namespace ajsdoc {
         protected _initialize(): void {
 
             // load program.json resource
-            let res: Promise<ajs.resources.IResource> = ajs.Framework.resourceManager.getResource(
+            let res: Promise<Ajs.Resources.IResource> = Ajs.Framework.resourceManager.getResource(
                 config.dataSources.program,
                 config.storageType,
-                ajs.resources.CACHE_POLICY.PERMANENT,
-                ajs.resources.LOADING_PREFERENCE.CACHE
+                Ajs.Resources.CACHE_POLICY.PERMANENT,
+                Ajs.Resources.LOADING_PREFERENCE.CACHE
             );
 
             // process program.json resource when ready
             res.then(
-                (resource: ajs.resources.IResource) => {
+                (resource: Ajs.Resources.IResource) => {
 
                     // store loaded data locally
                     this._jsonDataString = resource.data;
@@ -341,7 +341,12 @@ namespace ajsdoc {
          * @param label Label of the menu group (usually doc node kind + doc node name)
          * @param items Items to be added to the group (usually [])
          */
-        protected _addMenuGroup(menu: IAjsDocMenuComponentState, key: any, label: string, items: IAjsDocMenuItemComponentState[]): IAjsDocMenuGroupComponentState {
+        protected _addMenuGroup(
+            menu: IAjsDocMenuComponentState,
+            key: any,
+            label: string,
+            items: IAjsDocMenuItemComponentState[]): IAjsDocMenuGroupComponentState {
+
             let group: IAjsDocMenuGroupComponentState = {
                 key: key,
                 label: label,

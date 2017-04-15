@@ -35,7 +35,7 @@ IN THE SOFTWARE.
  * #example app_init
  *
  */
-namespace ajs.app {
+namespace Ajs.App {
 
     "use strict";
 
@@ -78,7 +78,7 @@ namespace ajs.app {
          * @param e ErrorEvent or ajs.Exception to be handled
          */
         protected _handleError(e: ErrorEvent | Exception): void {
-            ajs.utils.errorHandler(e);
+            Ajs.Utils.errorHandler(e);
         }
 
         /**
@@ -108,8 +108,8 @@ namespace ajs.app {
             if (!this._initialized) {
                 throw new NotInitializedException();
             }
-            ajs.Framework.navigator.canNavigate = true;
-            ajs.Framework.navigator.navigated();
+            Ajs.Framework.navigator.canNavigate = true;
+            Ajs.Framework.navigator.navigated();
         }
 
         /**

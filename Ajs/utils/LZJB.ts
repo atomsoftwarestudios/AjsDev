@@ -37,7 +37,7 @@ Source: https://github.com/vitorio/jslzjb/blob/master/Iuppiter.js
 **************************************************************************** */
 
 
-namespace ajs.utils {
+namespace Ajs.Utils {
 
     "use strict";
 

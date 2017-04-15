@@ -23,14 +23,14 @@ IN THE SOFTWARE.
 
 ///<reference path="../../ajs.Exception.ts" />
 
-namespace ajs.mvvm.view {
+namespace Ajs.MVVM.View {
 
     "use strict";
 
-    export class UpdateRootViewComponentFailedException extends ajs.Exception { }
+    export class UpdateRootViewComponentFailedException extends Ajs.Exception { }
 
-    export class VisualComponentNotRegisteredException extends ajs.Exception { }
+    export class VisualComponentNotRegisteredException extends Ajs.Exception { }
 
-    export class ViewComponentInitializationTimeoutException extends ajs.Exception { }
+    export class ViewComponentInitializationTimeoutException extends Ajs.Exception { }
 
 }

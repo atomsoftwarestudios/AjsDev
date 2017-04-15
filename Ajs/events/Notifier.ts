@@ -28,7 +28,7 @@ IN THE SOFTWARE.
  * to follow the TypeScript requirements regarding using of the this instance
  * identifier. The function must be defined according to the IListener interface.
  */
-namespace ajs.events {
+namespace Ajs.Events {
 
     "use strict";
 
@@ -44,14 +44,14 @@ namespace ajs.events {
          */
         public constructor(...listeners: IListener<T>[]) {
 
-            ajs.dbg.log(dbg.LogType.Constructor, 0, "ajs.events", this);
+            Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.events", this);
 
             this._listeners = [];
             for (let i: number = 0; i < listeners.length; i++) {
                 this._listeners.push(listeners[i]);
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.events", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.events", this);
 
         }
 
@@ -61,16 +61,16 @@ namespace ajs.events {
          */
         public subscribe(listener: IListener<T>): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.events", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.events", this);
 
             if (this._listeners.indexOf(listener) === -1) {
                 this._listeners.push(listener);
             }
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.events", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.events", this,
                 "Registered subscribers: " + this._listeners.length, this._listeners);
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.events", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.events", this);
         }
 
         /**
@@ -79,16 +79,16 @@ namespace ajs.events {
          */
         public unsubscribe(listener: IListener<T>): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.events", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.events", this);
 
             if (this._listeners.indexOf(listener) !== -1) {
                 this._listeners.splice(this._listeners.indexOf(listener));
             }
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.events", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.events", this,
                 "Registered subscribers: " + this._listeners.length, this._listeners);
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.events", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.events", this);
         }
 
         /**
@@ -99,10 +99,10 @@ namespace ajs.events {
          */
         public notify(sender: any, data?: T): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.events", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.events", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.events", this,
-                "Notifying subscribers. Sender: " + ajs.utils.getClassName(sender), sender, data);
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.events", this,
+                "Notifying subscribers. Sender: " + Ajs.Utils.getClassName(sender), sender, data);
 
             for (let i: number = 0; i < this._listeners.length; i++) {
                 let result: boolean = this._listeners[i](sender, data);
@@ -111,7 +111,7 @@ namespace ajs.events {
                 }
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.events", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.events", this);
         }
 
     }

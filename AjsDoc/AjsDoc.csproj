@@ -108,28 +108,28 @@
   <ItemGroup>
     <TypeScriptCompile Include="!ajsdoc.ts" />
     <TypeScriptCompile Include="AjsDocBrowser.ts" />
-    <TypeScriptCompile Include="components\AjsDocComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocMemberTypeParametersComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocMemberImplementsComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocMemberFunctionParamsComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocNavBarItemComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocMemberTypeParametersComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocMemberImplementsComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocMemberFunctionParamsComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocNavBarItemComponent.ts" />
     <TypeScriptCompile Include="lib\atsdoc.ts" />
-    <TypeScriptCompile Include="components\AjsDocArticleComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocContextSwitcherComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocLayoutComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocLayoutMenuButtonComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocHeaderComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocMenuComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocMenuGroupComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocMenuItemComponent.ts" />
-    <TypeScriptCompile Include="components\AjsDocNavBarComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocArticleComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocContextSwitcherComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocLayoutComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocLayoutMenuButtonComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocHeaderComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocMenuComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocMenuGroupComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocMenuItemComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocNavBarComponent.ts" />
     <TypeScriptCompile Include="Exceptions.ts" />
     <TypeScriptCompile Include="IAjsDocBrowserConfig.ts" />
     <TypeScriptCompile Include="lib\hljs.d.ts" />
-    <TypeScriptCompile Include="models\ContentModel.ts" />
-    <TypeScriptCompile Include="utils\AtsDoc.ts" />
-    <TypeScriptCompile Include="utils\HTMLHelpers.ts" />
-    <TypeScriptCompile Include="models\ProgramModel.ts" />
+    <TypeScriptCompile Include="Models\ContentModel.ts" />
+    <TypeScriptCompile Include="Utils\AtsDoc.ts" />
+    <TypeScriptCompile Include="Utils\HTMLHelpers.ts" />
+    <TypeScriptCompile Include="Models\ProgramModel.ts" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AjsDoc.Lib\AjsDoc.Lib.csproj">

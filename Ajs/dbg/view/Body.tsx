@@ -26,11 +26,11 @@ IN THE SOFTWARE.
 /**
  * Contains the debug view components
  */
-namespace ajs.dbg.view {
+namespace Ajs.Dbg.View {
 
     "use strict";
 
-    export class Body implements tsx.IViewComponent {
+    export class Body implements Tsx.IViewComponent {
 
         protected _console;
 
@@ -67,7 +67,7 @@ namespace ajs.dbg.view {
             }
 
             buttons.push(
-                <input type="button" value="Hide" click={() => { ajs.dbg.console.hide(); }} />
+                <input type="button" value="Hide" click={() => { Ajs.Dbg.console.hide(); }} />
             );
 
             if (this._currentModule !== null) {

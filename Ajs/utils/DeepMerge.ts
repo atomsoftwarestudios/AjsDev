@@ -24,7 +24,7 @@ THE SOFTWARE.
 Source: https://github.com/KyleAMathews/deepmerge
 **************************************************************************** */
 
-namespace ajs.utils {
+namespace Ajs.Utils {
 
     "use strict";
 

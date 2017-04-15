@@ -29,7 +29,7 @@ IN THE SOFTWARE.
 /**
  * Contains view components of the log debug module
  */
-namespace ajs.dbg.modules.logger {
+namespace Ajs.Dbg.modules.logger {
 
     "use strict";
 
@@ -42,9 +42,9 @@ namespace ajs.dbg.modules.logger {
         occurence: number;
     }
 
-    export class Logger implements dbg.IConsoleModule {
+    export class Logger implements Dbg.IConsoleModule {
 
-        protected _console: ajs.dbg.Console;
+        protected _console: Ajs.Dbg.Console;
         protected _config: ILoggerConfig;
 
         protected _initTime: number;
@@ -66,7 +66,7 @@ namespace ajs.dbg.modules.logger {
 
         protected _selectedItem: ILogRecord;
 
-        constructor(console: ajs.dbg.Console, config: ILoggerConfig) {
+        constructor(console: Ajs.Dbg.Console, config: ILoggerConfig) {
             this._initTime = (new Date()).getTime();
             this._console = console;
             this._config = config;

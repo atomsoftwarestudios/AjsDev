@@ -23,10 +23,10 @@ IN THE SOFTWARE.
 
 ///<reference path="../ajs.Exception.ts" />
 
-namespace ajs.routing {
+namespace Ajs.Routing {
 
     "use strict";
 
-    export class RouteNotFoundException extends ajs.Exception { }
+    export class RouteNotFoundException extends Ajs.Exception { }
 
 }

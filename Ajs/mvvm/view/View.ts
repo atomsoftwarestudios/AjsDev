@@ -27,12 +27,12 @@ IN THE SOFTWARE.
 /**
  * View namespace is dedicated to view and its exceptions only
  */
-namespace ajs.mvvm.view {
+namespace Ajs.MVVM.View {
 
     "use strict";
 
-    import ViewComponentManager = ajs.mvvm.viewmodel.ViewComponentManager;
-    import DocumentManager = ajs.doc.DocumentManager;
+    import ViewComponentManager = Ajs.MVVM.ViewModel.ViewComponentManager;
+    import DocumentManager = Ajs.Doc.DocumentManager;
 
     /**
      * View class represents a view composed from the view components. It manages the tree of instanced view components to be displayed.
@@ -87,25 +87,25 @@ namespace ajs.mvvm.view {
         public set rootViewComponentName(value: string) { this._rootUpdated(value); }
 
         /** Root view component currently in use */
-        protected _rootViewComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>;
+        protected _rootViewComponent: Ajs.MVVM.ViewModel.ViewComponent<any, any>;
         /** Returns root view component currently in use */
-        public get rootViewComponent(): ajs.mvvm.viewmodel.ViewComponent<any, any> { return this._rootViewComponent; }
+        public get rootViewComponent(): Ajs.MVVM.ViewModel.ViewComponent<any, any> { return this._rootViewComponent; }
 
         /** Specifies the root component for the current state change. Component is then rendered (including its children) if neccessary. */
-        protected _stateChangeRootComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>;
+        protected _stateChangeRootComponent: Ajs.MVVM.ViewModel.ViewComponent<any, any>;
         /** Returns the current change root component. Valid when the stage change is in progress only */
-        public get stateChangeRootComponent(): ajs.mvvm.viewmodel.ViewComponent<any, any> { return this._stateChangeRootComponent; }
+        public get stateChangeRootComponent(): Ajs.MVVM.ViewModel.ViewComponent<any, any> { return this._stateChangeRootComponent; }
 
         /** Used for rendering of view components after the state change and applying the changes to the render target */
         protected _shadowDom: Document;
 
         /** Notifies subscribers (usually view components) the Navigation event occured */
-        protected _navigationNotifier: ajs.events.Notifier<void>;
-        public get navigationNotifier(): ajs.events.Notifier<void> { return this._navigationNotifier; }
+        protected _navigationNotifier: Ajs.Events.Notifier<void>;
+        public get navigationNotifier(): Ajs.Events.Notifier<void> { return this._navigationNotifier; }
 
         /** Notifies subcribers (usually view components) the rendering of the component is finished */
-        protected _renderDoneNotifier: ajs.events.Notifier<void>;
-        public get renderDoneNotifier(): ajs.events.Notifier<void> { return this._renderDoneNotifier; }
+        protected _renderDoneNotifier: Ajs.Events.Notifier<void>;
+        public get renderDoneNotifier(): Ajs.Events.Notifier<void> { return this._renderDoneNotifier; }
 
         /** Unique component ID generator -> increments by 1 every time it is asked for the new value */
         protected _lastComponentId: number;
@@ -125,7 +125,7 @@ namespace ajs.mvvm.view {
          */
         public constructor(viewComponentManager: ViewComponentManager, config?: IViewConfig) {
 
-            ajs.dbg.log(dbg.LogType.Constructor, 0, "ajs.mvvm.view", this, "", ViewComponentManager, config);
+            Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.mvvm.view", this, "", ViewComponentManager, config);
 
             // store the configuration
             if (config) {
@@ -135,8 +135,8 @@ namespace ajs.mvvm.view {
             }
 
             // instantiate notifiers
-            this._navigationNotifier = new ajs.events.Notifier<void>();
-            this._renderDoneNotifier = new ajs.events.Notifier<void>();
+            this._navigationNotifier = new Ajs.Events.Notifier<void>();
+            this._renderDoneNotifier = new Ajs.Events.Notifier<void>();
 
             // store references to the template and view component managers
             this._viewComponentManager = viewComponentManager;
@@ -156,7 +156,7 @@ namespace ajs.mvvm.view {
 
             this._lastComponentId = 0;
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
         }
 
         /**
@@ -184,38 +184,38 @@ namespace ajs.mvvm.view {
          * </p>
          * @param viewComponent
          */
-        public stateChangeBegin(viewComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>): void {
+        public stateChangeBegin(viewComponent: Ajs.MVVM.ViewModel.ViewComponent<any, any>): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.mvvm.view", this,
-                "State change begun (" + ajs.utils.getClassName(viewComponent) + "), " +
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
+                "State change begun (" + Ajs.Utils.getClassName(viewComponent) + "), " +
                 "id: " + viewComponent.ajs.id + ", viewId: " + viewComponent.componentViewId,
                 viewComponent);
 
             // if there is no root assigned to the change, the passed component is the root of the change
             if (this._stateChangeRootComponent === null) {
 
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.mvvm.view", this,
-                    "The " + ajs.utils.getClassName(viewComponent) + ":" + viewComponent.ajs.id + " is root of the state change");
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
+                    "The " + Ajs.Utils.getClassName(viewComponent) + ":" + viewComponent.ajs.id + " is root of the state change");
 
                 this._stateChangeRootComponent = viewComponent;
 
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
         }
 
         /**
          * Called from the view component when it finishes the state change
          * @param viewComponent
          */
-        public stateChangeEnd(viewComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>): void {
+        public stateChangeEnd(viewComponent: Ajs.MVVM.ViewModel.ViewComponent<any, any>): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.mvvm.view", this,
-                "State change end (" + ajs.utils.getClassName(viewComponent) + "), " +
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
+                "State change end (" + Ajs.Utils.getClassName(viewComponent) + "), " +
                 "id: " + viewComponent.ajs.id + ", viewId: " + viewComponent.componentViewId +
                 ", state changed: " + viewComponent.ajs.stateChanged,
                 viewComponent);
@@ -244,7 +244,7 @@ namespace ajs.mvvm.view {
 
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
         }
 
         /**
@@ -256,15 +256,15 @@ namespace ajs.mvvm.view {
          * </p>
          * @param viewComponent
          */
-        public notifyParentsChildrenStateChange(parentViewComponent: ajs.mvvm.viewmodel.IParentViewComponent): void {
+        public notifyParentsChildrenStateChange(parentViewComponent: Ajs.MVVM.ViewModel.IParentViewComponent): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
-            let vc: ajs.mvvm.viewmodel.ViewComponent<any, any> = <any>parentViewComponent;
+            let vc: Ajs.MVVM.ViewModel.ViewComponent<any, any> = <any>parentViewComponent;
 
             if (vc !== null && this._stateChangeRootComponent !== null) {
 
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.mvvm.view", this,
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
                     "Notifying parents about the component change: " + vc.ajs.id + " " + vc.componentViewId);
 
                 while (vc !== this._stateChangeRootComponent.ajs.parentComponent && vc !== null) {
@@ -273,18 +273,18 @@ namespace ajs.mvvm.view {
                 }
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
         }
 
         /**
          * Renders a viewComponent to the view
          * @param viewComponent
          */
-        public render(viewComponent: ajs.mvvm.viewmodel.ViewComponent<any, any>): Element {
+        public render(viewComponent: Ajs.MVVM.ViewModel.ViewComponent<any, any>): Element {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.mvvm.view", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
                 "Rendering component, id: " + viewComponent.ajs.id + ", viewId: " + viewComponent.componentViewId,
                 viewComponent);
 
@@ -316,7 +316,7 @@ namespace ajs.mvvm.view {
                 } catch (e) {
                     this._shadowDom.body.innerHTML = "";
 
-                    ajs.dbg.log(dbg.LogType.Error, 0, "ajs.mvvm.view", this,
+                    Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.mvvm.view", this,
                         "Error while updating the DOM!", e);
 
                     throw new Error(e);
@@ -337,13 +337,13 @@ namespace ajs.mvvm.view {
 
                     if (targetUpdateRoot !== null) {
 
-                        ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
+                        Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
 
                         return targetUpdateRoot as Element;
 
                     } else {
 
-                        ajs.dbg.log(dbg.LogType.Error, 0, "ajs.mvvm.view", this,
+                        Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.mvvm.view", this,
                             "Something went wrong during the DOM update as the root element of the view component can't be located!");
 
                         throw new Error("Unrecoverable internal error. \
@@ -352,7 +352,7 @@ namespace ajs.mvvm.view {
 
                 } else {
 
-                    ajs.dbg.log(dbg.LogType.Error, 0, "ajs.mvvm.view", this,
+                    Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.mvvm.view", this,
                         "Root of the component must be always element!");
 
                     throw new Error("Unrecoverable internal error. Root of the component must be always element!");
@@ -368,7 +368,7 @@ namespace ajs.mvvm.view {
                 }*/
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
 
         }
 
@@ -382,9 +382,9 @@ namespace ajs.mvvm.view {
          */
         protected _rootUpdated(rootComponentName: string): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.mvvm.view", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
                 "Root component updated: " + rootComponentName);
 
             // clean the target document including the render target
@@ -407,7 +407,7 @@ namespace ajs.mvvm.view {
             // render
             this.render(this._rootViewComponent);
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
         }
 
     }

@@ -41,20 +41,20 @@
 
             function onLoad() {
 
-                if (window.ajs && window.ajs.ui) {
-                    if (ajs.ui.ErrorScreen) {
-                        ajs.ui.ErrorScreen.setDOMElement("ajsErrorScreen");
+                if (window.Ajs && window.Ajs.UI) {
+                    if (Ajs.UI.ErrorScreen) {
+                        Ajs.UI.ErrorScreen.setDOMElement("ajsErrorScreen");
                     }
 
-                    if (ajs.ui.RenderTarget) {
-                        ajs.ui.RenderTarget.setDOMElement("ajsRenderTarget");
+                    if (Ajs.UI.RenderTarget) {
+                        Ajs.UI.RenderTarget.setDOMElement("ajsRenderTarget");
                     }
 
-                    if (ajs.ui.RenderTarget) {
-                        ajs.ui.ProgressBar.setDOMElement("ajsProgressBar");
-                        ajs.ui.ProgressBar.setTotal(59);
-                        ajs.ui.ProgressBar.setCurrent(0);
-                        ajs.ui.ProgressBar.setLabel("AjsDoc is loading...");
+                    if (Ajs.UI.RenderTarget) {
+                        Ajs.UI.ProgressBar.setDOMElement("ajsProgressBar");
+                        Ajs.UI.ProgressBar.setTotal(59);
+                        Ajs.UI.ProgressBar.setCurrent(0);
+                        Ajs.UI.ProgressBar.setLabel("AjsDoc is loading...");
                     }
                 }
 

@@ -26,17 +26,17 @@ IN THE SOFTWARE.
 /**
  * dom namespace contains the DOM updater and related interfaces
  */
-namespace ajs.doc {
+namespace Ajs.Doc {
 
     "use strict";
 
-    export class RenderTargetNotInManagedDocumentException extends ajs.Exception { }
+    export class RenderTargetNotInManagedDocumentException extends Ajs.Exception { }
 
-    export class TargetOrParentIsUnknownException extends ajs.Exception { }
+    export class TargetOrParentIsUnknownException extends Ajs.Exception { }
 
-    export class SourceNodeHasNoComponentAssignedException extends ajs.Exception { }
+    export class SourceNodeHasNoComponentAssignedException extends Ajs.Exception { }
 
-    export class CSSRequiredResourceNotLoadedException extends ajs.Exception { }
+    export class CSSRequiredResourceNotLoadedException extends Ajs.Exception { }
 
-    export class CSSInvalidResourceSpecificationException extends ajs.Exception { }
+    export class CSSInvalidResourceSpecificationException extends Ajs.Exception { }
 }

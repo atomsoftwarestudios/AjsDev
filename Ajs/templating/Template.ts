@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.templating {
+namespace Ajs.Templating {
 
     "use strict";
 
@@ -49,11 +49,11 @@ namespace ajs.templating {
         protected _name: string;
         public get name(): string { return this._name; }
 
-        protected _storageType: resources.STORAGE_TYPE;
-        public get storageType(): resources.STORAGE_TYPE { return this._storageType; }
+        protected _storageType: Resources.STORAGE_TYPE;
+        public get storageType(): Resources.STORAGE_TYPE { return this._storageType; }
 
-        protected _cachePolicy: resources.CACHE_POLICY;
-        public get cachePolicy(): resources.CACHE_POLICY { return this._cachePolicy; }
+        protected _cachePolicy: Resources.CACHE_POLICY;
+        public get cachePolicy(): Resources.CACHE_POLICY { return this._cachePolicy; }
 
         protected _styleSheetsUrls: string[];
         public get styleSheetsUrls(): string[] { return this._styleSheetsUrls; }
@@ -77,9 +77,9 @@ namespace ajs.templating {
          */
         public constructor(
             templateManager: TemplateManager,
-            templateResource: resources.IResource,
-            storageType: resources.STORAGE_TYPE,
-            cachePolicy: resources.CACHE_POLICY
+            templateResource: Resources.IResource,
+            storageType: Resources.STORAGE_TYPE,
+            cachePolicy: Resources.CACHE_POLICY
         ) {
             this._templateManager = templateManager;
             this._name = "";
@@ -115,21 +115,21 @@ namespace ajs.templating {
                 }
 
                 // prepare resources to be obtained from resource manager (cache/server)
-                let resourcePromises: Promise<resources.IResource>[] = [];
+                let resourcePromises: Promise<Resources.IResource>[] = [];
                 for (let i: number = 0; i < this._styleSheetsUrls.length; i++) {
                     resourcePromises.push(
                         this._templateManager.resourceManager.getResource(
                             this._styleSheetsUrls[i],
                             this._storageType,
                             this._cachePolicy,
-                            resources.LOADING_PREFERENCE.CACHE
+                            Resources.LOADING_PREFERENCE.CACHE
                         )
                     );
                 }
 
                 try {
                     // wait till all resources are loaded
-                    let styleSheets: resources.IResource[] = await Promise.all(resourcePromises);
+                    let styleSheets: Resources.IResource[] = await Promise.all(resourcePromises);
 
                     // store stylesheets
                     for (let i: number = 0; i < styleSheets.length; i++) {

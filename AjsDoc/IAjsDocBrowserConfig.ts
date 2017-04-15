@@ -18,22 +18,22 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
-    export interface IAjsDocBrowserConfig extends ajs.app.IApplicationConfig {
-        storageType: ajs.resources.STORAGE_TYPE;
-        storagePolicy: ajs.resources.CACHE_POLICY;
+    export interface IAjsDocBrowserConfig extends Ajs.App.IApplicationConfig {
+        storageType: Ajs.Resources.STORAGE_TYPE;
+        storagePolicy: Ajs.Resources.CACHE_POLICY;
         templateList: string;
-        templateLoadingPreference: ajs.resources.LOADING_PREFERENCE;
+        templateLoadingPreference: Ajs.Resources.LOADING_PREFERENCE;
         resourceList: string;
-        resourceLoadingPreference: ajs.resources.LOADING_PREFERENCE;
+        resourceLoadingPreference: Ajs.Resources.LOADING_PREFERENCE;
         dataSources: {
             toc: string;
             program: string;
         };
-        dataLoadingPreference: ajs.resources.LOADING_PREFERENCE;
+        dataLoadingPreference: Ajs.Resources.LOADING_PREFERENCE;
         headerLabel: string;
         headerDescription: string;
     }

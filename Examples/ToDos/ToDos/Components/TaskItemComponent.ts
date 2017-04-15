@@ -7,20 +7,20 @@ namespace ToDos.Components {
 
     "use strict";
 
-    export interface ITaskItemComponentEvents extends ajs.mvvm.viewmodel.IParentViewComponent  {
+    export interface ITaskItemComponentEvents extends Ajs.MVVM.ViewModel.IParentViewComponent  {
         onTaskItemEdit: (key: number) => void;
         onTaskItemDelete: (key: number) => void;
         onTaskItemDoneChanged: (key: number, state: boolean) => void;
     }
 
-    export interface ITaskItemComponentState extends ajs.mvvm.viewmodel.IViewComponentState {
+    export interface ITaskItemComponentState extends Ajs.MVVM.ViewModel.IViewComponentState {
         key?: number;
         done?: boolean;
         description?: string;
     }
 
     export class TaskItemComponent
-        extends ajs.mvvm.viewmodel.ViewComponent<ITaskItemComponentState, ITaskItemComponentEvents>
+        extends Ajs.MVVM.ViewModel.ViewComponent<ITaskItemComponentState, ITaskItemComponentEvents>
         implements ITaskItemComponentState {
 
         public key: number;
@@ -28,22 +28,22 @@ namespace ToDos.Components {
         public description: string;
 
         public editTask(e: Event): void {
-            let key: number = ajs.utils.getDomEventTargetOwnerComponent<TaskItemComponent>(e.target).key;
+            let key: number = Ajs.Utils.getDomEventTargetOwnerComponent<TaskItemComponent>(e.target).key;
             this.ajs.parentComponent.onTaskItemEdit(key);
         }
 
         public deleteTask(e: Event): void {
-            let key: number = ajs.utils.getDomEventTargetOwnerComponent<TaskItemComponent>(e.target).key;
+            let key: number = Ajs.Utils.getDomEventTargetOwnerComponent<TaskItemComponent>(e.target).key;
             this.ajs.parentComponent.onTaskItemDelete(key);
         }
 
         public doneChanged(e: Event): void {
-            let key: number = ajs.utils.getDomEventTargetOwnerComponent<TaskItemComponent>(e.target).key;
+            let key: number = Ajs.Utils.getDomEventTargetOwnerComponent<TaskItemComponent>(e.target).key;
             this.ajs.parentComponent.onTaskItemDoneChanged(key, (<HTMLInputElement>e.target).checked);
         }
 
     }
 
-    ajs.Framework.viewComponentManager.registerComponents(TaskItemComponent);
+    Ajs.Framework.viewComponentManager.registerComponents(TaskItemComponent);
 
 }

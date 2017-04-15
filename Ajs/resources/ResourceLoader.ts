@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.resources {
+namespace Ajs.Resources {
 
     "use strict";
 
@@ -36,8 +36,8 @@ namespace ajs.resources {
     export class ResourceLoader {
 
         public constructor() {
-            ajs.dbg.log(dbg.LogType.Constructor, 0, "ajs.resources", this);
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
         }
 
         /**
@@ -50,16 +50,16 @@ namespace ajs.resources {
          */
         public loadResource(url: string, isBinary: boolean, lastModified?: Date): Promise<IResourceResponseData> {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             let response: Promise<IResourceResponseData> = new Promise<IResourceResponseData>(
                 (resolve: (data: IResourceResponseData) => void, reject: (reason?: any) => void) => {
 
-                    ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                         "Requesting [GET] resource '" + url + "'", isBinary, lastModified);
 
                     // prepare data for the loader
-                    lastModified = lastModified || ajs.utils.minDate();
+                    lastModified = lastModified || Ajs.Utils.minDate();
 
                     let requestData: IResourceRequestData = {
                         url: url,
@@ -76,7 +76,7 @@ namespace ajs.resources {
                 }
             );
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return response;
         }
@@ -87,9 +87,9 @@ namespace ajs.resources {
          */
         protected _loadResource(requestData: IResourceRequestData): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
-            ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Initializing the XHR");
 
             // setup the xhr
@@ -108,13 +108,13 @@ namespace ajs.resources {
             });
 
             if (requestData.lastModified !== null) {
-                xhr.setRequestHeader("If-Modified-Since", ajs.utils.ie10UTCDate(requestData.lastModified));
+                xhr.setRequestHeader("If-Modified-Since", Ajs.Utils.ie10UTCDate(requestData.lastModified));
             }
 
             // send request to the server
             xhr.send();
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
         }
 
@@ -124,12 +124,12 @@ namespace ajs.resources {
          */
         protected _xhrStatusChanged(e: Event): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             let xhr: IResourceRequest = e.target as IResourceRequest;
             let requestData: IResourceRequestData = xhr.resourceRequestData;
 
-            ajs.dbg.log(dbg.LogType.Info, 3, "ajs.resources", this,
+            Ajs.Dbg.log(Dbg.LogType.Info, 3, "ajs.resources", this,
                 "Url: " + xhr.resourceRequestData.url + ", XHR readyState: " + xhr.readyState);
 
             // if completed
@@ -143,7 +143,7 @@ namespace ajs.resources {
                     endTime: new Date()
                 };
 
-                ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this,
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                     "XHR for '" + requestData.url + "' ready in " + (responseData.endTime.getTime() - responseData.startTime.getTime()) +
                     "ms with " + xhr.status + " " + xhr.statusText);
 
@@ -154,7 +154,7 @@ namespace ajs.resources {
                     let tmp: string = responseData.data.substr(0, 50);
                     if (tmp.indexOf("<!--offline-->") !== -1) {
                         responseData.httpStatus = 304;
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Offline mode detected, index.html served");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Offline mode detected, index.html served");
                     }
                 }
 
@@ -171,7 +171,7 @@ namespace ajs.resources {
                     }
                     if (str.indexOf("<!--offline-->") !== -1) {
                         responseData.httpStatus = 304;
-                        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.resources", this, "Offline mode detected, index.html served");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Offline mode detected, index.html served");
                     }
                 }
 
@@ -182,13 +182,13 @@ namespace ajs.resources {
 
                 } else {
 
-                    ajs.dbg.log(dbg.LogType.Error, 0, "Load end handler is not function", this);
+                    Ajs.Dbg.log(Dbg.LogType.Error, 0, "Load end handler is not function", this);
                     throw new LoadEndHandlerIsNotFunctionException();
 
                 }
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
         }
 

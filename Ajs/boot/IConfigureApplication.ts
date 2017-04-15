@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.boot {
+namespace Ajs.Boot {
 
     "use strict";
 
@@ -31,7 +31,7 @@ namespace ajs.boot {
      * and loaded by html page. It is expcected to be defined in the ajs.boot namespace.
      */
     export interface IConfigureApplication {
-        (appConfig: ajs.app.IApplicationInfo): void;
+        (appConfig: Ajs.App.IApplicationInfo): void;
     }
 
 }

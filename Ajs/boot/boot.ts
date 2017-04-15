@@ -42,7 +42,7 @@ IN THE SOFTWARE.
  *        let applicationConfig = { ... }; return applicationConfig }</li>
  * </ul>
  */
-namespace ajs.boot {
+namespace Ajs.Boot {
 
     "use strict";
 
@@ -79,7 +79,7 @@ namespace ajs.boot {
     function _defaultConfig(): IBootConfig {
         return {
             offlineSupport: false,
-            bootResourcesLoadingPreference: resources.LOADING_PREFERENCE.CACHE
+            bootResourcesLoadingPreference: Resources.LOADING_PREFERENCE.CACHE
         };
     }
 
@@ -88,7 +88,7 @@ namespace ajs.boot {
      * @param e ErrorEvent or ajs.Exception to be handled
      */
     function _bootErrorHandler(e: any): void {
-        ajs.utils.errorHandler(e);
+        Ajs.Utils.errorHandler(e);
     }
 
     function _getAjsConfig(): IAjsConfig {
@@ -120,25 +120,25 @@ namespace ajs.boot {
 
         // if debugging is configured, start it up
         if (config.debugging) {
-            ajs.dbg.init(config.debugging);
+            Ajs.Dbg.init(config.debugging);
         }
 
         // do some basic logging
-        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.boot", null, "Ajs Framework, (c)2016-2017 Atom Software Studios, s.r.o");
+        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", null, "Ajs Framework, (c)2016-2017 Atom Software Studios, s.r.o");
 
-        ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.boot", this);
+        Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.boot", this);
 
-        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.boot", null, "Booting up Ajs Framework");
+        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", null, "Booting up Ajs Framework");
 
         // initialize config
-        ajs.Framework.initialize(config);
+        Ajs.Framework.initialize(config);
 
         window.removeEventListener("error", _bootErrorHandler);
 
         // continue by loading resources and application configuration
         _loadResources();
 
-        ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.boot", this);
+        Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
 
     }
 
@@ -147,7 +147,7 @@ namespace ajs.boot {
      */
     function _loadResources(): void {
 
-        ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.boot", this);
+        Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.boot", this);
 
         if (!(configureResources instanceof Function)) {
             throw new ConfigureResourcesFunctionNotDefinedException();
@@ -160,22 +160,22 @@ namespace ajs.boot {
         // review if it is possible to use cached resources rather than server ones
         let _resourcesLoadingInfo: any[] = [
             Framework.resourceManager.getMultipleResources(
-                res.localPermanent, resources.STORAGE_TYPE.LOCAL, resources.CACHE_POLICY.PERMANENT,
+                res.localPermanent, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.PERMANENT,
                 config.boot.bootResourcesLoadingPreference),
             Framework.resourceManager.getMultipleResources(
-                res.localLastRecentlyUsed, resources.STORAGE_TYPE.LOCAL, resources.CACHE_POLICY.LASTRECENTLYUSED,
+                res.localLastRecentlyUsed, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.LASTRECENTLYUSED,
                 config.boot.bootResourcesLoadingPreference),
             Framework.resourceManager.getMultipleResources(
-                res.sessionPermanent, resources.STORAGE_TYPE.SESSION, resources.CACHE_POLICY.PERMANENT,
+                res.sessionPermanent, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.PERMANENT,
                 config.boot.bootResourcesLoadingPreference),
             Framework.resourceManager.getMultipleResources(
-                res.sessionLastRecentlyUsed, resources.STORAGE_TYPE.SESSION, resources.CACHE_POLICY.LASTRECENTLYUSED,
+                res.sessionLastRecentlyUsed, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.LASTRECENTLYUSED,
                 config.boot.bootResourcesLoadingPreference),
             Framework.resourceManager.getMultipleResources(
-                res.memoryPermanent, resources.STORAGE_TYPE.MEMORY, resources.CACHE_POLICY.PERMANENT,
+                res.memoryPermanent, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.PERMANENT,
                 config.boot.bootResourcesLoadingPreference),
             Framework.resourceManager.getMultipleResources(
-                res.memoryLastRecentlyUsed, resources.STORAGE_TYPE.MEMORY, resources.CACHE_POLICY.LASTRECENTLYUSED,
+                res.memoryLastRecentlyUsed, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.LASTRECENTLYUSED,
                 config.boot.bootResourcesLoadingPreference),
             Framework.resourceManager.getMultipleResources(
                 res.direct, undefined, undefined)
@@ -190,14 +190,14 @@ namespace ajs.boot {
                 }
             ).
             // catch the problem
-            catch((e: ajs.Exception) => {
-                ajs.dbg.log(dbg.LogType.Error, 0, "ajs.boot", this,
+            catch((e: Ajs.Exception) => {
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.boot", this,
                     "Something went wrong during resource loading " + e, e);
 
-                ajs.Exception.throwAsync(new ResourcesLoadingFailedException(e));
+                Ajs.Exception.throwAsync(new ResourcesLoadingFailedException(e));
             });
 
-        ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.boot", this);
+        Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
     }
 
     /**
@@ -205,23 +205,23 @@ namespace ajs.boot {
      */
     function _configureApplication(): void {
 
-        ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.boot", this);
+        Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.boot", this);
 
-        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.boot", this, "Getting the Application config");
+        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", this, "Getting the Application config");
 
         if (!(configureApplication instanceof Function)) {
-            ajs.dbg.log(dbg.LogType.Error, 0, this, "GetApplicationConfigFunctionNotDefinedException");
+            Ajs.Dbg.log(Dbg.LogType.Error, 0, this, "GetApplicationConfigFunctionNotDefinedException");
             throw new GetApplicationConfigFunctionNotDefinedException();
         }
 
-        let appConfig: ajs.app.IApplicationInfo = <any>{};
+        let appConfig: Ajs.App.IApplicationInfo = <any>{};
         configureApplication(appConfig);
 
-        ajs.Framework.configureApplication(appConfig);
+        Ajs.Framework.configureApplication(appConfig);
 
         _start();
 
-        ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.boot", this);
+        Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
     }
 
     /**
@@ -229,13 +229,13 @@ namespace ajs.boot {
      */
     function _start(): void {
 
-        ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.boot", this);
+        Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.boot", this);
 
-        ajs.dbg.log(dbg.LogType.Info, 0, "ajs.boot", this, "Starting the framework");
+        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", this, "Starting the framework");
 
-        ajs.Framework.start();
+        Ajs.Framework.start();
 
-        ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.boot", this);
+        Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
     }
 
     /**
@@ -255,7 +255,7 @@ namespace ajs.boot {
 
         // does not make sense to log, reload performed
 
-        let resMan: ajs.resources.ResourceManager = new ajs.resources.ResourceManager();
+        let resMan: Ajs.Resources.ResourceManager = new Ajs.Resources.ResourceManager();
         resMan.cleanCaches();
         window.location.reload();
     }

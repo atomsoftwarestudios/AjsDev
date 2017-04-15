@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.mvvm.viewmodel {
+namespace Ajs.MVVM.ViewModel {
 
     "use strict";
 
@@ -40,16 +40,16 @@ namespace ajs.mvvm.viewmodel {
     export class ViewComponentManager {
 
         /** Reference to the template manager */
-        protected _templateManager: templating.TemplateManager;
+        protected _templateManager: Templating.TemplateManager;
         /** Returns reference to the template manager used during the view construction */
-        public get templateManager(): templating.TemplateManager { return this._templateManager; }
+        public get templateManager(): Templating.TemplateManager { return this._templateManager; }
 
         protected _components: IRegisteredViewComponentsDict;
         public get components(): IRegisteredViewComponentsDict { return this._components; }
 
         protected _componentInstances: IInstancedViewComponentsCollection;
 
-        public constructor(templateManager: templating.TemplateManager) {
+        public constructor(templateManager: Templating.TemplateManager) {
             this._templateManager = templateManager;
             this._components = {};
             this._componentInstances = {};
@@ -73,19 +73,19 @@ namespace ajs.mvvm.viewmodel {
         public createViewComponent(
             name: string,
             id: string,
-            view: view.View,
+            view: View.View,
             parentComponent: IParentViewComponent,
             state?: IViewComponentState): ViewComponent<any, any> {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
             // get the visual component for the view component
-            let visualComponent: templating.IVisualComponent;
+            let visualComponent: Templating.IVisualComponent;
             visualComponent = this._templateManager.getVisualComponent(name);
 
             // throw error if it does not exist
             if (visualComponent === null) {
-                ajs.dbg.log(dbg.LogType.Error, 0, "ajs.mvvm.view", this,
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.mvvm.view", this,
                     "Visual component is not defined (probably the appropriate template is not loaded): " + name);
                 throw new VisualComponentNotRegisteredException(name);
 
@@ -102,16 +102,16 @@ namespace ajs.mvvm.viewmodel {
             // get new unique id for the new component
             let componentViewId: number = view.getNewComponentId();
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
                 "Creating the view component instance: " +
-                ajs.utils.getFunctionName(viewComponentConstructor) + "[" + componentViewId + "]:" + id, view, parentComponent, state);
+                Ajs.Utils.getFunctionName(viewComponentConstructor) + "[" + componentViewId + "]:" + id, view, parentComponent, state);
 
             // create view component and store its instance to the collection identified by id
             let viewComponent: ViewComponent<any, any>;
             viewComponent = new viewComponentConstructor(view, this, id, componentViewId, parentComponent, visualComponent, state);
             this._componentInstances[componentViewId] = viewComponent;
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
             return viewComponent;
         }
@@ -173,11 +173,11 @@ namespace ajs.mvvm.viewmodel {
 
             let viewComponentInstances: ViewComponent<any, any>[] = [];
 
-            let componentConstructorName: string = ajs.utils.getFunctionName(component);
+            let componentConstructorName: string = Ajs.Utils.getFunctionName(component);
 
             for (let key in this._componentInstances) {
                 if (this._componentInstances.hasOwnProperty(key)) {
-                    let constructorName: string = ajs.utils.getClassName(this._componentInstances[key]);
+                    let constructorName: string = Ajs.Utils.getClassName(this._componentInstances[key]);
                     if (constructorName === componentConstructorName) {
                         if (id) {
                             if (this._componentInstances[key].ajs.id === id) {
@@ -203,11 +203,11 @@ namespace ajs.mvvm.viewmodel {
 
         public getFirstComponentInstance<T extends ViewComponent<any, any>>(component: typeof ViewComponent, id?: string, userKey?: string): T {
 
-            let componentConstructorName: string = ajs.utils.getFunctionName(component);
+            let componentConstructorName: string = Ajs.Utils.getFunctionName(component);
 
             for (let key in this._componentInstances) {
                 if (this._componentInstances.hasOwnProperty(key)) {
-                    let constructorName: string = ajs.utils.getClassName(this._componentInstances[key]);
+                    let constructorName: string = Ajs.Utils.getClassName(this._componentInstances[key]);
                     if (constructorName === componentConstructorName) {
                         if (id) {
                             if (this._componentInstances[key].ajs.id === id) {

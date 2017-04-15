@@ -5,7 +5,7 @@ class UserApplication extends ajs.app.Application {
     // lambda function for async calls to keep "this" pointing to the correct (this) object
     // and keep it as small as possible
     public initialize(): void {
-        ajs.Framework.templateManager.loadTemplateFiles(
+        Ajs.Framework.templateManager.loadTemplateFiles(
             (success: boolean) => { this._templateLoaded(success); }, 
             ["/template.html"],
             ajs.resources.STORAGE_TYPE.MEMORY,
@@ -33,7 +33,7 @@ class UserApplication extends ajs.app.Application {
     // finally, it is necessary to call the _initDone() in order to let the framework
     // know the application was initialized and can be run.
     protected _setupRoutes(): void {
-        ajs.Framework.router.registerRoute([{ base: "^\/.*", params: "" }], "Index");
-        ajs.Framework.router.registerRoute([{ base: "^\/.*", params: "" }], "Index");
+        Ajs.Framework.router.registerRoute([{ base: "^\/.*", params: "" }], "Index");
+        Ajs.Framework.router.registerRoute([{ base: "^\/.*", params: "" }], "Index");
     }
 }

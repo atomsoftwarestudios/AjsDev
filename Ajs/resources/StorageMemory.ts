@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.resources {
+namespace Ajs.Resources {
 
     "use strict";
 
@@ -36,7 +36,7 @@ namespace ajs.resources {
         /** Constructs the StorageLocal object */
         protected _initialize(): void {
 
-            ajs.dbg.log(dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
 
             this._supported = true;
 
@@ -46,7 +46,7 @@ namespace ajs.resources {
                 this._resources = this._getResourcesInfo();
             }
 
-            ajs.dbg.log(dbg.LogType.Exit, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
         }
     }
 }

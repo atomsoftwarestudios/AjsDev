@@ -2,7 +2,7 @@ interface IClockState {
     time: string;
 }
 
-class Clock extends ajs.mvvm.viewmodel.ViewComponent {
+class Clock extends Ajs.MVVM.ViewModel.ViewComponent {
 
     public time: string;
 
@@ -11,7 +11,7 @@ class Clock extends ajs.mvvm.viewmodel.ViewComponent {
     }
 }
 
-class UserComponent extends ajs.mvvm.viewmodel.ViewComponent {
+class UserComponent extends Ajs.MVVM.ViewModel.ViewComponent {
 
     protected _timer: number;
     protected _lastContent: string;

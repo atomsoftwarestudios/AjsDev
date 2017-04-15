@@ -3,7 +3,7 @@ Released under MIT License
 Copyright (c)2017, Atom Software Studios. All rights reserved.
 **************************************************************************** */
 
-namespace ajs.boot {
+namespace Ajs.Boot {
 
     "use strict";
 

@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.dbg {
+namespace Ajs.Dbg {
 
     "use strict";
 
@@ -32,7 +32,7 @@ namespace ajs.dbg {
 
         showOnBootDelay: number;
 
-        loggerConfig: ajs.dbg.modules.logger.ILoggerConfig;
+        loggerConfig: Ajs.Dbg.modules.logger.ILoggerConfig;
 
     }
 

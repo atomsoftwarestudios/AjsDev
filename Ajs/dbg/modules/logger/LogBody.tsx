@@ -23,11 +23,11 @@ IN THE SOFTWARE.
 
 ///<reference path="../../tsx/tsx.ts" />
 
-namespace ajs.dbg.modules.logger {
+namespace Ajs.Dbg.modules.logger {
 
     "use strict";
 
-    export class LogBody implements tsx.IViewComponent {
+    export class LogBody implements Tsx.IViewComponent {
 
         protected _logElement: HTMLDivElement;
 
@@ -167,7 +167,7 @@ namespace ajs.dbg.modules.logger {
                         return "null";
                     } else {
                         if (object.constructor) {
-                            return ajs.utils.getClassName(object);
+                            return Ajs.Utils.getClassName(object);
                         }
                     }
                     return "object";

@@ -3,7 +3,7 @@ Released under MIT License
 Copyright (c)2017, Atom Software Studios. All rights reserved.
 **************************************************************************** */
 
-namespace ajs.boot {
+namespace Ajs.Boot {
 
     "use strict";
 
@@ -20,7 +20,7 @@ namespace ajs.boot {
             // enable ajs offline support
             offlineSupport: true,
             // bootResourcesLoadingPreference: ajs.resources.LOADING_PREFERENCE.SERVER
-            bootResourcesLoadingPreference: ajs.resources.LOADING_PREFERENCE.CACHE
+            bootResourcesLoadingPreference: Ajs.Resources.LOADING_PREFERENCE.CACHE
         };
 
         ajsConfig.debugging = {
@@ -30,8 +30,8 @@ namespace ajs.boot {
             bodyRenderTarget: document.body,
             // show the debug console on boot after x miliseconds (0 = don't show)
             // to manually control the console use the browser console 
-            // ajs.dbg.console.show()
-            // ajs.dbg.console.hide()
+            // Ajs.Dbg.console.show()
+            // Ajs.Dbg.console.hide()
             showOnBootDelay: 0,
             loggerConfig: {
                 // logging enabled
@@ -40,17 +40,17 @@ namespace ajs.boot {
                 logDataToConsole: false,
                 // type of records to be logged
                 logTypes: [
-                    /*ajs.dbg.LogType.Enter,
-                    ajs.dbg.LogType.Exit,*/
-                    ajs.dbg.LogType.Constructor,
-                    ajs.dbg.LogType.Info,
-                    ajs.dbg.LogType.Warning,
-                    ajs.dbg.LogType.Error,
-                    ajs.dbg.LogType.DomAddListener,
-                    ajs.dbg.LogType.DomRemoveListener,
-                    ajs.dbg.LogType.DomAppendChild,
-                    ajs.dbg.LogType.DomRemoveChild,
-                    ajs.dbg.LogType.DomReplaceChild
+                    /*Ajs.Dbg.LogType.Enter,
+                    Ajs.Dbg.LogType.Exit,*/
+                    Ajs.Dbg.LogType.Constructor,
+                    Ajs.Dbg.LogType.Info,
+                    Ajs.Dbg.LogType.Warning,
+                    Ajs.Dbg.LogType.Error,
+                    Ajs.Dbg.LogType.DomAddListener,
+                    Ajs.Dbg.LogType.DomRemoveListener,
+                    Ajs.Dbg.LogType.DomAppendChild,
+                    Ajs.Dbg.LogType.DomRemoveChild,
+                    Ajs.Dbg.LogType.DomReplaceChild
                 ],
                 sourceModules: [
                     "ajs.app",
@@ -77,7 +77,7 @@ namespace ajs.boot {
             memoryCacheSize: 20 * 1024 * 1024,
             sessionCacheSize: 2 * 1024 * 1024,
             localCacheSize: 2 * 1024 * 1024,
-            removeResourcesOlderThan: ajs.utils.maxDate()
+            removeResourcesOlderThan: Ajs.Utils.maxDate()
         };
 
         ajsConfig.navigator = [

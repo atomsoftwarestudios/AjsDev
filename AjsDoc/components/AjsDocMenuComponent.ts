@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
@@ -46,7 +46,7 @@ namespace ajsdoc {
         "SetAccessor"
     ];
 
-    export interface IAjsDocMenuComponentState extends ajs.mvvm.viewmodel.IViewComponentState {
+    export interface IAjsDocMenuComponentState extends Ajs.MVVM.ViewModel.IViewComponentState {
         parentLabel?: string;
         parentPath?: string;
         groups?: IAjsDocMenuGroupComponentState[];
@@ -54,7 +54,7 @@ namespace ajsdoc {
     }
 
     export class AjsDocMenuComponent
-        extends ajs.mvvm.viewmodel.ViewComponent<IAjsDocMenuComponentState, any>
+        extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocMenuComponentState, any>
         implements IAjsDocMenuComponentState {
 
         public parentLabel: string;
@@ -71,8 +71,8 @@ namespace ajsdoc {
 
         protected _initialize(): void {
 
-            this._contentModel = ajs.Framework.modelManager.getModelInstance(ContentModel) as ContentModel;
-            this._programModel = ajs.Framework.modelManager.getModelInstance(ProgramModel) as ProgramModel;
+            this._contentModel = Ajs.Framework.modelManager.getModelInstance(ContentModel) as ContentModel;
+            this._programModel = Ajs.Framework.modelManager.getModelInstance(ProgramModel) as ProgramModel;
 
             this._previousContext = null;
             this._previousRefNode = null;
@@ -94,7 +94,7 @@ namespace ajsdoc {
 
         }
 
-        public stateTransitionBegin(): ajs.mvvm.viewmodel.ITransitionType {
+        public stateTransitionBegin(): Ajs.MVVM.ViewModel.ITransitionType {
 
             let transitionType: TransitionType = this._getTransitionType();
 
@@ -117,7 +117,7 @@ namespace ajsdoc {
 
             let transitionType: TransitionType = TransitionType.NONE;
 
-            let path: string = ajs.Framework.router.currentRoute.base;
+            let path: string = Ajs.Framework.router.currentRoute.base;
 
             if (path.substr(0, 3) === "ref") {
 
@@ -257,6 +257,6 @@ namespace ajsdoc {
     }
 
     /** Register the component to ViewComponentManager */
-    ajs.Framework.viewComponentManager.registerComponents(AjsDocMenuComponent);
+    Ajs.Framework.viewComponentManager.registerComponents(AjsDocMenuComponent);
 
 }

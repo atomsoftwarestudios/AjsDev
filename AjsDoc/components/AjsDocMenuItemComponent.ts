@@ -21,11 +21,11 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
-    export interface IAjsDocMenuItemComponentState extends ajs.mvvm.viewmodel.IViewComponentState {
+    export interface IAjsDocMenuItemComponentState extends Ajs.MVVM.ViewModel.IViewComponentState {
         key?: string;
         path?: string;
         label?: string;
@@ -35,7 +35,7 @@ namespace ajsdoc {
     }
 
     export class AjsDocMenuItemComponent
-        extends ajs.mvvm.viewmodel.ViewComponent<IAjsDocMenuItemComponentState, any>
+        extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocMenuItemComponentState, any>
         implements IAjsDocMenuItemComponentState {
 
         public key: string;
@@ -47,6 +47,6 @@ namespace ajsdoc {
     }
 
     /** Register the component to ViewComponentManager */
-    ajs.Framework.viewComponentManager.registerComponents(AjsDocMenuItemComponent);
+    Ajs.Framework.viewComponentManager.registerComponents(AjsDocMenuItemComponent);
 
 }

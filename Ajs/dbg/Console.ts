@@ -27,7 +27,7 @@ IN THE SOFTWARE.
 /**
  * The debugging namespace contain the debugging console and debugging tools for Ajs and Application developers
  */
-namespace ajs.dbg {
+namespace Ajs.Dbg {
 
     "use strict";
 
@@ -48,8 +48,8 @@ namespace ajs.dbg {
         protected _bodyElement: HTMLElement;
 
         // view components
-        protected _body: view.Body;
-        protected _styleSheet: view.StyleSheet;
+        protected _body: View.Body;
+        protected _styleSheet: View.StyleSheet;
 
         protected _infoElement: HTMLDivElement;
 
@@ -69,8 +69,8 @@ namespace ajs.dbg {
             this._registerModules();
 
             // init view components
-            this._body = new ajs.dbg.view.Body(this, this._modules[defaultModule]);
-            this._styleSheet = new ajs.dbg.view.StyleSheet();
+            this._body = new Ajs.Dbg.View.Body(this, this._modules[defaultModule]);
+            this._styleSheet = new Ajs.Dbg.View.StyleSheet();
         }
 
         public setInfo(info: string): void {
@@ -138,7 +138,7 @@ namespace ajs.dbg {
         }
 
         protected _registerModules(): void {
-            this._registerModule("logger", new ajs.dbg.modules.logger.Logger(this, this._config.loggerConfig));
+            this._registerModule("logger", new Ajs.Dbg.modules.logger.Logger(this, this._config.loggerConfig));
         }
 
     }

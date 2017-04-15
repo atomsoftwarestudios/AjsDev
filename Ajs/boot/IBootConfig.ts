@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.boot {
+namespace Ajs.Boot {
 
     "use strict";
 
@@ -33,7 +33,7 @@ namespace ajs.boot {
          * Specifies if the cahcable cached resources returned by the @see ajs.boot.getResourceLists
          * are preferably loaded from server or the cache
          */
-        bootResourcesLoadingPreference: resources.LOADING_PREFERENCE;
+        bootResourcesLoadingPreference: Resources.LOADING_PREFERENCE;
 
         /**
          * Specifies if the offline support is required during the ajs boot

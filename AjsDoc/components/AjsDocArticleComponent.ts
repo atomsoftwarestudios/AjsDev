@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajsdoc {
+namespace AjsDoc {
 
     "use strict";
 
@@ -37,13 +37,13 @@ namespace ajsdoc {
         name: string;
     }
 
-    export interface INodeState extends ajs.mvvm.viewmodel.IViewComponentState, atsdoc.IATsDocNode {
+    export interface INodeState extends Ajs.MVVM.ViewModel.IViewComponentState, atsdoc.IATsDocNode {
         key: string;
         isLast: boolean;
         path: string;
     }
 
-    export interface IAjsDocArticleComponentState extends ajs.mvvm.viewmodel.IViewComponentState {
+    export interface IAjsDocArticleComponentState extends Ajs.MVVM.ViewModel.IViewComponentState {
         caption?: string;
         description?: string;
         longDescription?: string;
@@ -72,10 +72,10 @@ namespace ajsdoc {
     }
 
     export class AjsDocArticleComponent
-        extends ajs.mvvm.viewmodel.ViewComponent<IAjsDocArticleComponentState, any>
+        extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocArticleComponentState, any>
         implements IAjsDocArticleComponentState {
 
-        protected _renderedListener: ajs.events.IListener<void>;
+        protected _renderedListener: Ajs.Events.IListener<void>;
 
         public caption?: string;
         public description?: string;
@@ -142,7 +142,7 @@ namespace ajsdoc {
         }
 
         protected _initialize(): void {
-            this._renderedListener = (sender: ajs.mvvm.viewmodel.ViewComponent<any, any>) => {
+            this._renderedListener = (sender: Ajs.MVVM.ViewModel.ViewComponent<any, any>) => {
                 this._rendered();
                 return true;
             };
@@ -163,6 +163,6 @@ namespace ajsdoc {
 
     }
 
-    ajs.Framework.viewComponentManager.registerComponents(AjsDocArticleComponent);
+    Ajs.Framework.viewComponentManager.registerComponents(AjsDocArticleComponent);
 
 }

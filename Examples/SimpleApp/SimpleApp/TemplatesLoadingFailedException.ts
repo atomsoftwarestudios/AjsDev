@@ -7,7 +7,7 @@ namespace SimpleApp {
 
     "use strict";
 
-    export class TemplatesLoadingFailedException extends ajs.Exception {
+    export class TemplatesLoadingFailedException extends Ajs.Exception {
     }
 
 }

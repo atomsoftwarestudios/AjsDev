@@ -26,7 +26,7 @@ IN THE SOFTWARE.
  * It is used internally by the view to manage document stylesheets and update
  * the DOM node tree if it is changed.
  */
-namespace ajs.doc {
+namespace Ajs.Doc {
 
     "use strict";
 
@@ -71,9 +71,9 @@ namespace ajs.doc {
          */
         constructor(renderTarget: Element) {
 
-            ajs.dbg.log(ajs.dbg.LogType.Constructor, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Constructor, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Managing the DOM document", renderTarget.ownerDocument);
 
             this._renderTarget = renderTarget;
@@ -81,7 +81,7 @@ namespace ajs.doc {
             this._styleSheets = [];
             this._touchEventsCount = 0;
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
         }
 
         /**
@@ -89,14 +89,14 @@ namespace ajs.doc {
          */
         public clean(renderTarget: Element): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Cleaning up the target document and render target", this._targetDocument, renderTarget);
 
             // check if the renderTarget requested to be clean is in the managed document
             if (renderTarget.ownerDocument !== this._targetDocument) {
-                ajs.dbg.log(ajs.dbg.LogType.Error, 0, "ajs.doc", this,
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
                     "Render target is not contained in the managed document", this._targetDocument, renderTarget);
                 throw new RenderTargetNotInManagedDocumentException();
             }
@@ -143,7 +143,7 @@ namespace ajs.doc {
 
             renderTarget.innerHTML = "";
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
         }
 
         /**
@@ -153,14 +153,14 @@ namespace ajs.doc {
          */
         public updateDom(source: Node, target: Node): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Updating DOM structure", source, target);
 
             // check if the renderTarget requested to be updated is in the managed document
             if (target.ownerDocument !== this._targetDocument) {
-                ajs.dbg.log(ajs.dbg.LogType.Error, 0, "ajs.doc", this,
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
                     "Render target is not contained in the managed document", this._targetDocument, target);
                 throw new RenderTargetNotInManagedDocumentException();
             }
@@ -193,7 +193,7 @@ namespace ajs.doc {
                     this.updateDom(src, nodeToUpdate);
 
                 } else {
-                    ajs.dbg.log(ajs.dbg.LogType.Error, 0, "ajs.doc", this,
+                    Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
                         "Target or its parent is unknown!", this._targetDocument, target);
                     throw new TargetOrParentIsUnknownException();
                 }
@@ -265,9 +265,9 @@ namespace ajs.doc {
          */
         public removeNodeByUniqueId(id: number): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Removing the target node by assigned to the source node " + id);
 
             let node: INode = this.getTargetNodeByUniqueId(id);
@@ -276,7 +276,7 @@ namespace ajs.doc {
                 this.removeNode(node);
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
         }
 
         /**
@@ -286,9 +286,9 @@ namespace ajs.doc {
          */
         protected _findSameComponent(src: INode, tgt: INode): INode {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Looking for the same component", src, tgt);
 
             if (src.ajsData !== undefined && src.ajsData.component !== undefined) {
@@ -299,10 +299,10 @@ namespace ajs.doc {
 
                     if (targetNode.ajsData && targetNode.ajsData.component === src.ajsData.component) {
 
-                        ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+                        Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                             "Component found", tgt.parentNode.childNodes.item(i));
 
-                        ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+                        Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
                         return tgt.parentNode.childNodes.item(i) as INode;
 
@@ -311,8 +311,8 @@ namespace ajs.doc {
 
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this, "Component not found");
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this, "Component not found");
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
             return null;
         }
@@ -324,9 +324,9 @@ namespace ajs.doc {
          */
         protected _updateChildren(src: INode, tgt: INode): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Updating children node", src, tgt);
 
             for (let i: number = 0; i < src.childNodes.length; i++) {
@@ -347,7 +347,7 @@ namespace ajs.doc {
 
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
         }
 
@@ -358,9 +358,9 @@ namespace ajs.doc {
          */
         protected _appendNode(src: INode, tgt: INode): INode {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.DomAppendChild, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.DomAppendChild, 0, "ajs.doc", this,
                 "Appending new node", src, tgt);
 
             let clonedNode: Node = src.cloneNode(false);
@@ -372,7 +372,7 @@ namespace ajs.doc {
 
             tgt.appendChild(adoptedNode);
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
             return adoptedNode;
 
@@ -385,9 +385,9 @@ namespace ajs.doc {
          */
         protected _insertBefore(src: INode, tgt: INode): INode {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.DomAppendChild, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.DomAppendChild, 0, "ajs.doc", this,
                 "Inserting new node before", src, tgt);
 
             // clone, adapt and insert node from shadow dom to target document
@@ -400,7 +400,7 @@ namespace ajs.doc {
 
             tgt.parentNode.insertBefore(adoptedNode, tgt);
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
             return adoptedNode;
         }
@@ -412,9 +412,9 @@ namespace ajs.doc {
          */
         protected _replaceNode(src: INode, tgt: INode): INode {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.DomReplaceChild, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.DomReplaceChild, 0, "ajs.doc", this,
                 "Replacing target node with source node", src, tgt);
 
             // do necessary cleanup - this is maybe not necessary as the node will be discarded completely
@@ -444,7 +444,7 @@ namespace ajs.doc {
 
             tgt.parentNode.replaceChild(adoptedNode, tgt);
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
             return adoptedNode;
         }
@@ -455,20 +455,20 @@ namespace ajs.doc {
          */
         public removeNode(target: Node): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Removing the target node", target);
 
             // the target was probably removed already
             if (!target || target === null) {
-                ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
                 return;
             }
 
             // check if the renderTarget requested to be removed is in the managed document
             if (target.ownerDocument !== this._targetDocument) {
-                ajs.dbg.log(ajs.dbg.LogType.Error, 0, "ajs.doc", this,
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
                     "Render target is not contained in the managed document", this._targetDocument, target);
                 throw new RenderTargetNotInManagedDocumentException();
             }
@@ -503,7 +503,7 @@ namespace ajs.doc {
                 tgt.parentNode.removeChild(tgt);
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
         }
 
@@ -514,9 +514,9 @@ namespace ajs.doc {
          */
         protected _updateNodeAttributes(source: Node, target: Node): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Updating node attributes", source, target);
 
             if (source.nodeType === Node.ELEMENT_NODE) {
@@ -526,13 +526,13 @@ namespace ajs.doc {
                 while (i < target.attributes.length) {
                     if (!(source as HTMLElement).hasAttribute(target.attributes.item(i).nodeName)) {
 
-                        ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+                        Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                             "Removing attribute ", target.attributes.item(i).nodeName);
 
                         try {
                             target.attributes.removeNamedItem(target.attributes.item(i).nodeName);
                         } catch (e) {
-                            ajs.dbg.log(ajs.dbg.LogType.Error, 0, "ajs.doc", this,
+                            Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
                                 "Removing attribute " + target.attributes.item(i).nodeName + " failed.");
                             break;
                         }
@@ -547,7 +547,7 @@ namespace ajs.doc {
                     let tattr: Attr = target.attributes.getNamedItem(source.attributes.item(i).nodeName);
                     if (tattr === null) {
 
-                        ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+                        Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                             "Adding attribute " + source.attributes.item(i).nodeName + "=" + source.attributes.item(i).nodeValue);
 
                         tattr = target.ownerDocument.createAttribute(source.attributes.item(i).nodeName);
@@ -559,7 +559,7 @@ namespace ajs.doc {
                     } else {
                         if (tattr.nodeValue !== source.attributes.item(i).nodeValue) {
 
-                            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+                            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                                 "Updating the attribute value " + tattr.nodeName + "=" + source.attributes.item(i).nodeValue);
 
                             tattr.nodeValue = source.attributes.item(i).nodeValue;
@@ -577,7 +577,7 @@ namespace ajs.doc {
                 }
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
         }
 
@@ -639,16 +639,16 @@ namespace ajs.doc {
         */
         protected _setNodeMetadata(src: INode, tgt: INode): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Setting node metadata", src, tgt);
 
             if (src.ajsData) {
                 tgt.ajsData = src.ajsData;
             }
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
         }
 
@@ -659,13 +659,13 @@ namespace ajs.doc {
          */
         protected _registerEventListeners(src: INode, tgt: INode): void {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
             if (src.ajsData && src.ajsData.eventListeners instanceof Array) {
 
                 for (let i: number = 0; i < src.ajsData.eventListeners.length; i++) {
 
-                    ajs.dbg.log(ajs.dbg.LogType.DomAddListener, 0, "ajs.doc", this,
+                    Ajs.Dbg.log(Ajs.Dbg.LogType.DomAddListener, 0, "ajs.doc", this,
                         "Registering event listener " + src.ajsData.eventListeners[i].eventType, src, tgt);
 
                     tgt.addEventListener(
@@ -683,11 +683,11 @@ namespace ajs.doc {
          * Asynchronously loads necessary resources (i.e. images) and replaces appropriate URLs with the resource Base64 representation
          * @param template Template which stylesheets have to be applied
          */
-        public applyStyleSheetsFromTemplate(template: ajs.templating.Template): Promise<void> {
+        public applyStyleSheetsFromTemplate(template: Ajs.Templating.Template): Promise<void> {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
-            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Applying Style Sheets from template " + template.name + "(" + template.styleSheets.length + ")");
 
             let styleSheetsToProcess: Promise<string>[] = [];
@@ -715,14 +715,14 @@ namespace ajs.doc {
                             style.setAttribute("id", id);
                             style.textContent = template.styleSheets[i];
 
-                            ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+                            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                                 "Adding processed stylesheet to the render target", template.styleSheets[i]);
 
                             this._targetDocument.head.appendChild(style);
                         }
                     } catch (e) {
 
-                        ajs.dbg.log(ajs.dbg.LogType.Error, 0, "ajs.doc", this,
+                        Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
                             "Required CSS resource can't be reached", e);
 
                         throw new CSSRequiredResourceNotLoadedException(e);
@@ -734,7 +734,7 @@ namespace ajs.doc {
 
             );
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
             return applyPromise;
 
@@ -745,12 +745,12 @@ namespace ajs.doc {
          * @param template
          * @param index
          */
-        protected _processStyleSheet(template: ajs.templating.Template, index: number): Promise<string> {
+        protected _processStyleSheet(template: Ajs.Templating.Template, index: number): Promise<string> {
 
-            ajs.dbg.log(ajs.dbg.LogType.Enter, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
             // resources to be checked
-            let resourcesPromises: Promise<ajs.resources.IResource>[] = [];
+            let resourcesPromises: Promise<Ajs.Resources.IResource>[] = [];
 
             // find all url(...) in the stylesheet
             let urls: RegExpMatchArray = template.styleSheets[index].match(/url\(('|")(.*)('|")\)/g);
@@ -764,7 +764,7 @@ namespace ajs.doc {
 
                     if (url.length < 2) {
 
-                        ajs.dbg.log(ajs.dbg.LogType.Error, 0, "ajs.doc", this,
+                        Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
                             "CSS Invalid URL specification " + urls[i]);
 
                         throw new CSSInvalidResourceSpecificationException();
@@ -786,10 +786,10 @@ namespace ajs.doc {
                 async (resolve: (styleSheet: string) => void, reject: (e: any) => void) => {
 
                     try {
-                        let resources: ajs.resources.IResource[] = await Promise.all(resourcesPromises);
+                        let resources: Ajs.Resources.IResource[] = await Promise.all(resourcesPromises);
 
                         for (let i: number = 0; i < resources.length; i++) {
-                            template.styleSheets[index] = ajs.utils.replaceAll(
+                            template.styleSheets[index] = Ajs.Utils.replaceAll(
                                 template.styleSheets[index],
                                 resources[i].url,
                                 "data:image;base64," + resources[i].data);
@@ -797,20 +797,20 @@ namespace ajs.doc {
 
                     } catch (e) {
 
-                        ajs.dbg.log(ajs.dbg.LogType.Warning, 0, "ajs.doc", this,
+                        Ajs.Dbg.log(Ajs.Dbg.LogType.Warning, 0, "ajs.doc", this,
                             "Unable to reach one of requested resources for the stylesheet", e);
 
                         reject(e);
                     }
 
-                    ajs.dbg.log(ajs.dbg.LogType.Info, 0, "ajs.doc", this,
+                    Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                         "Discovered style sheet resources succesfully loaded");
 
                     resolve(template.styleSheets[index]);
 
                 });
 
-            ajs.dbg.log(ajs.dbg.LogType.Exit, 0, "ajs.doc", this);
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
             return styleSheetPromise;
         }

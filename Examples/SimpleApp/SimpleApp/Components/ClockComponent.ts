@@ -7,7 +7,7 @@ namespace SimpleApp.Components {
 
     "use strict";
 
-    import viewModel = ajs.mvvm.viewmodel;
+    import viewModel = Ajs.MVVM.ViewModel;
 
     export interface IClockComponentState extends viewModel.IViewComponentState {
         time?: string;
@@ -15,7 +15,7 @@ namespace SimpleApp.Components {
 
     export class ClockComponent extends viewModel.ViewComponent<IClockComponentState, any> {
 
-        protected _navigatedListener: ajs.events.IListener<void>;
+        protected _navigatedListener: Ajs.Events.IListener<void>;
         protected _timer: number;
 
         public time: string;
@@ -60,6 +60,6 @@ namespace SimpleApp.Components {
 
     }
 
-    ajs.Framework.viewComponentManager.registerComponents(ClockComponent);
+    Ajs.Framework.viewComponentManager.registerComponents(ClockComponent);
 
 }

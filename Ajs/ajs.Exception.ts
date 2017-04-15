@@ -24,7 +24,7 @@ IN THE SOFTWARE.
 /**
  * Exception class for better exception handling
  */
-namespace ajs {
+namespace Ajs {
 
     "use strict";
 

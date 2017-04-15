@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace ajs.utils {
+namespace Ajs.Utils {
 
     "use strict";
 
@@ -93,8 +93,8 @@ namespace ajs.utils {
         return element instanceof HTMLInputElement && (<HTMLInputElement>element).type === "submit";
     }
 
-    export function getDomEventTargetOwnerComponent<T extends ajs.mvvm.viewmodel.ViewComponent<any, any>>(target: EventTarget): T {
-        return <T>(<ajs.doc.INode>target).ajsData.ownerComponent;
+    export function getDomEventTargetOwnerComponent<T extends Ajs.MVVM.ViewModel.ViewComponent<any, any>>(target: EventTarget): T {
+        return <T>(<Ajs.Doc.INode>target).ajsData.ownerComponent;
     }
 
 
@@ -290,7 +290,7 @@ namespace ajs.utils {
         let maps: IFileMaps = {};
 
         let mp: Promise<SourceMap.MappedPosition> = new Promise<SourceMap.MappedPosition>(
-            (resolve: (position: SourceMap.MappedPosition) => void, reject: (reason: ajs.Exception) => void) => {
+            (resolve: (position: SourceMap.MappedPosition) => void, reject: (reason: Ajs.Exception) => void) => {
 
                 if (maps.hasOwnProperty(srcUrl)) {
 
@@ -372,7 +372,7 @@ namespace ajs.utils {
             }
 
             return new Promise<string>(
-                (resolve: (stackString: string) => void, reject: (reason: ajs.Exception) => void) => {
+                (resolve: (stackString: string) => void, reject: (reason: Ajs.Exception) => void) => {
 
                     Promise.all(promises).then(
                         (mappedPositions: SourceMap.MappedPosition[]) => {
@@ -423,7 +423,7 @@ namespace ajs.utils {
         getStackString(exception.stack)
 
             .then((stackString: string) => {
-                let epc: ajs.ui.IErrorPageContent = {
+                let epc: Ajs.UI.IErrorPageContent = {
                     label: "Ajs Framework unhandled exception",
                     errorCode: "",
                     errorLabel: name,
@@ -432,7 +432,7 @@ namespace ajs.utils {
                     userAction: "",
                 };
 
-                if (!ajs.ui.ErrorScreen.show(epc)) {
+                if (!Ajs.UI.ErrorScreen.show(epc)) {
                     document.write("<div style=\"font-family: Arial\">");
                     document.write("<h1>Ajs Framework</h1>");
                     document.write("<h2>Unhandled exception occured</h2>");

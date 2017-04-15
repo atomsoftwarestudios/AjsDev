@@ -23,11 +23,11 @@ IN THE SOFTWARE.
 
 ///<reference path="../../tsx/tsx.ts" />
 
-namespace ajs.dbg.modules.logger {
+namespace Ajs.Dbg.modules.logger {
 
     "use strict";
 
-    export class LoggerStyleSheet implements tsx.IViewComponent {
+    export class LoggerStyleSheet implements Tsx.IViewComponent {
 
         protected _log: Logger;
 
