@@ -45,7 +45,7 @@ namespace Ajs.UI {
             ProgressBar._lbl = document.getElementById(progressBarElementId + "Label");
 
             if (!ProgressBar._checkDOM()) {
-                console.error("Invalid progress bar DOM specification!");
+                window.console.error("Invalid progress bar DOM specification!");
                 return;
             }
 
@@ -82,7 +82,7 @@ namespace Ajs.UI {
 
         public static show(): void {
             if (!ProgressBar._checkDOM()) {
-                console.error("Invalid progress bar DOM specification!");
+                window.console.error("Invalid progress bar DOM specification!");
                 return;
             }
             ProgressBar._pbar.style.display = "";
@@ -91,7 +91,7 @@ namespace Ajs.UI {
 
         public static hide(): void {
             if (!ProgressBar._checkDOM()) {
-                console.error("Invalid progress bar DOM specification!");
+                window.console.error("Invalid progress bar DOM specification!");
                 return;
             }
             ProgressBar._pbar.setAttribute("hidden", "true");

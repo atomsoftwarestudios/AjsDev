@@ -25,32 +25,100 @@ namespace Ajs.MVVM.Model {
 
     "use strict";
 
-    export class Model<T> {
+    export interface ICPModelParameters {
+        container: DI.IContainer;
+    }
 
-        /** Hold reference to the model manager */
-        protected _modelManager: ModelManager;
+    export class Model implements IModel {
 
-        /** Holds information if all initial async operations, such as data loading are done */
-        protected _initialized: boolean;
-        /** Returm information if all initial async operations, such as data loading are done */
-        public get initialized(): boolean { return this._initialized; }
+        private __container: DI.IContainer;
 
-        /** Holds the data ready notifier which notifies ViewModels the requested data is ready */
-        protected _dataReadyNotifier: Ajs.Events.Notifier<T>;
-        /** Returns the data ready notifier which notifies ViewModels the requested data is ready */
-        public get dataReadyNotifier(): Ajs.Events.Notifier<T> { return this._dataReadyNotifier; }
+        private __initialized: boolean;
+        protected _initialized(): boolean { return this.__initialized; }
 
-        /** Constructs the model */
-        public constructor(modelManager: ModelManager) {
-            this._initialized = false;
-            this._modelManager = modelManager;
-            this._dataReadyNotifier = new Ajs.Events.Notifier();
-            this._initialize();
+        public constructor(container: DI.IContainer) {
+            this.__initialized = false;
+            this.__container = container;
         }
 
-        /** Must be overriden in the inherited class */
-        protected _initialize(): void {
-            throw new NotImplementedException();
+        public initialize(): Promise<void> {
+            if (!this.__initialized) {
+                return this.__initialize();
+            }
+        }
+
+        public release(): void {
+            this.__release();
+        }
+
+        protected _onInitialize(): Promise<any> {
+            return Promise.resolve();
+        }
+
+        protected _onInitialized(): void {
+            return;
+        }
+
+        protected _onFinalize(): void {
+            return;
+        }
+
+        protected _checkInitialized(exception: Exception, callForward: Function): void {
+            this.__checkInitialized(exception, callForward);
+        }
+
+        protected _waitInitialized(timeout: number): Promise<void> {
+
+            const timeStep: number = 250;
+
+            return new Promise<void>(
+
+                (resolve: () => void, reject: (reason: any) => void) => {
+
+                    let elapsed: number = 0;
+                    let w: Function;
+
+                    function wait() {
+
+                        if (this.__initialized) {
+                            resolve();
+                        } else {
+                            elapsed += timeStep;
+                            if (elapsed > timeout) {
+                                reject(new InitializationTimeoutException());
+                            }
+                            setTimeout(() => w(), timeStep);
+                        }
+                    }
+
+                    w = wait.bind(this);
+                    w();
+
+                }
+            );
+        }
+
+        private __initialize(): Promise<void> {
+            let promise: Promise<void> = new Promise<void>(
+                (resolve: () => void) => {
+                    this._onInitialize()
+                        .then(() => {
+                            this.__initialized = true;
+                            this._onInitialized();
+                            resolve();
+                        });
+                });
+            return promise;
+        }
+
+        private __destroy(): void {
+            this._onFinalize();
+        }
+
+        private __release(): void {
+            if (this.__container.releaseScopedInstanceReference(this)) {
+                this.__destroy();
+            }
         }
 
         /**
@@ -59,14 +127,14 @@ namespace Ajs.MVVM.Model {
          * @param callForward Method to be called when initialization is done
          * @param param Parameter to be passed to the method
          */
-        protected _checkInitialized(exception: Exception, callForward: Function): void {
-            if (!this._initialized) {
+        private __checkInitialized(exception: Exception, callForward: Function): void {
+            if (!this.__initialized) {
                 // if not initialized, wait for it up to 20 seconds (80 x 250ms)
                 let timeout: number = 80;
                 let w8timer: number = setInterval(
                     () => {
                         // if loaded, get menu and notify about it
-                        if (this._initialized) {
+                        if (this.__initialized) {
                             clearInterval(w8timer);
                             callForward();
                             // otherwise check if we are timeouted

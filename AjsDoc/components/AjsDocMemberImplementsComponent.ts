@@ -21,13 +21,14 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace AjsDoc {
+namespace AjsDoc.Components {
 
     "use strict";
 
     export class IAjsDocMemberImplementsState {
     }
 
+    @Ajs.viewcomponent()
     export class AjsDocMemberImplementsComponent
         extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocMemberImplementsState, any>
         implements IAjsDocMemberImplementsState {
@@ -37,8 +38,5 @@ namespace AjsDoc {
         }
 
     }
-
-    /** Register the component to ViewComponentManager */
-    Ajs.Framework.viewComponentManager.registerComponents(AjsDocMemberImplementsComponent);
 
 }

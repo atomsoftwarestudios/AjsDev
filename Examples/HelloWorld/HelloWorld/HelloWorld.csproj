@@ -38,9 +38,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="IApplicationConfig.ts" />
-    <TypeScriptCompile Include="Application.ts" />
-    <TypeScriptCompile Include="TemplatesLoadingFailedException.ts" />
+    <TypeScriptCompile Include="HelloWorldApplication.ts" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -73,6 +71,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
+      <UserProperties tsconfig_1common_1json__JSONSchema="http://json.schemastore.org/tsconfig" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

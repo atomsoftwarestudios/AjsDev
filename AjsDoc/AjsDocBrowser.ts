@@ -25,121 +25,94 @@ namespace AjsDoc {
     /**
      * The AjsDocBrowser application
      */
-    export class AjsDocBrowser extends Ajs.App.Application {
+    @Ajs.application()
+    export class AjsDocBrowser extends Ajs.App.Application<IAjsDocBrowserConfig> {
 
-        protected _config: IAjsDocBrowserConfig;
+        protected _onConfigure(
+            container: Ajs.DI.IContainer,
+            resources: Ajs.App.IResourceLists,
+            templates: Ajs.App.IResourceLists,
+            redirections: Ajs.Navigation.IRedirection[],
+            routes: Ajs.Routing.IRoutes[],
+            viewComponentManager: Ajs.MVVM.ViewModel.IViewComponentManager): void {
 
-        /**
-         * Starts application intitalization by loading template list file defined in the config
-         */
-        public initialize(): void {
+            // app configuration
 
-            AjsDoc.config = this._config;
-            this._loadTemplatesList();
+            this._resourcesLoadingPreference = this._config.dataStorageOptions.loadingPreference;
 
-        }
+            // use the TypeScript helper to extend a class
+            __extends(resources, this._config.resources);
+            __extends(templates, this._config.templates);
 
-        /**
-         * Loads a list of templates to be loaded and continues with loadTemplates
-         */
-        protected _loadTemplatesList(): void {
+            // configure application services
 
-            // load template list (JSON file)
-            let templateList: Promise<Ajs.Resources.IResource> = Ajs.Framework.resourceManager.getResource(
-                this._config.templateList,
-                this._config.storageType,
-                Ajs.Resources.CACHE_POLICY.PERMANENT,
-                this._config.templateLoadingPreference
-            );
+            container
 
-            templateList
-                // on success parse the templates list and load templates
-                .then((resource: Ajs.Resources.IResource) => {
-                    this._loadTemplates(JSON.parse(resource.data));
+                .addScoped<Utils.IHTMLHelpers, Utils.ICPHTMLHelpers>(
+                Utils.IIHTMLHelpers, Utils.HTMLHelpers, {
+                    examplesPath: this._config.contentFolders.examples,
+                    chartsPaths: this._config.contentFolders.charts,
+                    resourceManager: Ajs.Resources.IIResourceManager,
+                    storageType: this._config.dataStorageOptions.storageType,
+                    cachePolicy: this._config.dataStorageOptions.cachePolicy,
+                    loadingPreference: this._config.dataStorageOptions.loadingPreference
                 })
-                // otherwise crash
-                .catch((reason: Ajs.Exception) => {
-                    throw new Ajs.Exception("Failed to load template list.", reason);
-                });
-        }
 
-        /**
-         * Initiate loading of templates defined in the template list
-         */
-        protected _loadTemplates(templateUrls: string[]): void {
-
-            let templatePromise: Promise<Ajs.Templating.Template[]> = Ajs.Framework.templateManager.loadTemplates(
-                templateUrls,
-                config.storageType,
-                Ajs.Resources.CACHE_POLICY.PERMANENT,
-                this._config.templateLoadingPreference
-            );
-
-            templatePromise
-                .then((templates: Ajs.Templating.Template[]) => {
-                    this._loadResourcesList();
+                .addScoped<Models.ProgramModel.IProgramModel, Models.ProgramModel.ICPProgramModel>(
+                Models.ProgramModel.IIProgramModel, Models.ProgramModel.ProgramModel, {
+                    container: container,
+                    resourceManager: Ajs.Resources.IIResourceManager,
+                    htmlHelpers: Utils.IIHTMLHelpers,
+                    config: {
+                        storageType: this._config.dataStorageOptions.storageType,
+                        cachePolicy: this._config.dataStorageOptions.cachePolicy,
+                        loadingPreference: this._config.dataStorageOptions.loadingPreference,
+                        initializationTimeout: this._config.modelInitializationTimeout,
+                        programUrl: this._config.dataSources.program
+                    }
                 })
-                .catch((reason: Ajs.Exception) => {
-                    throw new Ajs.Exception("Failed to load templates", reason);
-                }
-            );
 
-        }
-
-        /**
-         * Initiates loading of the resources list file
-         */
-        protected _loadResourcesList(): void {
-
-            // load template list (JSON file)
-            let resourceList: Promise<Ajs.Resources.IResource> = Ajs.Framework.resourceManager.getResource(
-                this._config.resourceList,
-                this._config.storageType,
-                Ajs.Resources.CACHE_POLICY.PERMANENT,
-                this._config.resourceLoadingPreference
-            );
-
-            resourceList
-                // on success parse the templates list and load templates
-                .then((resource: Ajs.Resources.IResource) => {
-                    this._loadResources(JSON.parse(resource.data));
-                })
-                // otherwise crash
-                .catch((reason?: Ajs.Exception) => {
-                    throw new Ajs.Exception("Failed to load resources configuration", reason);
+                .addScoped<Models.ContentModel.IContentModel, Models.ContentModel.ICPContentModel>(
+                Models.ContentModel.IIContentModel, Models.ContentModel.ContentModel, {
+                    container: container,
+                    resourceManager: Ajs.Resources.IIResourceManager,
+                    htmlHelpers: Utils.IIHTMLHelpers,
+                    config: {
+                        storageType: this._config.dataStorageOptions.storageType,
+                        cachePolicy: this._config.dataStorageOptions.cachePolicy,
+                        loadingPreference: this._config.dataStorageOptions.loadingPreference,
+                        initializationTimeout: this._config.modelInitializationTimeout,
+                        tocUrl: this._config.dataSources.toc
+                    }
                 });
 
-        }
+            // configure VCM (View Component dependencies)
 
+            viewComponentManager
 
-        /**
-         * Initiates loading of resources specified in the resources list file + data
-         */
-        protected _loadResources(resourceUrls: string[]): void {
-
-            resourceUrls.push(config.dataSources.program);
-            resourceUrls.push(config.dataSources.toc);
-
-            let resourcesPromise: Promise<Ajs.Resources.IResource[]> = Ajs.Framework.resourceManager.getMultipleResources(
-                resourceUrls,
-                (this._config as IAjsDocBrowserConfig).storageType,
-                Ajs.Resources.CACHE_POLICY.PERMANENT,
-                this._config.resourceLoadingPreference);
-
-            resourcesPromise
-                .then((resources: Ajs.Resources.IResource[]): void => {
-                    this._initDone();
+                .addComponentDependencies<Components.ICPAjsDocComponent>(
+                Components.AjsDocComponent, {
+                    programModel: Models.ProgramModel.IIProgramModel,
+                    contentModel: Models.ContentModel.IIContentModel
                 })
-                .catch((reason: Ajs.Exception): void => {
-                    throw new Ajs.Exception("Failed to load application resources", reason);
-                });
-        }
 
-        /**
-         * Finalizes the application when the browser tab is about to be closed
-         */
-        protected _finalize(): void {
-            console.warn("IMPLEMENT: AjsDocBrowser.application.finalize");
+                .addComponentDependencies<Components.ICPAjsDocMenuComponent>(
+                Components.AjsDocMenuComponent, {
+                    programModel: Models.ProgramModel.IIProgramModel,
+                    contentModel: Models.ContentModel.IIContentModel
+                })
+
+                .addComponentDependencies<Components.ICPAjsDocContextSwitcherComponent>(
+                Components.AjsDocContextSwitcherComponent, {
+                    stateManager: Ajs.State.IIStateManager
+                })
+
+                .addComponentDependencies<Components.ICPAjsDocHeaderComponent>(
+                Components.AjsDocHeaderComponent, {
+                    headerLabel: this._config.headerLabel,
+                    headerDescription: this._config.headerDescription
+                });
+
         }
 
     }

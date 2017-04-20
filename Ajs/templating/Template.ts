@@ -43,8 +43,9 @@ namespace Ajs.Templating {
      */
     export class Template {
 
-        protected _templateManager: TemplateManager;
-        public get templateManager(): TemplateManager { return this._templateManager; }
+        protected _resourceManager: Resources.IResourceManager;
+
+        protected _templateManager: ITemplateManager;
 
         protected _name: string;
         public get name(): string { return this._name; }
@@ -76,11 +77,13 @@ namespace Ajs.Templating {
          * @param storageType
          */
         public constructor(
-            templateManager: TemplateManager,
+            resourceManager: Resources.IResourceManager,
+            templateManager: ITemplateManager,
             templateResource: Resources.IResource,
             storageType: Resources.STORAGE_TYPE,
             cachePolicy: Resources.CACHE_POLICY
         ) {
+            this._resourceManager = resourceManager;
             this._templateManager = templateManager;
             this._name = "";
             this._storageType = storageType;
@@ -118,7 +121,7 @@ namespace Ajs.Templating {
                 let resourcePromises: Promise<Resources.IResource>[] = [];
                 for (let i: number = 0; i < this._styleSheetsUrls.length; i++) {
                     resourcePromises.push(
-                        this._templateManager.resourceManager.getResource(
+                        this._resourceManager.getResource(
                             this._styleSheetsUrls[i],
                             this._storageType,
                             this._cachePolicy,

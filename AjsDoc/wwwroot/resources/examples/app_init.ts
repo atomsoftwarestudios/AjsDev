@@ -1,39 +1,57 @@
-class UserApplication extends ajs.app.Application {
+@Ajs.application()
+export class AjsApplication extends Ajs.App.Application<void> {
 
-    // override the initialize method
-    // perform necessary tasks here. for example, template file can be loaded. always use 
-    // lambda function for async calls to keep "this" pointing to the correct (this) object
-    // and keep it as small as possible
-    public initialize(): void {
-        Ajs.Framework.templateManager.loadTemplateFiles(
-            (success: boolean) => { this._templateLoaded(success); }, 
-            ["/template.html"],
-            ajs.resources.STORAGE_TYPE.MEMORY,
-            ajs.resources.CACHE_POLICY.LASTRECENTLYUSED
+    // _onConfigure is called automatically when the application is instanced
+    protected _onConfigure(
+        // DI container is provided to the method to make it possible to configure dependencies
+        container: Ajs.DI.IContainer,
+        // resources array to be filled in with resources to be loaded before the application will start
+        resources: Ajs.App.IResourceLists,
+        // templates array to be filled in with templates to be loaded before the application will start
+        templates: Ajs.App.IResourceLists,
+        // redirections to be filled in with redirections
+        redirections: Ajs.Navigation.IRedirection[],
+        // routes array to be filled in with application routes
+        routes: Ajs.Routing.IRoutes[]): void {
+
+        // Configuration of the DI container
+        // In this case the model implementation Model.Model with constructor parameters Models.ICPModel
+        // is mapped to interface Models.IModel identified by the Models.IIModel interface runtime identifier
+        container
+            .addScoped<Models.IModel, Models.ICPModel>(
+            Models.IIModel, Models.Model, {
+                container: container
+            });
+
+        // As view components are not services it is necessary to configure dependecies separately
+        // In this case, the view component Components.Component depends on model implementing the IModel
+        // interface (identified by the Models.IIModel runtime interface identifier) and the component
+        // configuration parameters are defined by the IComponentConfigParams interface
+        viewComponentManager.
+            addComponentDependencies<Components.IComponentConfigParams>(
+            Components.Component, {
+                tasksModel: Models.IIModel
+            });
+
+        // All resources requested are first looked for in the cache (app storage, session storage
+        // memory storage or indexed db storage) and if found they are returned immediately then
+        // request to server is made to update the resource cache if the resource has been changed
+        this._resourcesLoadingPreference = Ajs.Resources.LOADING_PREFERENCE.CACHE;
+
+        // Resources stored in local store (if not they are loaded from server and stored there)
+        // to be loaded before application will start
+        templates.localPermanent = [
+            "/templates/default.html"
+        ];
+
+        // configuration of routes
+        // in case of Ajs the route is mapping of URL to the View Component Name
+        routes.push(
+            {
+                paths: [{ base: ".*", params: "" }],
+                viewComponentName: "DefaultComponent"
+            }
         );
     }
 
-    // process the template loaded event - it is possible to initiate
-    // some additional async tasks here but we are done with resources for
-    // this example so we will continue by setting up routes
-    // so we call the _initDone() method of the super class
-    protected _templateLoaded(success: boolean) {
-        if (success) {
-            this._setupRoutes();
-        } else {
-            throw new Error("Template loading failed");
-        }
-    }
-
-    // setup the application routes
-    // route points to the ViewComponent object constructor name and consists of two
-    // parts: base and params. Base part can be later used to determine the path to
-    // the view component while path (contains the path plus search string and hash)
-    // can be used to internal ViewComponent routing
-    // finally, it is necessary to call the _initDone() in order to let the framework
-    // know the application was initialized and can be run.
-    protected _setupRoutes(): void {
-        Ajs.Framework.router.registerRoute([{ base: "^\/.*", params: "" }], "Index");
-        Ajs.Framework.router.registerRoute([{ base: "^\/.*", params: "" }], "Index");
-    }
 }

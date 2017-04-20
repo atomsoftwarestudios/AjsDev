@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace AjsDoc {
+namespace AjsDoc.Components {
 
     "use strict";
 
@@ -33,9 +33,16 @@ namespace AjsDoc {
         references: boolean;
     }
 
+    export interface ICPAjsDocContextSwitcherComponent {
+        stateManager: typeof Ajs.State.IIStateManager;
+    }
+
+    @Ajs.viewcomponent()
     export class AjsDocContextSwitcherComponent
         extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocContextSwitcherState, any>
         implements IAjsDocContextSwitcherState {
+
+        private __stateManager: Ajs.State.IStateManager;
 
         protected _lastGuidePath: string;
         protected _lastReferencePath: string;
@@ -43,48 +50,52 @@ namespace AjsDoc {
         public guides: boolean;
         public references: boolean;
 
-        protected _navigatedListener: Ajs.Events.IListener<void>;
+        protected _navigatedListener: Ajs.Events.IListener<Ajs.MVVM.View.ViewManager>;
 
-        protected _defaultState(): IAjsDocContextSwitcherState {
+        protected _onDefaultState(): IAjsDocContextSwitcherState {
             return this._prepareState();
         }
 
-        protected _initialize(): void {
+        protected _onConfigure(stateManager: Ajs.State.IStateManager): void {
+            this.__stateManager = stateManager;
+        }
 
-            this._lastGuidePath = Ajs.Framework.stateManager.getSessionState(sessionStateGuidePath);
+        protected _onInitialize(): void {
+
+            this._lastGuidePath = this.__stateManager.getSessionState(sessionStateGuidePath);
             if (this._lastGuidePath === null) {
                 this._lastGuidePath = "";
             }
 
-            this._lastReferencePath = Ajs.Framework.stateManager.getSessionState(sessionStateReferencePath);
+            this._lastReferencePath = this.__stateManager.getSessionState(sessionStateReferencePath);
             if (this._lastReferencePath === null) {
                 this._lastReferencePath = "ref";
             }
 
-            this._navigatedListener = (sender: Ajs.MVVM.ViewModel.ViewComponent<any,any>) => {
+            this._navigatedListener = (sender: Ajs.MVVM.View.ViewManager) => {
                 this._navigated();
                 return true;
             };
 
-            this.ajs.view.navigationNotifier.subscribe(this._navigatedListener);
+            this.ajs.viewManager.navigationNotifier.subscribe(this._navigatedListener);
         }
 
         protected _finalize(): void {
-            this.ajs.view.navigationNotifier.unsubscribe(this._navigatedListener);
+            this.ajs.viewManager.navigationNotifier.unsubscribe(this._navigatedListener);
         }
 
         protected _prepareState(): IAjsDocContextSwitcherState {
-            let routeInfo: Ajs.Routing.IRouteInfo = Ajs.Framework.router.currentRoute;
+            let routeInfo: Ajs.Routing.IRouteInfo = this.ajs.router.currentRoute;
 
             if (routeInfo.base.substr(0, 4) === "ref/" || routeInfo.base === "ref") {
-                Ajs.Framework.stateManager.setSessionState(sessionStateReferencePath, routeInfo.base);
+                this.__stateManager.setSessionState(sessionStateReferencePath, routeInfo.base);
                 this._lastReferencePath = routeInfo.base;
                 return {
                     guides: false,
                     references: true
                 };
             } else {
-                Ajs.Framework.stateManager.setSessionState(sessionStateGuidePath, routeInfo.base);
+                this.__stateManager.setSessionState(sessionStateGuidePath, routeInfo.base);
                 this._lastGuidePath = routeInfo.base;
                 return{
                     guides: true,
@@ -99,18 +110,16 @@ namespace AjsDoc {
 
         public onGuidesClick(e: Event): void {
             if (this.references) {
-                Ajs.Framework.navigator.navigate(this._lastGuidePath !== "" ? "/" + this._lastGuidePath : "/");
+                this.ajs.navigator.navigate(this._lastGuidePath !== "" ? "/" + this._lastGuidePath : "/");
             }
         }
 
         public onReferenceGuideClick(e: Event): void {
             if (this.guides) {
-                Ajs.Framework.navigator.navigate(this._lastReferencePath !== "" ? "/" + this._lastReferencePath : "/ref");
+                this.ajs.navigator.navigate(this._lastReferencePath !== "" ? "/" + this._lastReferencePath : "/ref");
             }
         }
 
     }
-
-    Ajs.Framework.viewComponentManager.registerComponents(AjsDocContextSwitcherComponent);
 
 }

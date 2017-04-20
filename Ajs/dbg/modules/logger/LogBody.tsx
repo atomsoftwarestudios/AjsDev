@@ -23,7 +23,7 @@ IN THE SOFTWARE.
 
 ///<reference path="../../tsx/tsx.ts" />
 
-namespace Ajs.Dbg.modules.logger {
+namespace Ajs.Dbg.Modules.Logger {
 
     "use strict";
 
@@ -35,11 +35,9 @@ namespace Ajs.Dbg.modules.logger {
         protected _lastMarked: HTMLTableRowElement;
 
         protected _logger: Logger;
-        protected _log: ILogRecord[];
 
         constructor(logger: Logger) {
             this._logger = logger;
-            this._log = logger.records;
             this._lastSelected = null;
             this._lastMarked = null;
         }
@@ -104,22 +102,22 @@ namespace Ajs.Dbg.modules.logger {
 
             let lines: any[] = [];
 
-            for (let i: number = 0; i < this._log.length; i++) {
-                let className: string = "ajsDebugLog" + LogType[this._log[i].type];
+            for (let i: number = 0; i < this._logger.records.length; i++) {
+                let className: string = "ajsDebugLog" + LogType[this._logger.records[i].type];
                 lines.push(
-                    <tr class={className} ajsbreakpoint={this._log[i].breakpoint}
-                        mousedown={(e: Event) => (this._selectRow(e as MouseEvent))} ajsdata={this._log[i]}>
+                    <tr class={className} ajsbreakpoint={this._logger.records[i].breakpoint}
+                        mousedown={(e: Event) => (this._selectRow(e as MouseEvent))} ajsdata={this._logger.records[i]}>
                         <td>{i}</td>
-                        <td>{this._log[i].occurence}</td>
-                        <td>{this._log[i].time.getTime() - this._logger.initTime}</td>
-                        <td>{LogType[this._log[i].type]}</td>
-                        <td>{this._log[i].level}</td>
-                        <td>{this._log[i].module}</td>
-                        <td>{this._getType(this._log[i].object)}</td>
-                        <td>{this._log[i].function}</td>
-                        <td>{this._log[i].caller}</td>
-                        <td>{this._log[i].message}</td>
-                        <td>{this._log[i].data}</td>
+                        <td>{this._logger.records[i].occurence}</td>
+                        <td>{this._logger.records[i].time.getTime() - this._logger.initTime}</td>
+                        <td>{LogType[this._logger.records[i].type]}</td>
+                        <td>{this._logger.records[i].level}</td>
+                        <td>{this._logger.records[i].module}</td>
+                        <td>{this._getType(this._logger.records[i].object)}</td>
+                        <td>{this._logger.records[i].function}</td>
+                        <td>{this._logger.records[i].caller}</td>
+                        <td>{this._logger.records[i].message}</td>
+                        <td>{this._logger.records[i].data}</td>
                     </tr>
                 );
             }
@@ -177,6 +175,11 @@ namespace Ajs.Dbg.modules.logger {
         }
 
         public rendered(doc: Document): void {
+
+            if (this._logger.records.length === 0) {
+                return;
+            }
+
             let hdr: HTMLTableElement = doc.getElementsByClassName("ajsDebugLogHeader")[0] as HTMLTableElement;
             let bdy: HTMLTableElement = doc.getElementsByClassName("ajsDebugLogBody")[0] as HTMLTableElement;
 

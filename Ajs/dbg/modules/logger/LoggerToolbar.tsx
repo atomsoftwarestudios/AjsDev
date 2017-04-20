@@ -23,7 +23,7 @@ IN THE SOFTWARE.
 
 ///<reference path="../../tsx/tsx.ts" />
 
-namespace Ajs.Dbg.modules.logger {
+namespace Ajs.Dbg.Modules.Logger {
 
     "use strict";
 

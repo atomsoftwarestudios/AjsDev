@@ -32,8 +32,6 @@ namespace Ajs.Dbg {
 
         showOnBootDelay: number;
 
-        loggerConfig: Ajs.Dbg.modules.logger.ILoggerConfig;
-
     }
 
 }

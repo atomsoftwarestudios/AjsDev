@@ -32,7 +32,7 @@ namespace Ajs.UI {
         public static setDOMElement(renderTargetElementId: string): void {
             RenderTarget._renderTarget = document.getElementById(renderTargetElementId);
             if (!RenderTarget._checkDOM()) {
-                console.error("Invalid render target DOM specification!");
+                window.console.error("Invalid render target DOM specification!");
             }
         }
 

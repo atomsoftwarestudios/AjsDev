@@ -32,12 +32,12 @@ namespace Ajs.Dbg.View {
 
     export class Body implements Tsx.IViewComponent {
 
-        protected _console;
+        protected _console: IConsole;
 
         protected _currentModule: IConsoleModule;
         public get currentModule(): IConsoleModule { return this._currentModule; }
 
-        constructor(console: Console, currentModule: IConsoleModule) {
+        constructor(console: IConsole, currentModule: IConsoleModule) {
             this._console = console;
             this._currentModule = currentModule;
         }
@@ -67,7 +67,7 @@ namespace Ajs.Dbg.View {
             }
 
             buttons.push(
-                <input type="button" value="Hide" click={() => { Ajs.Dbg.console.hide(); }} />
+                <input type="button" value="Hide" click={() => { this._console.hide(); }} />
             );
 
             if (this._currentModule !== null) {

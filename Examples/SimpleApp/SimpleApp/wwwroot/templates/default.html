@@ -3,8 +3,8 @@
     <component name="ClockComponent">
         <h1>Welcome to Ajs!</h1>
         Current date &amp; time:
-        <span if="this.time && this.time !== null">{time}</span>
-        <span if="this.time === undefined || this.time === null">Wait a second!</span>
+        <span if="this.isTimeSet">{time}</span>
+        <span if="!this.isTimeSet">Wait a second!</span>
     </component>
 
 </ajstemplate>

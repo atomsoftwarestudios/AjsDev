@@ -107,6 +107,10 @@ namespace Ajs.State {
      */
     const SESS_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "SESSTATE.";
 
+    export interface ICPStateManager {
+        resourceManager: typeof Resources.IIResourceManager;
+    }
+
     /**
      * State manager is used for the application and session state persistance
      * State manager currently supports only string values so if it is required to store
@@ -115,7 +119,7 @@ namespace Ajs.State {
     export class StateManager {
 
         /** Resource manager to be used to access the local and session storages */
-        protected _resourceManager: Ajs.Resources.ResourceManager;
+        private __resourceManager: Ajs.Resources.ResourceManager;
 
         /**
          * Constructs the state manager object
@@ -125,7 +129,7 @@ namespace Ajs.State {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Constructor, 0, "ajs.state", this);
 
-            this._resourceManager = resourceManager;
+            this.__resourceManager = resourceManager;
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
@@ -142,7 +146,7 @@ namespace Ajs.State {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Setting the application state: " + key + " : " + value);
 
-            this._resourceManager.setCachedResource(
+            this.__resourceManager.setCachedResource(
                 APP_STATE_PREFIX + key,
                 value,
                 Ajs.Resources.STORAGE_TYPE.LOCAL,
@@ -162,7 +166,7 @@ namespace Ajs.State {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Retrieving the application state " + key);
 
-            let resource: Ajs.Resources.ICachedResource = this._resourceManager.getCachedResource(
+            let resource: Ajs.Resources.ICachedResource = this.__resourceManager.getCachedResource(
                 APP_STATE_PREFIX + key,
                 Ajs.Resources.STORAGE_TYPE.LOCAL
             );
@@ -186,7 +190,7 @@ namespace Ajs.State {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Removing the application state " + key);
 
-            this._resourceManager.removeCachedResource(key, Ajs.Resources.STORAGE_TYPE.LOCAL);
+            this.__resourceManager.removeCachedResource(key, Ajs.Resources.STORAGE_TYPE.LOCAL);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
@@ -203,7 +207,7 @@ namespace Ajs.State {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Setting the session state " + key + " : " + value);
 
-            this._resourceManager.setCachedResource(
+            this.__resourceManager.setCachedResource(
                 SESS_STATE_PREFIX + key,
                 value,
                 Ajs.Resources.STORAGE_TYPE.SESSION,
@@ -223,7 +227,7 @@ namespace Ajs.State {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Retireving the session state " + key);
 
-            let resource: Ajs.Resources.ICachedResource = this._resourceManager.getCachedResource(
+            let resource: Ajs.Resources.ICachedResource = this.__resourceManager.getCachedResource(
                 SESS_STATE_PREFIX + key,
                 Ajs.Resources.STORAGE_TYPE.SESSION
             );
@@ -247,7 +251,7 @@ namespace Ajs.State {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Removing the session state " + key);
 
-            this._resourceManager.removeCachedResource(key, Ajs.Resources.STORAGE_TYPE.SESSION);
+            this.__resourceManager.removeCachedResource(key, Ajs.Resources.STORAGE_TYPE.SESSION);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }

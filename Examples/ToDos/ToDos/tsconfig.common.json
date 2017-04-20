@@ -18,7 +18,9 @@
     // preserve const enums (don't delete from generated code)
     "preserveConstEnums": true,
     // implicit any
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    // allow experimental decorators feature
+    "experimentalDecorators": true
   },
   "include": [
     "./**/*",

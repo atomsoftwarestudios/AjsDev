@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace AjsDoc {
+namespace AjsDoc.Components {
 
     "use strict";
 
@@ -34,6 +34,7 @@ namespace AjsDoc {
         menuLabel?: boolean;
     }
 
+    @Ajs.viewcomponent()
     export class AjsDocMenuItemComponent
         extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocMenuItemComponentState, any>
         implements IAjsDocMenuItemComponentState {
@@ -45,8 +46,5 @@ namespace AjsDoc {
         public expandable: boolean;
         public menuLabel: boolean;
     }
-
-    /** Register the component to ViewComponentManager */
-    Ajs.Framework.viewComponentManager.registerComponents(AjsDocMenuItemComponent);
 
 }

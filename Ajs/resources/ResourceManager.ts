@@ -103,6 +103,10 @@ namespace Ajs.Resources {
         CACHE
     }
 
+    export interface ICPResourceManager {
+        config?: IResourceManagerConfig;
+    }
+
     /**
      * Resource manager takes care of loading of resources from the server and caching them in the appropriate cache
      * <ul>
@@ -120,33 +124,26 @@ namespace Ajs.Resources {
      *    <li>Other types of resources are not evaluated automatically and are just returned / cached</li>
      * </ul>
      */
-    export class ResourceManager {
+    export class ResourceManager implements IResourceManager {
 
-        protected _config: IResourceManagerConfig;
-        public get config(): IResourceManagerConfig { return this._config; }
-
-        protected _managedResources: IManagedResource[];
-        public get managedResources(): IManagedResource[] { return this._managedResources; }
+        private __config: IResourceManagerConfig;
 
         /** Stores referrence to the ResourceLoader object */
         protected _resourceLoader: ResourceLoader;
-        /** Returns referrence to the ResourceLoader object used by the Resource Manager */
-        public get resourceLoader(): ResourceLoader { return this.resourceLoader; }
 
         /** Stores reference to the StorageLocal object */
         protected _storageLocal: StorageLocal;
-        /** Returns referrence to the StorageLocal object used by the Resource Manager */
-        public get storageLocal(): StorageLocal { return this._storageLocal; }
 
         /** Stores reference to the StorageSession object */
         protected _storageSession: StorageSession;
-        /** Returns referrence to the StorageSession object used by the Resource Manager */
-        public get storageSession(): StorageSession { return this._storageSession; }
 
         /** Stores reference to the StorageMemory object */
         protected _storageMemory: StorageMemory;
-        /** Returns referrence to the StorageMemory object used by the Resource Manager */
-        public get storageMemory(): StorageMemory { return this._storageMemory; }
+
+        /** Stores list of all resources managed by the resource manager */
+        protected _managedResources: IManagedResource[];
+        /** Returns list of all resources managed by the resource manager */
+        public get managedResources(): IManagedResource[] { return this._managedResources; }
 
         /**
          * Constructs the ResourceManager
@@ -164,15 +161,15 @@ namespace Ajs.Resources {
 
             // store config locally
             if (config === undefined) {
-                this._config = this._defaultConfig();
+                this.__config = this._defaultConfig();
             } else {
-                this._config = config;
+                this.__config = config;
             }
 
             this._resourceLoader = new ResourceLoader();
-            this._storageLocal = new StorageLocal(this._config.localCacheSize);
-            this._storageSession = new StorageSession(this._config.sessionCacheSize);
-            this._storageMemory = new StorageMemory(this._config.memoryCacheSize);
+            this._storageLocal = new StorageLocal(this.__config.localCacheSize);
+            this._storageSession = new StorageSession(this.__config.sessionCacheSize);
+            this._storageMemory = new StorageMemory(this.__config.memoryCacheSize);
 
             this._managedResources = this._getManagedResources();
 
@@ -193,7 +190,7 @@ namespace Ajs.Resources {
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
                 "Memory storage managed resources count: " + this._storageMemory.resources.length);
 
-            if (this._config.removeResourcesOlderThan !== undefined) {
+            if (this.__config.removeResourcesOlderThan !== undefined) {
                 Ajs.Dbg.log(Dbg.LogType.Warning, 0, "ajs.resources", this,
                     "IMPLEMENT: ResourceManager.constructor - removeResourcesOlderThan functionality");
             }

@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-///<reference path="../ajs.Exception.ts" />
+///<reference path="../Exception.ts" />
 
 /**
  * dom namespace contains the DOM updater and related interfaces

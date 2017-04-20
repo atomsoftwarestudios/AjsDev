@@ -23,7 +23,7 @@ IN THE SOFTWARE.
 
 ///<reference path="../../tsx/tsx.ts" />
 
-namespace Ajs.Dbg.modules.logger {
+namespace Ajs.Dbg.Modules.Logger {
 
     "use strict";
 
@@ -54,6 +54,7 @@ namespace Ajs.Dbg.modules.logger {
                         font-size: 12px;
                         display: inline-block;
                         box-sizing: border-box;
+                        width: 100%;
                     $
 
                     .ajsDebugLogHeader tr ^
@@ -91,6 +92,10 @@ namespace Ajs.Dbg.modules.logger {
                         border-left: solid 1px silver;
                         border-top: solid 1px silver;
                         font-size: 12px;
+                    $
+
+                    .ajsDebugLogBody ^
+                        width: 100%;
                     $
 
                     .ajsDebugLogBody tr[ajsselected="true"] ^

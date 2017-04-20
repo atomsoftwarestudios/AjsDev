@@ -29,13 +29,13 @@ namespace Ajs.DI {
      * Ajs dependency injection container implementation
      * <p>
      * The Ajs Service DI Container is used internally by Ajs to instance services of the Ajs and either
-     * it can be used by the application to construct object graphs based on the service dependancies. It
+     * it can be used by the application to construct object graphs based on the service dependencies. It
      * is designed with the TypeScript compiler and JavaScript runtime in mind so it is possible to check
      * for the compile time errors (i.e. type inconsistences). Runtime checking is limited as the type
      * information is not available at all (the reflection is not in use). The DI container is supposed to
      * be used for configuration of service graphs during the application intialization and resolving
-     * automatic service instantiation and dependancy resolving once the services are requested to be
-     * instantiated. The @see [resolve]{Ajs.DI.Container.resolve} method is supposed to be used internally
+     * automatic service instantiation and dependency resolving once the services are requested to be
+     * instantiated. The #see [resolve]{Ajs.DI.Container.resolve} method is supposed to be used internally
      * by the Ajs Fraemework only. For more information about Ajs Framework DI integration and usage reffer
      * to Ajs DI guide articles and examples.
      * </p>
@@ -50,7 +50,7 @@ namespace Ajs.DI {
      * They are supposed to be used for global services (mainly Ajs Framework services are instanced as
      * singletons) and are not supposed to be released before the end of application lifecycle and it is not
      * recommended. However, container allows to release the singleton instance reference it holds by calling
-     * the @see {Ajs.DI.Container.releaseSingletonInstanceReference} method.
+     * the #see [releaseSingletonInstanceReference]{Ajs.DI.Container.releaseSingletonInstanceReference} method.
      * </p>
      * <h4>Scoped services</h4>
      * <p>
@@ -62,7 +62,7 @@ namespace Ajs.DI {
      * the service instance reference is called. This can be used for debugging i.e. to check if the scoped
      * service consumers are correctly releasing the instance.
      * The service instance life time is fully managable by the application code. Once the instance is not
-     * necessary the @see [releaseScopedInstanceReference]{Ajs.DI.Container.releaseScopedInstanceReference}
+     * necessary the #see [releaseScopedInstanceReference]{Ajs.DI.Container.releaseScopedInstanceReference}
      * method can be called to release the instance. Once the reference count is zero the reference is
      * released from the DI container and memory cleared by the garbage collector.
      * Requirement to obtain a reference to the service instance directly from the DI container in all cases
@@ -81,19 +81,19 @@ namespace Ajs.DI {
          * Stores container managed transcient services
          * To add a managed trancient service the addTranscient method has to be used
          */
-        private __transcientServices: IService[];
+        private __transientServices: IServiceDescriptor[];
 
         /**
          * Stores container managed scoped services
          * To add a managed scoped service the addScoped methiod has to be used
          */
-        private __scopedServices: IService[];
+        private __scopedServices: IServiceDescriptor[];
 
         /**
          * Stores container managed singleton services
          * To add a managed singleton service the addSingleton methiod has to be used
          */
-        private __singletonServices: IService[];
+        private __singletonServices: IServiceDescriptor[];
 
         /**
          * Holds instances of instanced scoped services
@@ -114,7 +114,7 @@ namespace Ajs.DI {
          * Performs basic initialization of managed service stores and service instance stores
          */
         constructor() {
-            this.__transcientServices = [];
+            this.__transientServices = [];
             this.__scopedServices = [];
             this.__singletonServices = [];
             this.__scopedInstances = [];
@@ -127,8 +127,13 @@ namespace Ajs.DI {
          * @param serviceParameters Parameters of the service to be passed to the service constructor function
          * @returns reference to DI container in order to be possible to chain container configuration functions
          */
-        public addTranscient<T>(serviceConstructor: any, serviceParameters: T): Container {
-            this.__addService(this.__transcientServices, {
+        public addTransient<ServiceType extends IServiceType, Params extends IServiceConstructorParameters>(
+            interfaceIdentifier: ServiceType,
+            serviceConstructor: Ctor,
+            serviceParameters: Params): Container {
+
+            this.__addService(this.__transientServices, {
+                serviceInterfaceIdentifier: interfaceIdentifier,
                 serviceConstructor: serviceConstructor,
                 serviceParameters: serviceParameters
             });
@@ -138,11 +143,16 @@ namespace Ajs.DI {
         /**
          * Adds a scoped service to the DI container
          * @param serviceConstructor Constructor (class name) of the service to be added
-         * @param serviceParameters Parameters (including service dependancies) to be passed to the service constructor function
+         * @param serviceParameters Parameters (including service dependencies) to be passed to the service constructor function
          * @returns reference to DI container in order to be possible to chain container configuration functions
          */
-        public addScoped<T>(serviceConstructor: any, serviceParameters: T): Container {
+        public addScoped<ServiceType extends IServiceType, Params extends IServiceConstructorParameters>(
+            interfaceIdentifier: ServiceType,
+            serviceConstructor: Ctor,
+            serviceParameters: Params): Container {
+
             this.__addService(this.__scopedServices, {
+                serviceInterfaceIdentifier: interfaceIdentifier,
                 serviceConstructor: serviceConstructor,
                 serviceParameters: serviceParameters
             });
@@ -152,11 +162,16 @@ namespace Ajs.DI {
         /**
          * Adds a singleton service to the DI container
          * @param serviceConstructor Constructor (class name) of the service to be added
-         * @param serviceParameters Parameters (including service dependancies) to be passed to the service constructor function
+         * @param serviceParameters Parameters (including service dependncies) to be passed to the service constructor function
          * @returns reference to DI container in order to be possible to chain container configuration functions
          */
-        public addSingleton<T>(classToConstruct: any, constructorParameters: T): Container {
+        public addSingleton<ServiceType extends IServiceType, Params extends IServiceConstructorParameters>(
+            interfaceIdentifier: ServiceType,
+            classToConstruct: Ctor,
+            constructorParameters: Params): Container {
+
             this.__addService(this.__singletonServices, {
+                serviceInterfaceIdentifier: interfaceIdentifier,
                 serviceConstructor: classToConstruct,
                 serviceParameters: constructorParameters
             });
@@ -164,20 +179,33 @@ namespace Ajs.DI {
         }
 
         /**
-         * Resolves the service including configured dependancies and returns a resolved service instance
+         * Resolves the service including configured dependncies and returns a resolved service instance
          * <ul>
          * <li>1. Looks up for service tables if the service was previously registered to be managed</li>
          * <li>2. For scoped and singleton services it looks up the appropriate instance tables and returns
          *        the instance created previously if it is found</li>
-         * <li>3. Resolves dependancies, prepares the constructor parameters by mapping configured parameter
-         *        names to code defined constructor arguments in order to pass dependancies in correct order
+         * <li>3. Resolves dependencies, prepares the constructor parameters by mapping configured parameter
+         *        names to code defined constructor arguments in order to pass dependencies in correct order
          *        and creates and returns the instanced service
          * </li>
          * @param serviceConstructor
          * @returns Instance of the service
          */
-        public resolve<T>(serviceConstructor?: new (...params: any[]) => T): T {
-            return <T>this.__resolve(serviceConstructor);
+        public resolve<ServiceType extends IServiceType>(
+            interfaceIdentifier: ServiceType,
+            throwUnresolvedException: boolean = true): ServiceType {
+
+            let resolved: ServiceType = <ServiceType>this.__resolve(interfaceIdentifier);
+            if (resolved !== null) {
+                return resolved;
+            } else {
+                if (throwUnresolvedException) {
+                    throw new UnableToResolveDependencyException(
+                        "Class '" + Utils.getClassName(interfaceIdentifier) + "' is not registered within the DI container");
+                } else {
+                    return null;
+                }
+            }
         }
 
         /**
@@ -191,18 +219,19 @@ namespace Ajs.DI {
         /**
          * Decreases scoped instance reference counter and releases the internal reference when the counter equals to zero
          * @param serviceInstance Instance of the service to be released
+         * @returns true if last instance was released, otherwise returns false
          */
-        public releaseScopedInstanceReference(serviceInstance: any): void {
-            this.__releaseInstanceReference(this.__singletonInstances, serviceInstance);
+        public releaseScopedInstanceReference(serviceInstance: any): boolean {
+            return this.__releaseInstanceReference(this.__singletonInstances, serviceInstance);
         }
 
         /**
          * Adds a service to appropriate services list
          * @param serviceList List to which the service has to be added
-         * @param service Service descriptor (constructor and dependancy list)
+         * @param service Service descriptor (constructor and dependency list)
          */
-        private __addService(serviceList: IService[], service: IService): void {
-            let s: IService = this.__getService(serviceList, service);
+        private __addService(serviceList: IServiceDescriptor[], service: IServiceDescriptor): void {
+            let s: IServiceDescriptor = this.__getService(serviceList, service.serviceInterfaceIdentifier);
             if (s !== null) {
                 return;
             }
@@ -215,9 +244,9 @@ namespace Ajs.DI {
          * @param serviceConstructor Service constructor to be looked for
          * @returns The service descriptor if the service is found, otherwise null
          */
-        private __getService(serviceList: IService[], serviceConstructor: any): IService {
+        private __getService(serviceList: IServiceDescriptor[], serviceInterfaceIdentifier: any): IServiceDescriptor {
             for (let s of serviceList) {
-                if (s.serviceConstructor === serviceConstructor) {
+                if (s.serviceInterfaceIdentifier === serviceInterfaceIdentifier) {
                     return s;
                 }
             }
@@ -245,9 +274,9 @@ namespace Ajs.DI {
          * @param serviceConstructor Constructor of the service to be looked for
          * @returns The service descriptor if the service instance was found, otherwise null
          */
-        private __findServiceInstance(instanceList: IServiceInstance[], serviceConstructor: any): IServiceInstance {
+        private __findServiceInstance(instanceList: IServiceInstance[], serviceInterface: any): IServiceInstance {
             for (let i of instanceList) {
-                if (i.serviceConstructor === serviceConstructor) {
+                if (i.serviceInterfaceIdentifier === serviceInterface) {
                     return i;
                 }
             }
@@ -263,7 +292,7 @@ namespace Ajs.DI {
          * @param instanceList List of instances to be se
          * @param serviceInstance
          */
-        private __releaseInstanceReference(instanceList: IServiceInstance[], serviceInstance: any): void {
+        private __releaseInstanceReference(instanceList: IServiceInstance[], serviceInstance: any): boolean {
             let i: IServiceInstance = this.__getServiceInstance(instanceList, serviceInstance);
             if (i !== null) {
 
@@ -277,82 +306,86 @@ namespace Ajs.DI {
                         instanceList.splice(index, 1);
                     }
                 }
+
+                return i.referenceCount === 0;
             }
+            return false;
         }
 
         /**
-         * Resolves service dependancies and constructs the service instance with passing configured dependancies to constructor
+         * Resolves service dependencies and constructs the service instance with passing configured dependencies to constructor
          * @param serviceConstructor Constructor of the service to be instanitated
          * @returns Instaniated service or null if the service was not registered
          */
-        private __resolve(serviceConstructor: any): any {
+        private __resolve(serviceInterfaceIdentifier: any): any {
             let i: IServiceInstance;
 
-            i = this.__resolveScoped(serviceConstructor);
+            i = this.__resolveScoped(serviceInterfaceIdentifier);
             if (i !== null) {
                 return i;
             }
 
-            i = this.__resolveSingleton(serviceConstructor);
+            i = this.__resolveSingleton(serviceInterfaceIdentifier);
             if (i !== null) {
                 return i;
             }
 
-            i = this.__resolveTransient(serviceConstructor);
+            i = this.__resolveTransient(serviceInterfaceIdentifier);
             return i;
         }
 
         /**
          * Constructs a new instance of transient service includind resolving of configured dependencies
-         * The process of the instance construction includes dependancy resolving and constructor argument mapping.
+         * The process of the instance construction includes dependency resolving and constructor argument mapping.
          * @param serviceConstructor Constructor of the service to be instanitated
          * @returns Instaniated service or null if the service was not registered
          */
-        private __resolveTransient(serviceConstructor: any): any {
-            return this.__constructService(this.__transcientServices, serviceConstructor);
+        private __resolveTransient(serviceInterfaceIdentifier: any): any {
+            return this.__constructService(this.__transientServices, null, serviceInterfaceIdentifier);
         }
 
         /**
          * Looks for the existing service instance and returns it if found. Otherwise constructs a new instance
-         * The process of the instance construction includes dependancy resolving and constructor argument mapping.
+         * The process of the instance construction includes dependency resolving and constructor argument mapping.
          * @param serviceConstructor Constructor of the service to be instanitated
          * @returns Instaniated service or null if the service was not registered
          */
-        private __resolveScoped(serviceConstructor: any): any {
+        private __resolveScoped(serviceInterfaceIdentifier: any): any {
 
-            let i: IServiceInstance = this.__findServiceInstance(this.__scopedInstances, serviceConstructor);
+            let i: IServiceInstance = this.__findServiceInstance(this.__scopedInstances, serviceInterfaceIdentifier);
             if (i !== null) {
                 i.referenceCount++;
-                return i;
+                return i.serviceInstance;
             }
 
-            let serviceInstance: any = this.__constructService(this.__scopedServices, serviceConstructor);
-
-            this.__scopedInstances.push({
-                serviceConstructor: serviceConstructor,
-                serviceInstance: serviceInstance,
-                referenceCount: 1
-            });
-            return serviceInstance;
+            return this.__constructService(
+                this.__scopedServices,
+                this.__scopedInstances,
+                serviceInterfaceIdentifier
+            );
         }
 
 
         /**
          * Looks for the existing service instance and returns it if found. Otherwise constructs a new instance
-         * The process of the instance construction includes dependancy resolving and constructor argument mapping.
+         * The process of the instance construction includes dependency resolving and constructor argument mapping.
          * @param serviceConstructor Constructor of the service to be instanitated
          * @returns Instaniated service or null if the service was not registered
          */
-        private __resolveSingleton(serviceConstructor: any): any {
-            let i: IServiceInstance = this.__findServiceInstance(this.__singletonInstances, serviceConstructor);
+        private __resolveSingleton(serviceInterfaceIdentifier: any): any {
+            let i: IServiceInstance = this.__findServiceInstance(this.__singletonInstances, serviceInterfaceIdentifier);
             if (i !== null) {
-                return i;
+                return i.serviceInstance;
             }
 
-            let serviceInstance: any = this.__constructService(this.__singletonServices, serviceConstructor);
+            let serviceInstance: any = this.__constructService(
+                this.__singletonServices,
+                this.__singletonInstances,
+                serviceInterfaceIdentifier
+            );
 
             this.__singletonInstances.push({
-                serviceConstructor: serviceConstructor,
+                serviceInterfaceIdentifier: serviceInterfaceIdentifier,
                 serviceInstance: serviceInstance,
                 referenceCount: 0
             });
@@ -360,18 +393,17 @@ namespace Ajs.DI {
         }
 
         /**
-         * Resolves service dependancies and maps them to constuctor arguments. Finally, constructs and returns the instance of the service
+         * Resolves service dependencies and maps them to constuctor arguments. Finally, constructs and returns the instance of the service
          * @param serviceList List of registered services to be looked for the service descriptor
          * @param serviceConstructor Constructor of the service to be constructed
          * @returns Instaniated service or null if the service was not registered
          */
-        private __constructService(serviceList: IService[], serviceConstructor: any): any {
+        private __constructService(
+            serviceList: IServiceDescriptor[],
+            instanceList: IServiceInstance[],
+            serviceInterfaceIdentifier: any): any {
 
-            if (!(serviceConstructor instanceof Function)) {
-                throw new Error("Service constructor must be passed in!");
-            }
-
-            let s: IService = this.__getService(serviceList, serviceConstructor);
+            let s: IServiceDescriptor = this.__getService(serviceList, serviceInterfaceIdentifier);
             if (s === null) {
                 return null;
             }
@@ -379,15 +411,24 @@ namespace Ajs.DI {
             let params: any = this.__resolveParameters(s);
             let o: any = Object.create(s.serviceConstructor.prototype);
             s.serviceConstructor.apply(o, params);
+
+            if (instanceList !== null) {
+                instanceList.push({
+                    serviceInterfaceIdentifier: serviceInterfaceIdentifier,
+                    serviceInstance: o,
+                    referenceCount: 1
+                });
+            }
+
             return o;
         }
 
         /**
          * Resolves service depenancies and maps them to constructor arguments
-         * @param service Service which dependancies should be resolved and mapped to constructor arguments
-         * @returns Constructor argument list with resolved dependancies
+         * @param service Service which dependencies should be resolved and mapped to constructor arguments
+         * @returns Constructor argument list with resolved dependencies
          */
-        private __resolveParameters(service: IService): any[] {
+        private __resolveParameters(service: IServiceDescriptor): any[] {
 
             let ctorParams: any[] = [];
 
@@ -398,22 +439,25 @@ namespace Ajs.DI {
 
             for (let pn of ctorParamNames) {
                 if (pn in service.serviceParameters) {
-                    if (service.serviceParameters[pn] instanceof Function) {
-                        // try to resolve service
-                        let s: any = this.resolve(service.serviceParameters[pn]);
-                        if (s !== null) {
-                            // pass resolved service
-                            ctorParams.push(s);
-                        } else {
-                            // pass the original function
-                            ctorParams.push(service.serviceParameters[pn]);
-                        }
+                    // try to resolve service
+                    let s: any = this.resolve(service.serviceParameters[pn], false);
+                    if (s !== null) {
+                        // pass resolved service
+                        ctorParams.push(s);
                     } else {
-                        // pass the configuration data
+                        if (service.serviceParameters[pn] &&
+                            service.serviceParameters[pn] !== null &&
+                            typeof service.serviceParameters[pn] === "object" &&
+                            "__diService__" in service.serviceParameters[pn]) {
+                            throw new UnableToResolveDependencyException(
+                                "Service: '" + Utils.getClassName(service.serviceConstructor) + "', parameter name: '" + pn + "'");
+                        }
+                        // pass the original data
                         ctorParams.push(service.serviceParameters[pn]);
                     }
                 } else {
-                    throw new Error("Invalid constructor parameters specification");
+                    throw new InvalidConstructorParameterException(
+                        "Service '" + Utils.getClassName(service.serviceConstructor) + "' constructor has no argument '" + pn + "'");
                 }
             }
 
@@ -429,45 +473,18 @@ namespace Ajs.DI {
          * @param service Service which constructor should be parsed
          * @returns List of constructor argument names in correct order
          */
-        private __collectConstructorParameters(service: IService): any[] {
+        private __collectConstructorParameters(service: IServiceDescriptor): any[] {
 
             let ctor: any = service.serviceConstructor;
             let paramNames: string[] = [];
 
             while (ctor instanceof Function && paramNames.length === 0) {
-                paramNames = this.__getFunctionParameterNames(ctor);
+                paramNames = Utils.getFunctionParameterNames(ctor);
                 ctor = Object.getPrototypeOf(ctor);
             }
 
             return paramNames;
         }
-
-        /**
-         * Parses the function declaration and returns argument names
-         * @param f Function declaration to be parsed
-         * @returns List of function arguments in the correct order
-         */
-        private __getFunctionParameterNames(f: Function): string[] {
-
-            let paramNames: string[] = [];
-
-            let fn: string = f.toString();
-            let p: string = fn.substr(fn.indexOf("(") + 1).trim();
-
-            if (p[0] === ")") {
-                return paramNames;
-            }
-            p = p.substr(0, p.indexOf(")"));
-            paramNames = p.split(",");
-
-            for (let i: number = 0; i < paramNames.length; i++) {
-                paramNames[i] = paramNames[i].trim();
-            }
-
-            return paramNames;
-        }
-
-
 
     }
 

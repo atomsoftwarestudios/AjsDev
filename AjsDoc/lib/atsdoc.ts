@@ -471,7 +471,7 @@
         commentShort?: string;
         commentLong?: string;
         children: IATsDocNode[];
-        file?: string;
+        files?: string[];
 
         name?: string;
         fqdn?: string;

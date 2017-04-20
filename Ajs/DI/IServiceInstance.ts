@@ -29,7 +29,7 @@ namespace Ajs.DI {
      * Used internally by DI container to keep track of services instances constructed
      */
     export interface IServiceInstance {
-        serviceConstructor: any;
+        serviceInterfaceIdentifier: any;
         serviceInstance: any;
         referenceCount: number;
     }

@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace AjsDoc {
+namespace AjsDoc.Components {
 
     "use strict";
 
@@ -37,6 +37,7 @@ namespace AjsDoc {
         ajsDocFooter?: null | {};
     }
 
+    @Ajs.viewcomponent()
     export class AjsDocLayoutComponent
         extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocLayoutComponentState, any>
         implements IAjsDocLayoutComponentState {
@@ -49,7 +50,7 @@ namespace AjsDoc {
         public ajsDocNavBarComponent: AjsDocNavBarComponent;
         public ajsDocArticleComponent: AjsDocArticleComponent;
 
-        protected _defaultState(): IAjsDocLayoutComponentState {
+        protected _onDefaultState(): IAjsDocLayoutComponentState {
             return {
                 dialogVisible: window.innerWidth < 980,
                 menuVisible: true
@@ -113,8 +114,5 @@ namespace AjsDoc {
         }
 
     }
-
-    /** Register the component to ViewComponentManager */
-    Ajs.Framework.viewComponentManager.registerComponents(AjsDocLayoutComponent);
 
 }

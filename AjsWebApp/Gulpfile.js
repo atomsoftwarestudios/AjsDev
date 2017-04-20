@@ -102,46 +102,65 @@ function printSolutionInfo(solution) {
  * @param src path to source file
  * @param dst path to destination file
  */
-function copyIfNewer(src, dst) {
+function copyIfNewer(src, dst, errorCounter) {
     "use strict";
-    var statSrc;
-    var statDst;
-    // copy only if source file exists
-    if (fs.existsSync(src)) {
-        statSrc = fs.statSync(src);
+    if (errorCounter === void 0) { errorCounter = 0; }
+    try {
+        var statSrc = void 0;
+        var statDst = void 0;
+        // copy only if source file exists
+        if (fs.existsSync(src)) {
+            statSrc = fs.statSync(src);
+        }
+        else {
+            return;
+        }
+        // check if dst file exists and copy always if not
+        if (fs.existsSync(dst)) {
+            statDst = fs.statSync(dst);
+        }
+        else {
+            index_1.printf("copying %1 %2", src, dst);
+            fs.copySync(src, dst);
+            fs.utimesSync(dst, statSrc.atime, statSrc.mtime);
+            return;
+        }
+        // get modification date of both files
+        var dmsrc = Math.floor(statSrc.mtime.getTime() / 1000);
+        var dmdst = Math.floor(statDst.mtime.getTime() / 1000);
+        // copy if newer
+        if (dmsrc > dmdst) {
+            index_1.printf("copying %1 %2", src, dst);
+            fs.copySync(src, dst);
+            fs.utimesSync(dst, statSrc.atime, statSrc.mtime);
+            return;
+        }
+        // copy if hash does not match
+        var srcContent = fs.readFileSync(src, "utf8");
+        var srcSha = crypto.createHash("sha1").update(srcContent).digest("hex");
+        var dstContent = fs.readFileSync(dst, "utf8");
+        var dstSha = crypto.createHash("sha1").update(dstContent).digest("hex");
+        if (srcSha !== dstSha) {
+            index_1.printf("copying %1 %2", src, dst);
+            fs.copySync(src, dst);
+            return;
+        }
     }
-    else {
-        return;
-    }
-    // check if dst file exists and copy always if not
-    if (fs.existsSync(dst)) {
-        statDst = fs.statSync(dst);
-    }
-    else {
-        index_1.printf("copying %1 %2", src, dst);
-        fs.copySync(src, dst);
-        fs.utimesSync(dst, statSrc.atime, statSrc.mtime);
-        return;
-    }
-    // get modification date of both files
-    var dmsrc = Math.floor(statSrc.mtime.getTime() / 1000);
-    var dmdst = Math.floor(statDst.mtime.getTime() / 1000);
-    // copy if newer
-    if (dmsrc > dmdst) {
-        index_1.printf("copying %1 %2", src, dst);
-        fs.copySync(src, dst);
-        fs.utimesSync(dst, statSrc.atime, statSrc.mtime);
-        return;
-    }
-    // copy if hash does not match
-    var srcContent = fs.readFileSync(src, "utf8");
-    var srcSha = crypto.createHash("sha1").update(srcContent).digest("hex");
-    var dstContent = fs.readFileSync(dst, "utf8");
-    var dstSha = crypto.createHash("sha1").update(dstContent).digest("hex");
-    if (srcSha !== dstSha) {
-        index_1.printf("copying %1 %2", src, dst);
-        fs.copySync(src, dst);
-        return;
+    catch (e) {
+        // on ebusy error
+        if (e.code && e.code === "EBUSY") {
+            // check number of tries
+            errorCounter++;
+            if (errorCounter >= 5) {
+                console.log("Unable to copy changed resoource!", e.msg);
+            }
+            else {
+                // and try it again in few miliseconds
+                setTimeout(function () {
+                    copyIfNewer(src, dst, errorCounter);
+                }, 100);
+            }
+        }
     }
 }
 /**
@@ -497,6 +516,43 @@ function processWWWRoot(project, projectConfig, ajsWebAppProject, ajsWebAppProje
  */
 function generateCacheManifest(project, projectConfig, ajsWebAppProject, ajsWebAppProjectConfig, solutionData) {
     "use strict";
+    console.log("Generating cache manifest...");
+    var toClean = [];
+    if (fs.existsSync(path.normalize(ajsWebAppProject.projectDir + "/buildtools/clean.json"))) {
+        toClean = JSON.parse(fs.readFileSync(path.normalize(ajsWebAppProject.projectDir + "/buildtools/clean.json"), "utf8"));
+    }
+    var sourceRoot = ajsWebAppProject.projectDir;
+    var hash = "";
+    var cmFile = "CACHE MANIFEST\n";
+    for (var _i = 0, _a = projectConfig.offlineFiles; _i < _a.length; _i++) {
+        var f = _a[_i];
+        var file = path.normalize(sourceRoot + f);
+        if (fs.existsSync(file)) {
+            cmFile += f + "\n";
+            var srcContent = fs.readFileSync(file, "utf8");
+            var srcSha = crypto.createHash("sha1").update(srcContent).digest("hex");
+            hash = crypto.createHash("sha1").update(hash + srcSha).digest("hex");
+        }
+        else {
+            console.log("WARNING: file '" + f + "' not found.");
+        }
+    }
+    cmFile += "\n";
+    cmFile += "NETWORK:\n";
+    cmFile += "*\n";
+    cmFile += "\n";
+    cmFile += "FALLBACK:\n";
+    cmFile += "/ /\n";
+    cmFile += "\n";
+    cmFile += "#HASH: " + hash + "\n";
+    cmFile += "#LASTCHANGE: " + new Date().toISOString() + "\n";
+    var cm = path.normalize(sourceRoot + "/cache.manifest");
+    fs.writeFileSync(cm, cmFile, { encoding: "ASCII" });
+    console.log(path.normalize(sourceRoot + "/cache.manifest"));
+    if (toClean.indexOf(cm) === -1) {
+        toClean.push(cm);
+        fs.writeFileSync(path.normalize(ajsWebAppProject.projectDir + "/buildtools/clean.json"), JSON.stringify(toClean, null, 2), "utf8");
+    }
 }
 /**
  * setup sources virtual folders to applicationhost.config
@@ -579,6 +635,9 @@ function processProject(project, projectConfig, ajsWebAppProject, ajsWebAppProje
     processJSFiles(project, projectConfig, ajsWebAppProject, ajsWebAppProjectConfig);
     // process wwwroot folder (process LESS/SASS, minify CSS and HTML files, copy the rest of resources
     processWWWRoot(project, projectConfig, ajsWebAppProject, ajsWebAppProjectConfig);
+    if (projectConfig.offlineSupport) {
+        generateCacheManifest(project, projectConfig, ajsWebAppProject, ajsWebAppProjectConfig, solutionData);
+    }
     // setup sources virtual directories to %solutiondir%/.vs/config/applicationhost.config if solution configuration = Debug
     setupSrcVirutalDirs(project, projectConfig, ajsWebAppProject, ajsWebAppProjectConfig, solutionData);
     index_1.printf("Processing project done.");

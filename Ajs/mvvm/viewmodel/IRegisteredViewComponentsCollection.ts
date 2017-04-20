@@ -26,7 +26,7 @@ namespace Ajs.MVVM.ViewModel {
     "use strict";
 
     export interface IRegisteredViewComponentsDict {
-        [name: string]: typeof ViewComponent;
+        [name: string]: CtorTyped<IViewComponent>;
     }
 
 }

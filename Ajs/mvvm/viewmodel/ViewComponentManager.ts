@@ -25,6 +25,13 @@ namespace Ajs.MVVM.ViewModel {
 
     "use strict";
 
+    export interface ICPViewComponentManager {
+        container: typeof DI.IIContainer;
+        documentManager: typeof Doc.IIDocumentManager;
+        templateManager: typeof Templating.IITemplateManager;
+        viewManager: typeof MVVM.View.IIViewManager;
+    }
+
     /**
      * Default time to wait for initialization of newly created view component
      * <p>
@@ -37,51 +44,80 @@ namespace Ajs.MVVM.ViewModel {
      */
     // const COMPONENT_INITILAIZATION_TIMEOUT: number = 30000;
 
-    export class ViewComponentManager {
+    export class ViewComponentManager implements IViewComponentManager {
 
-        /** Reference to the template manager */
-        protected _templateManager: Templating.TemplateManager;
-        /** Returns reference to the template manager used during the view construction */
-        public get templateManager(): Templating.TemplateManager { return this._templateManager; }
+        private __container: DI.IContainer;
+        private __documentManager: Doc.IDocumentManager;
+        private __templateManager: Templating.ITemplateManager;
+        private __viewManager: View.IViewManager;
 
-        protected _components: IRegisteredViewComponentsDict;
-        public get components(): IRegisteredViewComponentsDict { return this._components; }
+        private __components: IRegisteredViewComponentsDict;
+        public get components(): IRegisteredViewComponentsDict { return this.__components; }
 
-        protected _componentInstances: IInstancedViewComponentsCollection;
+        private __componentDependencies: IViewComponentDependencies[];
+        private __componentInstances: IInstancedViewComponentsCollection;
 
-        public constructor(templateManager: Templating.TemplateManager) {
-            this._templateManager = templateManager;
-            this._components = {};
-            this._componentInstances = {};
-        }
+        public constructor(
+            container: DI.IContainer,
+            documentManager: Doc.IDocumentManager,
+            templateManager: Templating.ITemplateManager,
+            viewManager: View.IViewManager) {
 
-        public registerComponents(...componentConstructor: typeof ViewComponent[]): void {
-            for (let i: number = 0; i < componentConstructor.length; i++) {
-                if (componentConstructor[i] instanceof Function) {
-                    this._registerComponent(componentConstructor[i]);
-                }
+            this.__container = container;
+            this.__documentManager = documentManager;
+            this.__templateManager = templateManager;
+            this.__viewManager = viewManager;
+            this.__componentInstances = {};
+            this.__components = {};
+            this.__componentDependencies = [];
+
+            // to review
+            if (Ajs.viewComponentsToRegister instanceof Array) {
+                this.registerComponents.apply(this, Ajs.viewComponentsToRegister);
             }
         }
 
         /**
-         * @param name Name of registered view component to be created
-         * @param id Id of the component (usually the id from the template)
-         * @param view View to which the view component relates
-         * @param parentComponent Parent view component
-         * @param state Initial state to be set
+         * 
+         * @param componentConstructor
+         */
+        public registerComponents(...componentConstructor: CtorTyped<IViewComponent>[]): void {
+            for (let i: number = 0; i < componentConstructor.length; i++) {
+                if (!this.__isComponentConstructorRegistered(componentConstructor[i])) {
+                    this.__registerComponent(componentConstructor[i]);
+                } else {
+                    throw new SameViewComponentRegisteredAlreadyException();
+                }
+            }
+        }
+
+        public addComponentDependencies<ConfigParams>(
+            component: CtorTyped<Ajs.MVVM.ViewModel.IViewComponent>,
+            dependencies: ConfigParams): IViewComponentManager {
+
+            this.__addComponentDependencies(component, dependencies);
+            return this;
+
+        }
+
+        /**
+         * 
+         * @param name
+         * @param id
+         * @param parentComponent
+         * @param state
          */
         public createViewComponent(
             name: string,
             id: string,
-            view: View.View,
             parentComponent: IParentViewComponent,
-            state?: IViewComponentState): ViewComponent<any, any> {
+            state?: IViewComponentState): IViewComponent {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
             // get the visual component for the view component
             let visualComponent: Templating.IVisualComponent;
-            visualComponent = this._templateManager.getVisualComponent(name);
+            visualComponent = this.__templateManager.getVisualComponent(name);
 
             // throw error if it does not exist
             if (visualComponent === null) {
@@ -92,76 +128,88 @@ namespace Ajs.MVVM.ViewModel {
             }
 
             // get ViewComponent constructor from the vire component name
-            let viewComponentConstructor: typeof ViewComponent;
-            if (this._components.hasOwnProperty(name.toUpperCase())) {
-                viewComponentConstructor = this._components[name.toUpperCase()];
+            let viewComponentConstructor: CtorTyped<IViewComponent>;
+            if (this.__components.hasOwnProperty(name.toUpperCase())) {
+                viewComponentConstructor = this.__components[name.toUpperCase()];
             } else {
                 viewComponentConstructor = ViewComponent;
             }
 
+            // resolve construction dependencies
+            let navigator: Navigation.INavigator = this.__container.resolve<Navigation.INavigator>(Navigation.IINavigator);
+            let router: Routing.IRouter = this.__container.resolve<Routing.IRouter>(Routing.IIRouter);
+
             // get new unique id for the new component
-            let componentViewId: number = view.getNewComponentId();
+            let componentViewId: number = this.__viewManager.getNewComponentId();
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
                 "Creating the view component instance: " +
-                Ajs.Utils.getFunctionName(viewComponentConstructor) + "[" + componentViewId + "]:" + id, view, parentComponent, state);
+                Ajs.Utils.getClassName(
+                    viewComponentConstructor) + "[" + componentViewId + "]:" + id, this.__viewManager, parentComponent, state);
 
             // create view component and store its instance to the collection identified by id
-            let viewComponent: ViewComponent<any, any>;
-            viewComponent = new viewComponentConstructor(view, this, id, componentViewId, parentComponent, visualComponent, state);
-            this._componentInstances[componentViewId] = viewComponent;
+            let viewComponent: IViewComponent;
+            viewComponent = new viewComponentConstructor(
+                navigator,
+                router,
+                this.__documentManager,
+                this.__templateManager,
+                this.__viewManager,
+                this,
+                id,
+                componentViewId,
+                parentComponent,
+                visualComponent,
+                state
+            );
 
-            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
+            this.__componentInstances[componentViewId] = viewComponent;
+
+            // resolve configuration dependencies (like modules)
+            let dependencies: any[] = this.__resolveComponentDependencies(viewComponent);
+
+            // configure component with resolved dependencies
+            viewComponent.configure.apply(viewComponent, dependencies);
+
+            // initialize constructed and configured component
+            viewComponent.initialize();
+
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
 
             return viewComponent;
         }
 
-        public removeComponentInstance(component: ViewComponent<any, any>): void {
-            delete (this._componentInstances[component.componentViewId]);
+        /**
+         * 
+         * @param component
+         */
+        public removeComponentInstance(component: IViewComponent): void {
+            delete (this.__componentInstances[component.componentViewId]);
         }
 
         // remove
-        public getComponentConstructorByName(name: string): typeof ViewComponent {
-            if (this._components.hasOwnProperty(name.toUpperCase())) {
-                return this._components[name.toUpperCase()];
+        public getComponentConstructorByName(name: string): CtorTyped<IViewComponent> {
+            if (this.__components.hasOwnProperty(name.toUpperCase())) {
+                return this.__components[name.toUpperCase()];
             }
             return null;
         }
-        public getComponentInstanceByComponentId(componentId: number): ViewComponent<any, any> {
-            if (this._componentInstances.hasOwnProperty(componentId.toString())) {
-                return this._componentInstances[componentId];
+        public getComponentInstanceByComponentId(componentId: number): IViewComponent {
+            if (this.__componentInstances.hasOwnProperty(componentId.toString())) {
+                return this.__componentInstances[componentId];
             }
             return null;
         }
 
-        protected _registerComponent(componentConstructor: typeof ViewComponent): void {
-            if (componentConstructor instanceof Function) {
-                let componentName: string = "";
-                let parseName: string[] = /^function\s+([\w\$]+)\s*\(/.exec(componentConstructor.toString());
-                componentName = parseName ? parseName[1] : "";
-                componentName = componentName.toUpperCase();
-
-                if (this._components[componentName] === undefined) {
-                    this._components[componentName] = componentConstructor;
-                }
-            }
-        }
-
-        protected isComponentConstructorRegistered(componentConstructor: typeof ViewComponent): boolean {
-            for (let key in this._components) {
-                if (this._components[key] === componentConstructor) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public getChildrenComponentInstances(component: ViewComponent<any, any>): ViewComponent<any, any>[] {
-            let childrenInstances: ViewComponent<any, any>[] = [];
-            for (let key in this._componentInstances) {
-                if (this._componentInstances.hasOwnProperty(key)) {
-                    if (this._componentInstances[key].ajs.parentComponent === component) {
+        /**
+         * 
+         * @param component
+         */
+        public getChildrenComponentInstances(component: IViewComponent): IViewComponent[] {
+            let childrenInstances: IViewComponent[] = [];
+            for (let key in this.__componentInstances) {
+                if (this.__componentInstances.hasOwnProperty(key)) {
+                    if (this.__componentInstances[key].ajs.parentComponent === component) {
                         childrenInstances.push(component);
                     }
                 }
@@ -169,30 +217,36 @@ namespace Ajs.MVVM.ViewModel {
             return childrenInstances;
         }
 
-        public getComponentInstance(component: typeof ViewComponent, id?: string, userKey?: string): ViewComponent<any, any>[] {
+        /**
+         * 
+         * @param component
+         * @param id
+         * @param userKey
+         */
+        public getComponentInstances(component: typeof ViewComponent, id?: string, userKey?: string): IViewComponent[] {
 
-            let viewComponentInstances: ViewComponent<any, any>[] = [];
+            let viewComponentInstances: IViewComponent[] = [];
 
-            let componentConstructorName: string = Ajs.Utils.getFunctionName(component);
+            let componentConstructorName: string = Ajs.Utils.getClassName(component);
 
-            for (let key in this._componentInstances) {
-                if (this._componentInstances.hasOwnProperty(key)) {
-                    let constructorName: string = Ajs.Utils.getClassName(this._componentInstances[key]);
+            for (let key in this.__componentInstances) {
+                if (this.__componentInstances.hasOwnProperty(key)) {
+                    let constructorName: string = Ajs.Utils.getClassName(this.__componentInstances[key]);
                     if (constructorName === componentConstructorName) {
                         if (id) {
-                            if (this._componentInstances[key].ajs.id === id) {
+                            if (this.__componentInstances[key].ajs.id === id) {
                                 if (userKey) {
-                                    if (this._componentInstances[key].hasOwnProperty("key")) {
-                                        if (this._componentInstances[key].ajs.key === userKey) {
-                                            viewComponentInstances.push(this._componentInstances[key]);
+                                    if (this.__componentInstances[key].hasOwnProperty("key")) {
+                                        if (this.__componentInstances[key].ajs.key === userKey) {
+                                            viewComponentInstances.push(this.__componentInstances[key]);
                                         }
                                     }
                                 } else {
-                                    viewComponentInstances.push(this._componentInstances[key]);
+                                    viewComponentInstances.push(this.__componentInstances[key]);
                                 }
                             }
                         } else {
-                            viewComponentInstances.push(this._componentInstances[key]);
+                            viewComponentInstances.push(this.__componentInstances[key]);
                         }
                     }
                 }
@@ -201,34 +255,170 @@ namespace Ajs.MVVM.ViewModel {
             return viewComponentInstances;
         }
 
-        public getFirstComponentInstance<T extends ViewComponent<any, any>>(component: typeof ViewComponent, id?: string, userKey?: string): T {
+        /**
+         * 
+         * @param component
+         * @param id
+         * @param userKey
+         */
+        public getFirstComponentInstance<T extends IViewComponent>(
+            component: typeof ViewComponent,
+            id?: string, userKey?: string): T {
 
-            let componentConstructorName: string = Ajs.Utils.getFunctionName(component);
+            let componentConstructorName: string = Ajs.Utils.getClassName(component);
 
-            for (let key in this._componentInstances) {
-                if (this._componentInstances.hasOwnProperty(key)) {
-                    let constructorName: string = Ajs.Utils.getClassName(this._componentInstances[key]);
+            for (let key in this.__componentInstances) {
+                if (this.__componentInstances.hasOwnProperty(key)) {
+                    let constructorName: string = Ajs.Utils.getClassName(this.__componentInstances[key]);
                     if (constructorName === componentConstructorName) {
                         if (id) {
-                            if (this._componentInstances[key].ajs.id === id) {
+                            if (this.__componentInstances[key].ajs.id === id) {
                                 if (userKey) {
-                                    if (this._componentInstances[key].hasOwnProperty("key")) {
-                                        if (this._componentInstances[key].ajs.key === userKey) {
-                                            return this._componentInstances[key] as T;
+                                    if (this.__componentInstances[key].hasOwnProperty("key")) {
+                                        if (this.__componentInstances[key].ajs.key === userKey) {
+                                            return this.__componentInstances[key] as T;
                                         }
                                     }
                                 } else {
-                                    return this._componentInstances[key] as T;
+                                    return this.__componentInstances[key] as T;
                                 }
                             }
                         } else {
-                            return this._componentInstances[key] as T;
+                            return this.__componentInstances[key] as T;
                         }
                     }
                 }
             }
 
             return null;
+        }
+
+        public setRootViewComponentName(name: string): void {
+
+            // create the view component including its component tree with the default state
+            this.__viewManager.rootViewComponent = this.createViewComponent(
+                name,
+                "rootViewComponent",
+                null
+            );
+
+        }
+
+        public onNavigate(): void {
+            this.__viewManager.onNavigate();
+        }
+
+        /**
+         * 
+         * @param componentConstructor
+         */
+        private __registerComponent(componentConstructor: CtorTyped<IViewComponent>): void {
+            if (componentConstructor instanceof Function) {
+                let componentName: string = "";
+                let parseName: string[] = /^function\s+([\w\$]+)\s*\(/.exec(componentConstructor.toString());
+                componentName = parseName ? parseName[1] : "";
+                componentName = componentName.toUpperCase();
+
+                if (this.__components[componentName] === undefined) {
+                    this.__components[componentName] = componentConstructor;
+                }
+            }
+        }
+
+        /**
+         * 
+         * @param componentConstructor
+         */
+        private __isComponentConstructorRegistered(componentConstructor: CtorTyped<IViewComponent>): boolean {
+            for (let key in this.__components) {
+                if (this.__components[key] === componentConstructor) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private __addComponentDependencies<ConfigParams>(
+            componentCtor: CtorTyped<IViewComponent>,
+            dependencies: ConfigParams): void {
+
+            let deps: IViewComponentDependencies = this.__getComponentDependencies(componentCtor);
+
+            if (deps === null) {
+                this.__componentDependencies.push({
+                    viewComponentCtor: componentCtor,
+                    dependencies: dependencies
+                });
+            } else {
+                throw new ComponentDependenciesConfiguredAlreadyException();
+            }
+
+        }
+
+        private __getComponentDependencies(componentCtor: CtorTyped<IViewComponent>): IViewComponentDependencies {
+            for (let cd of this.__componentDependencies) {
+                if (cd.viewComponentCtor === componentCtor) {
+                    return cd;
+                }
+            }
+            return null;
+        }
+
+        private __resolveComponentDependencies(viewComponent: IViewComponent): any[] {
+
+            let proto: any = Object.getPrototypeOf(viewComponent);
+            if (proto === null) {
+                return [];
+            }
+
+            let ctor: CtorTyped<IViewComponent>;
+            if (proto instanceof Function) {
+                ctor = proto;
+            } else {
+                if (proto.constructor) {
+                    ctor = proto.constructor;
+                } else {
+                    return [];
+                }
+            }
+
+            let deps: IViewComponentDependencies = this.__getComponentDependencies(ctor);
+            if (deps === null) {
+                return [];
+            }
+
+            if (!("_onConfigure" in viewComponent)) {
+                return [];
+            }
+
+            let cfgParamNames: string[] = Utils.getFunctionParameterNames((<any>viewComponent)._onConfigure);
+
+            if (cfgParamNames.length === 0) {
+                return [];
+            }
+
+            let params: any[] = [];
+
+            for (let arg of cfgParamNames) {
+
+                if (arg in deps.dependencies) {
+
+                    let dep: any = this.__container.resolve<any>(deps.dependencies[arg], false);
+                    if (dep === null) {
+                        dep = deps.dependencies[arg];
+                    }
+
+                    params.push(dep);
+
+                } else {
+                    throw new InvalidViewComponentConfigurationArgumentException(
+                        "Component: '" + Utils.getClassName(viewComponent) + "', argument: '" + arg + "'");
+                }
+
+            }
+
+            return params;
         }
 
     }

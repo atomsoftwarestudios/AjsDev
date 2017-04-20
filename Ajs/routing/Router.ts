@@ -25,35 +25,40 @@ namespace Ajs.Routing {
 
     "use strict";
 
-    export class Router {
+    export interface ICPRouter {
+        viewComponentManager: typeof MVVM.ViewModel.IIViewComponentManager;
+        routes?: IRoutes[];
+    }
 
-        protected _view: Ajs.MVVM.View.View;
+    export class Router implements IRouter {
 
-        protected _lastURL: string;
-        protected _lastViewComponentName: string;
-        protected _lastViewComponentInstance: Ajs.MVVM.ViewModel.ViewComponent<any, any>;
+        private __viewComponentManager: MVVM.ViewModel.IViewComponentManager;
 
-        protected _routes: IRoutes[];
-        public get routes(): IRoutes[] { return this._routes; }
+        private __lastURL: string;
+        private __lastViewComponentName: string;
+        private __lastViewComponentInstance: MVVM.ViewModel.ViewComponent<any, any>;
 
-        protected _currentRoute: IRouteInfo;
-        public get currentRoute(): IRouteInfo { return this._currentRoute; }
+        private __routes: IRoutes[];
+        public get routes(): IRoutes[] { return this.__routes; }
 
-        public constructor(view: Ajs.MVVM.View.View, routes?: IRoutes[]) {
+        private __currentRoute: IRouteInfo;
+        public get currentRoute(): IRouteInfo { return this.__currentRoute; }
+
+        public constructor(viewComponentManager: MVVM.ViewModel.IViewComponentManager, routes?: IRoutes[]) {
 
             Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.routing", this);
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this,
                 "Registering routes (" + (routes ? routes.length : 0) + ")", routes);
 
-            this._view = view;
+            this.__viewComponentManager = viewComponentManager;
 
-            this._routes = routes || [];
+            this.__routes = routes || [];
 
-            this._lastURL = "";
-            this._lastViewComponentName = null;
-            this._lastViewComponentInstance = null;
+            this.__lastURL = "";
+            this.__lastViewComponentName = null;
+            this.__lastViewComponentInstance = null;
 
-            this._currentRoute = { base: "", path: "", search: "", hash: "" };
+            this.__currentRoute = { base: "", path: "", search: "", hash: "" };
 
             Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.routing", this);
         }
@@ -63,7 +68,7 @@ namespace Ajs.Routing {
             Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.routing", this);
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Registering route", paths);
 
-            this._routes.push({
+            this.__routes.push({
                 paths: paths,
                 viewComponentName: viewComponentName
             });
@@ -78,25 +83,25 @@ namespace Ajs.Routing {
 
             url = url || window.location.href;
 
-            if (this._lastURL !== url) {
+            if (this.__lastURL !== url) {
                 Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Maping route for '" + url + "'");
 
-                this._lastURL = url;
+                this.__lastURL = url;
 
-                let viewComponentName: string = this._getRouteViewComponent(url);
+                let viewComponentName: string = this.__getRouteViewComponent(url);
                 Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Routing to " + viewComponentName);
 
                 if (viewComponentName !== null) {
 
-                    if (this._lastViewComponentName !== viewComponentName) {
+                    if (this.__lastViewComponentName !== viewComponentName) {
                         Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Routing to a different than previous component");
 
-                        this._lastViewComponentName = viewComponentName;
-                        this._view.rootViewComponentName = viewComponentName;
+                        this.__lastViewComponentName = viewComponentName;
+                        this.__viewComponentManager.setRootViewComponentName(viewComponentName);
 
                     } else {
                         Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Notifying component the navigation occured");
-                        this._view.onNavigate();
+                        this.__viewComponentManager.onNavigate();
                     }
 
                 } else {
@@ -109,7 +114,7 @@ namespace Ajs.Routing {
             Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.routing", this);
         }
 
-        protected _getRouteViewComponent(url?: string): string {
+        private __getRouteViewComponent(url?: string): string {
 
             Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.routing", this);
 
@@ -117,17 +122,17 @@ namespace Ajs.Routing {
             let uriParser: HTMLAnchorElement = document.createElement("a");
             uriParser.href = url;
 
-            for (let i: number = 0; i < this._routes.length; i++) {
+            for (let i: number = 0; i < this.__routes.length; i++) {
 
-                for (let j: number = 0; j < this._routes[i].paths.length; j++) {
+                for (let j: number = 0; j < this.__routes[i].paths.length; j++) {
 
-                    let rx: RegExp = new RegExp(this._routes[i].paths[j].base + this._routes[i].paths[j].params, "g");
+                    let rx: RegExp = new RegExp(this.__routes[i].paths[j].base + this.__routes[i].paths[j].params, "g");
 
                     if (rx.test(window.location.pathname)) {
 
                         let routeURI: string = uriParser.pathname + uriParser.search + uriParser.hash;
 
-                        let base: string = routeURI.match(this._routes[i].paths[j].base)[0];
+                        let base: string = routeURI.match(this.__routes[i].paths[j].base)[0];
                         let path: string = routeURI.substr(base.length);
 
                         if (base[0] === "/") {
@@ -147,14 +152,14 @@ namespace Ajs.Routing {
                             path = path.substr(0, path.length - 1);
                         }
 
-                        this._currentRoute = {
+                        this.__currentRoute = {
                             base: base,
                             path: path,
                             search: window.location.search.substr(1),
                             hash: window.location.hash.substr(1)
                         };
 
-                        return this._routes[i].viewComponentName;
+                        return this.__routes[i].viewComponentName;
 
                     }
 

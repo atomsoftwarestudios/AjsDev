@@ -120,51 +120,67 @@ function printSolutionInfo(solution: vs.ISolution): void {
  * @param src path to source file
  * @param dst path to destination file
  */
-function copyIfNewer(src: string, dst: string): void {
+function copyIfNewer(src: string, dst: string, errorCounter: number = 0): void {
 
     "use strict";
 
-    let statSrc: fs.Stats;
-    let statDst: fs.Stats;
+    try {
+        let statSrc: fs.Stats;
+        let statDst: fs.Stats;
 
-    // copy only if source file exists
-    if (fs.existsSync(src)) {
-        statSrc = fs.statSync(src);
-    } else {
-        return;
-    }
+        // copy only if source file exists
+        if (fs.existsSync(src)) {
+            statSrc = fs.statSync(src);
+        } else {
+            return;
+        }
 
-    // check if dst file exists and copy always if not
-    if (fs.existsSync(dst)) {
-        statDst = fs.statSync(dst);
-    } else {
-        printf("copying %1 %2", src, dst);
-        fs.copySync(src, dst);
-        fs.utimesSync(dst, statSrc.atime, statSrc.mtime);
-        return;
-    }
+        // check if dst file exists and copy always if not
+        if (fs.existsSync(dst)) {
+            statDst = fs.statSync(dst);
+        } else {
+            printf("copying %1 %2", src, dst);
+            fs.copySync(src, dst);
+            fs.utimesSync(dst, statSrc.atime, statSrc.mtime);
+            return;
+        }
 
-    // get modification date of both files
-    let dmsrc: number = Math.floor(statSrc.mtime.getTime() / 1000);
-    let dmdst: number = Math.floor(statDst.mtime.getTime() / 1000);
+        // get modification date of both files
+        let dmsrc: number = Math.floor(statSrc.mtime.getTime() / 1000);
+        let dmdst: number = Math.floor(statDst.mtime.getTime() / 1000);
 
-    // copy if newer
-    if (dmsrc > dmdst) {
-        printf("copying %1 %2", src, dst);
-        fs.copySync(src, dst);
-        fs.utimesSync(dst, statSrc.atime, statSrc.mtime);
-        return;
-    }
+        // copy if newer
+        if (dmsrc > dmdst) {
+            printf("copying %1 %2", src, dst);
+            fs.copySync(src, dst);
+            fs.utimesSync(dst, statSrc.atime, statSrc.mtime);
+            return;
+        }
 
-    // copy if hash does not match
-    let srcContent: string = fs.readFileSync(src, "utf8");
-    let srcSha: string = crypto.createHash("sha1").update(srcContent).digest("hex");
-    let dstContent: string = fs.readFileSync(dst, "utf8");
-    let dstSha: string = crypto.createHash("sha1").update(dstContent).digest("hex");
-    if (srcSha !== dstSha) {
-        printf("copying %1 %2", src, dst);
-        fs.copySync(src, dst);
-        return;
+        // copy if hash does not match
+        let srcContent: string = fs.readFileSync(src, "utf8");
+        let srcSha: string = crypto.createHash("sha1").update(srcContent).digest("hex");
+        let dstContent: string = fs.readFileSync(dst, "utf8");
+        let dstSha: string = crypto.createHash("sha1").update(dstContent).digest("hex");
+        if (srcSha !== dstSha) {
+            printf("copying %1 %2", src, dst);
+            fs.copySync(src, dst);
+            return;
+        }
+    } catch (e) {
+        // on ebusy error
+        if (e.code && e.code === "EBUSY") {
+            // check number of tries
+            errorCounter++;
+            if (errorCounter >= 5) {
+                console.log("Unable to copy changed resoource!", e.msg);
+            } else {
+                // and try it again in few miliseconds
+                setTimeout(() => {
+                    copyIfNewer(src, dst, errorCounter);
+                }, 100);
+            }
+        }
     }
 
 }
@@ -696,6 +712,54 @@ function generateCacheManifest(
 
     "use strict";
 
+    console.log("Generating cache manifest...");
+
+    let toClean: string[] = [];
+    if (fs.existsSync(path.normalize(ajsWebAppProject.projectDir + "/buildtools/clean.json"))) {
+        toClean = JSON.parse(fs.readFileSync(path.normalize(ajsWebAppProject.projectDir + "/buildtools/clean.json"), "utf8"));
+    }
+
+    let sourceRoot: string = ajsWebAppProject.projectDir;
+    let hash: string = "";
+
+    let cmFile: string = "CACHE MANIFEST\n";
+
+    for (let f of projectConfig.offlineFiles) {
+
+        let file: string = path.normalize(sourceRoot + f);
+        if (fs.existsSync(file)) {
+            cmFile += f + "\n";
+            let srcContent: string = fs.readFileSync(file, "utf8");
+            let srcSha: string = crypto.createHash("sha1").update(srcContent).digest("hex");
+            hash = crypto.createHash("sha1").update(hash + srcSha).digest("hex");
+        } else {
+            console.log("WARNING: file '" + f + "' not found.");
+        }
+
+    }
+
+    cmFile += "\n";
+    cmFile += "NETWORK:\n";
+    cmFile += "*\n";
+    cmFile += "\n";
+    cmFile += "FALLBACK:\n";
+    cmFile += "/ /\n";
+    cmFile += "\n";
+    cmFile += "#HASH: " + hash + "\n";
+    cmFile += "#LASTCHANGE: " + new Date().toISOString() + "\n";
+
+    let cm: string = path.normalize(sourceRoot + "/cache.manifest");
+    fs.writeFileSync(cm, cmFile, { encoding: "ASCII" });
+
+    console.log(path.normalize(sourceRoot + "/cache.manifest"));
+
+    if (toClean.indexOf(cm) === -1) {
+        toClean.push(cm);
+        fs.writeFileSync(
+            path.normalize(ajsWebAppProject.projectDir + "/buildtools/clean.json"),
+            JSON.stringify(toClean, null, 2),
+            "utf8");
+    }
 }
 
 /**
@@ -819,6 +883,10 @@ function processProject(
 
     // process wwwroot folder (process LESS/SASS, minify CSS and HTML files, copy the rest of resources
     processWWWRoot(project, projectConfig, ajsWebAppProject, ajsWebAppProjectConfig);
+
+    if (projectConfig.offlineSupport) {
+        generateCacheManifest(project, projectConfig, ajsWebAppProject, ajsWebAppProjectConfig, solutionData);
+    }
 
     // setup sources virtual directories to %solutiondir%/.vs/config/applicationhost.config if solution configuration = Debug
     setupSrcVirutalDirs(project, projectConfig, ajsWebAppProject, ajsWebAppProjectConfig, solutionData);

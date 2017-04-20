@@ -301,7 +301,7 @@ Change log
     -  Refactoring
     	- Refactor View DOM Update functions to look nicer
             - New namespace / class created: ajs.doc.DocumentManager
-            - Currently it contain css from template management - will be moved to Template to make the DOM Updater less dependant on whole system
+            - Currently it contain css from template management - will be moved to Template to make the DOM Updater less dependent on whole system
 
 
     Implemented Feature Requests

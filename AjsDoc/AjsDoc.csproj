@@ -84,12 +84,16 @@
     <Content Include="wwwroot\resources\program.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="wwwroot\resources\templates.json" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AjsWebApp.Debug.json">
+      <DependentUpon>AjsWebApp.json</DependentUpon>
+    </Content>
+    <Content Include="AjsWebApp.json" />
+    <Content Include="AjsWebApp.Release.json">
+      <DependentUpon>AjsWebApp.json</DependentUpon>
+    </Content>
     <None Include="buildtools\tocgen.ps1" />
     <Content Include="LICENSE" />
     <Content Include="README.md" />
@@ -102,17 +106,19 @@
     <None Include="tsconfig.Release.json">
       <DependentUpon>tsconfig.json</DependentUpon>
     </None>
-    <Content Include="wwwroot\resources\appresources.json" />
     <Content Include="wwwroot\resources\toc.json" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="!ajsdoc.ts" />
     <TypeScriptCompile Include="AjsDocBrowser.ts" />
     <TypeScriptCompile Include="Components\AjsDocComponent.ts" />
+    <TypeScriptCompile Include="Components\AjsDocMemberComponent.ts" />
     <TypeScriptCompile Include="Components\AjsDocMemberTypeParametersComponent.ts" />
     <TypeScriptCompile Include="Components\AjsDocMemberImplementsComponent.ts" />
     <TypeScriptCompile Include="Components\AjsDocMemberFunctionParamsComponent.ts" />
     <TypeScriptCompile Include="Components\AjsDocNavBarItemComponent.ts" />
+    <TypeScriptCompile Include="Config.ts" />
+    <TypeScriptCompile Include="DTO\IContentData.ts" />
+    <TypeScriptCompile Include="DTO\IArticleData.ts" />
     <TypeScriptCompile Include="lib\atsdoc.ts" />
     <TypeScriptCompile Include="Components\AjsDocArticleComponent.ts" />
     <TypeScriptCompile Include="Components\AjsDocContextSwitcherComponent.ts" />
@@ -123,13 +129,17 @@
     <TypeScriptCompile Include="Components\AjsDocMenuGroupComponent.ts" />
     <TypeScriptCompile Include="Components\AjsDocMenuItemComponent.ts" />
     <TypeScriptCompile Include="Components\AjsDocNavBarComponent.ts" />
-    <TypeScriptCompile Include="Exceptions.ts" />
     <TypeScriptCompile Include="IAjsDocBrowserConfig.ts" />
     <TypeScriptCompile Include="lib\hljs.d.ts" />
-    <TypeScriptCompile Include="Models\ContentModel.ts" />
+    <TypeScriptCompile Include="lib\typescript-helpers.d.ts" />
+    <TypeScriptCompile Include="Models\ContentModel\IContentModel.ts" />
+    <TypeScriptCompile Include="Models\ContentModel\IContentModelConfig.ts" />
+    <TypeScriptCompile Include="Models\ContentModel\ContentModel.ts" />
+    <TypeScriptCompile Include="Models\ProgramModel\IProgramModelConfig.ts" />
+    <TypeScriptCompile Include="Models\ProgramModel\IProgramModel.ts" />
     <TypeScriptCompile Include="Utils\AtsDoc.ts" />
     <TypeScriptCompile Include="Utils\HTMLHelpers.ts" />
-    <TypeScriptCompile Include="Models\ProgramModel.ts" />
+    <TypeScriptCompile Include="Models\ProgramModel\ProgramModel.ts" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AjsDoc.Lib\AjsDoc.Lib.csproj">
@@ -144,6 +154,7 @@
   <ItemGroup>
     <Content Include="wwwroot\manifest.json" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
   </PropertyGroup>

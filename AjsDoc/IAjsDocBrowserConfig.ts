@@ -22,20 +22,31 @@ namespace AjsDoc {
 
     "use strict";
 
-    export interface IAjsDocBrowserConfig extends Ajs.App.IApplicationConfig {
-        storageType: Ajs.Resources.STORAGE_TYPE;
-        storagePolicy: Ajs.Resources.CACHE_POLICY;
-        templateList: string;
-        templateLoadingPreference: Ajs.Resources.LOADING_PREFERENCE;
-        resourceList: string;
-        resourceLoadingPreference: Ajs.Resources.LOADING_PREFERENCE;
+    export interface IAjsDocBrowserConfig {
+        dataStorageOptions: {
+            storageType: Ajs.Resources.STORAGE_TYPE;
+            cachePolicy: Ajs.Resources.CACHE_POLICY;
+            loadingPreference: Ajs.Resources.LOADING_PREFERENCE;
+        };
+
         dataSources: {
             toc: string;
             program: string;
         };
-        dataLoadingPreference: Ajs.Resources.LOADING_PREFERENCE;
+
+        contentFolders: {
+            content: string,
+            examples: string,
+            charts: string
+        };
+
+        modelInitializationTimeout: number;
+
         headerLabel: string;
         headerDescription: string;
+
+        resources: Ajs.App.IResourceLists;
+        templates: Ajs.App.IResourceLists
     }
 
 }

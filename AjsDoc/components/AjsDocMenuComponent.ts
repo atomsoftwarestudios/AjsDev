@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace AjsDoc {
+namespace AjsDoc.Components {
 
     "use strict";
 
@@ -33,7 +33,7 @@ namespace AjsDoc {
     }
 
     const MENU_DONT_EXPAND: string[] = [
-        "InterfaceDeclaration",
+        //"InterfaceDeclaration",
         "VariableStatement",
         "VariableDeclaration",
         "EnumerationDeclaration",
@@ -53,6 +53,12 @@ namespace AjsDoc {
         items?: IAjsDocMenuItemComponentState [];
     }
 
+    export interface ICPAjsDocMenuComponent {
+        programModel: typeof Models.ProgramModel.IIProgramModel;
+        contentModel: typeof Models.ContentModel.IIContentModel;
+    }
+
+    @Ajs.viewcomponent()
     export class AjsDocMenuComponent
         extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocMenuComponentState, any>
         implements IAjsDocMenuComponentState {
@@ -62,21 +68,40 @@ namespace AjsDoc {
         public groups: AjsDocMenuGroupComponent[];
         public items: AjsDocMenuItemComponent[];
 
-        protected _programModel: ProgramModel;
-        protected _contentModel: ContentModel;
+        private __programModel: Models.ProgramModel.IProgramModel;
+        private __contentModel: Models.ContentModel.IContentModel;
 
-        protected _previousContext: string;
-        protected _previousRefNode: atsdoc.IATsDocNode;
-        protected _previousArticle: IArticleData;
+        private __previousContext: string;
+        private __previousRefNode: atsdoc.IATsDocNode;
+        private __previousArticle: DTO.IArticleData;
 
-        protected _initialize(): void {
+        protected _onConfigure(
+            programModel: Models.ProgramModel.IProgramModel,
+            contentModel: Models.ContentModel.IContentModel): void {
 
-            this._contentModel = Ajs.Framework.modelManager.getModelInstance(ContentModel) as ContentModel;
-            this._programModel = Ajs.Framework.modelManager.getModelInstance(ProgramModel) as ProgramModel;
+            this.__programModel = programModel;
+            this.__contentModel = contentModel;
 
-            this._previousContext = null;
-            this._previousRefNode = null;
-            this._previousArticle = null;
+            this.__programModel.initialize();
+            this.__contentModel.initialize();
+        }
+
+        protected _onInitialize(): void {
+
+            this.__previousContext = null;
+            this.__previousRefNode = null;
+            this.__previousArticle = null;
+
+        }
+
+        protected _onFinalize(): void {
+
+            this.__programModel.release();
+            this.__programModel === null;
+
+            this.__contentModel.release();
+            this.__contentModel === null;
+
         }
 
         public touchMove(e: Event): void {
@@ -84,7 +109,7 @@ namespace AjsDoc {
             e.cancelBubble = true;
             e.stopPropagation();
 
-            let el: Node = this.ajs.view.documentManager.getTargetNodeByUniqueId(this.componentViewId);
+            let el: Node = this.ajs.documentManager.getTargetNodeByUniqueId(this.componentViewId);
 
             if (el instanceof HTMLElement) {
                 if ((el as HTMLElement).scrollHeight <= (el as HTMLElement).clientHeight) {
@@ -94,9 +119,9 @@ namespace AjsDoc {
 
         }
 
-        public stateTransitionBegin(): Ajs.MVVM.ViewModel.ITransitionType {
+        public async stateTransitionBegin(): Promise<Ajs.MVVM.ViewModel.ITransitionType> {
 
-            let transitionType: TransitionType = this._getTransitionType();
+            let transitionType: TransitionType = await this._getTransitionType();
 
             if (transitionType === TransitionType.NONE) {
                 return null;
@@ -113,78 +138,76 @@ namespace AjsDoc {
             this._ajsVisualStateTransitionEnd();
         }
 
-        protected _getTransitionType(): TransitionType {
+        protected async _getTransitionType(): Promise<TransitionType> {
 
             let transitionType: TransitionType = TransitionType.NONE;
 
-            let path: string = Ajs.Framework.router.currentRoute.base;
+            let path: string = this.ajs.router.currentRoute.base;
 
             if (path.substr(0, 3) === "ref") {
 
-                if (this._previousContext === "") {
+                if (this.__previousContext === "") {
                     transitionType = TransitionType.FADE;
                 } else {
-                    transitionType = this._getTransitionTypeRef(path.substr(4));
+                    transitionType = await this._getTransitionTypeRef(path.substr(4));
                 }
 
-                this._previousContext = "ref";
+                this.__previousContext = "ref";
 
             } else {
 
-                if (this._previousContext === "ref") {
+                if (this.__previousContext === "ref") {
                     transitionType = TransitionType.FADE;
                 } else {
-                    transitionType = this._getTransitionTypeDoc(path);
+                    transitionType = await this._getTransitionTypeDoc(path);
                 }
 
-                this._previousContext = "";
+                this.__previousContext = "";
 
             }
 
             return transitionType;
         }
 
-        protected _getTransitionTypeDoc(path: string): TransitionType {
+        protected async _getTransitionTypeDoc(path: string): Promise<TransitionType> {
+
             let transitionType: TransitionType = TransitionType.NONE;
 
-            let currentArticle: IArticleData = this._contentModel.navigate(path);
-            /*if (!(currentArticle.children instanceof Array) || currentArticle.children.length === 0) {
-                currentArticle = currentArticle.parent;
-            }*/
+            let currentArticle: DTO.IArticleData = await this.__contentModel.navigate(path);
 
-            if (this._previousArticle !== undefined) {
+            if (this.__previousArticle !== undefined) {
 
-                if (this._previousArticle !== null) {
+                if (this.__previousArticle !== null) {
 
-                    if (currentArticle.parent === this._previousArticle.parent) {
+                    if (currentArticle.parent === this.__previousArticle.parent) {
                         if (currentArticle.children && currentArticle.children.length > 0) {
                             transitionType = TransitionType.RTL;
                         } else {
-                            if (this._previousArticle.children && this._previousArticle.children.length > 0) {
+                            if (this.__previousArticle.children && this.__previousArticle.children.length > 0) {
                                 transitionType = TransitionType.LTR;
                             }
                         }
                     }
 
-                    if (currentArticle.parent === this._previousArticle) {
+                    if (currentArticle.parent === this.__previousArticle) {
                         if (currentArticle.children && currentArticle.children.length > 0) {
                             transitionType = TransitionType.RTL;
                         }
                     }
 
-                    if (currentArticle.parent === this._previousArticle) {
+                    if (currentArticle.parent === this.__previousArticle) {
                         if (currentArticle.children && currentArticle.children.length > 0) {
                             transitionType = TransitionType.RTL;
                         }
                     }
 
-                    if (currentArticle === this._previousArticle.parent) {
-                        if (this._previousArticle.children && this._previousArticle.children.length > 0) {
+                    if (currentArticle === this.__previousArticle.parent) {
+                        if (this.__previousArticle.children && this.__previousArticle.children.length > 0) {
                             transitionType = TransitionType.LTR;
                         }
                     }
 
-                    if (this._previousArticle.parent && currentArticle === this._previousArticle.parent.parent) {
+                    if (this.__previousArticle.parent && currentArticle === this.__previousArticle.parent.parent) {
                         transitionType = TransitionType.LTR;
                     }
 
@@ -196,34 +219,34 @@ namespace AjsDoc {
                 transitionType = TransitionType.NONE;
             }
 
-            this._previousArticle = currentArticle;
+            this.__previousArticle = currentArticle;
 
             return transitionType;
         }
 
-        protected _getTransitionTypeRef(path: string): TransitionType {
+        protected async _getTransitionTypeRef(path: string): Promise<TransitionType> {
 
             let transitionType: TransitionType = TransitionType.NONE;
 
-            let currentNode: atsdoc.IATsDocNode = this._programModel.navigateDocNode(path);
+            let currentNode: atsdoc.IATsDocNode = await this.__programModel.navigateDocNode(path);
             if (!(currentNode.children instanceof Array) || currentNode.children.length === 0) {
                 currentNode = currentNode.parent;
             }
 
 
-            if (this._previousArticle !== undefined) {
+            if (this.__previousArticle !== undefined) {
 
-                if (this._previousRefNode !== null) {
+                if (this.__previousRefNode !== null) {
 
-                    if (currentNode.parent !== this._previousRefNode && currentNode.parent !== this._previousRefNode.parent) {
+                    if (currentNode.parent !== this.__previousRefNode && currentNode.parent !== this.__previousRefNode.parent) {
                         transitionType = TransitionType.FADE;
                     }
 
-                    if (currentNode === this._previousRefNode.parent) {
+                    if (currentNode === this.__previousRefNode.parent) {
                         transitionType = TransitionType.LTR;
                     }
 
-                    if (currentNode.parent === this._previousRefNode && MENU_DONT_EXPAND.indexOf(currentNode.kindString) === -1) {
+                    if (currentNode.parent === this.__previousRefNode && MENU_DONT_EXPAND.indexOf(currentNode.kindString) === -1) {
                         transitionType = TransitionType.RTL;
                     }
 
@@ -232,13 +255,13 @@ namespace AjsDoc {
                 }
 
                 if (MENU_DONT_EXPAND.indexOf(currentNode.kindString) === -1) {
-                    this._previousRefNode = currentNode;
+                    this.__previousRefNode = currentNode;
                 } else {
-                    if (this._previousRefNode === null) {
+                    if (this.__previousRefNode === null) {
                         let node: atsdoc.IATsDocNode = currentNode.parent;
                         while (node.parent !== null) {
                             if (MENU_DONT_EXPAND.indexOf(node.kindString) === -1) {
-                                this._previousRefNode = node;
+                                this.__previousRefNode = node;
                                 break;
                             }
                             node = node.parent;
@@ -255,8 +278,5 @@ namespace AjsDoc {
         }
 
     }
-
-    /** Register the component to ViewComponentManager */
-    Ajs.Framework.viewComponentManager.registerComponents(AjsDocMenuComponent);
 
 }

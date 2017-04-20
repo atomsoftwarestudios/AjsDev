@@ -21,22 +21,20 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-///<reference path="../ajs.Exception.ts" />
+///<reference path="../Exception.ts" />
 
 namespace Ajs.Boot {
 
     "use strict";
 
-    /** Fired if the ajs.boot.getAjsConfig function is not defined */
-    export class ConfigureAjsFunctionNotDefinedException extends Ajs.Exception { }
+    /** 
+     * Thrown when multiple classes in the program are marked with the @Ajs.bootconfig decorator
+     */
+    export class ApplicationNotConfiguredException extends Ajs.Exception { }
 
-    /** Fired if the ajs.boot.getAjsConfig function is not defined */
-    export class GetApplicationConfigFunctionNotDefinedException extends Ajs.Exception { }
-
-    /** Fired if the ajs.boot.getResourceList function is not defined */
-    export class ConfigureResourcesFunctionNotDefinedException extends Ajs.Exception { }
-
-    /** Fired when loading resources specified in the configuration file fails */
-    export class ResourcesLoadingFailedException extends Ajs.Exception { }
+    /**
+     * Thrown when there is uncatched exception in the application
+     */
+    export class ApplicationException extends Ajs.Exception { }
 
 }

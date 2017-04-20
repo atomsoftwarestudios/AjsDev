@@ -26,8 +26,24 @@ namespace Ajs.MVVM.ViewModel {
     "use strict";
 
     export interface IViewComponent {
-        setState?(state: IViewComponentState): void;
-        clearState?(render: boolean): void;
+
+        readonly componentViewId: number;
+        ajs: IViewComponentProperties<any, any>;
+        configure(...services: any[]): void;
+        initialize(): void;
+        destroy(): void;
+        setState(state: any): void;
+        clearState(render: boolean): void;
+        render(parentElement: HTMLElement, clearStateChangeOnly: boolean, attributes?: NamedNodeMap): HTMLElement;
+        insertChildComponent(
+            viewComponentName: string,
+            id: string,
+            state: IViewComponentState,
+            placeholder: string,
+            index?: number): void;
+        removeChildComponent(placeholder: string, id: string): void;
+        ajsVisualStateTransitionBegin(newElement: Element): void;
+
     }
 
 }

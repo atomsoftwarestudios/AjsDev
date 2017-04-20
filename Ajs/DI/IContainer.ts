@@ -25,16 +25,36 @@ namespace Ajs.DI {
 
     "use strict";
 
+    export const IIContainer: IContainer = DI.II;
+
     /**
      * Describes the DI container implementation used within the Ajs Framework
      */
     export interface IContainer {
-        addTranscient<T>(serviceConstructor: any, serviceParameters: T): Container;
-        addScoped<T>(serviceConstructor: any, serviceParameters: T): Container;
-        addSingleton<T>(classToConstruct: any, constructorParameters: T): Container;
-        resolve<T>(c?: new (...params: any[]) => T): T;
+
+        addTransient<ServiceInterface extends IServiceType, ConstructorParams extends IServiceConstructorParameters>(
+            interfaceIdentifier: IServiceInterfaceIdentifier<ServiceInterface>,
+            classToConstruct: Ctor,
+            constructorParameters: ConstructorParams): Container;
+
+        addScoped<ServiceInterface extends IServiceType, ConstructorParams extends IServiceConstructorParameters>(
+            interfaceIdentifier: IServiceInterfaceIdentifier<ServiceInterface>,
+            classToConstruct: Ctor,
+            constructorParameters: ConstructorParams): Container;
+
+        addSingleton<ServiceInterface extends IServiceType, ConstructorParams extends IServiceConstructorParameters>(
+            interfaceIdentifier: IServiceInterfaceIdentifier<ServiceInterface>,
+            classToConstruct: Ctor,
+            constructorParameters: ConstructorParams): Container;
+
+        resolve<ServiceInterface extends IServiceType>(
+            interfaceIdentifier: IServiceInterfaceIdentifier<ServiceInterface>,
+            throwUnresolvedException?: boolean): ServiceInterface;
+
         releaseSingletonInstanceReference(serviceInstance: any): void;
-        releaseScopedInstanceReference(serviceInstance: any): void;
+
+        releaseScopedInstanceReference(serviceInstance: any): boolean;
+
     }
 
 }

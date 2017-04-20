@@ -33,10 +33,10 @@ namespace Ajs.Events {
     "use strict";
 
     /** Notifier can be instanced to let subscribers register within it and notify them about particular events */
-    export class Notifier<T> {
+    export class Notifier<T> implements INotifier<T> {
 
         /** List of subscribers */
-        protected _listeners: IListener<T>[];
+        private __listeners: IListener<T>[];
 
         /**
          * Instantiates the Notifier and subscribes listeners passed as parameter
@@ -46,9 +46,9 @@ namespace Ajs.Events {
 
             Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.events", this);
 
-            this._listeners = [];
+            this.__listeners = [];
             for (let i: number = 0; i < listeners.length; i++) {
-                this._listeners.push(listeners[i]);
+                this.__listeners.push(listeners[i]);
             }
 
             Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.events", this);
@@ -63,12 +63,12 @@ namespace Ajs.Events {
 
             Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.events", this);
 
-            if (this._listeners.indexOf(listener) === -1) {
-                this._listeners.push(listener);
+            if (this.__listeners.indexOf(listener) === -1) {
+                this.__listeners.push(listener);
             }
 
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.events", this,
-                "Registered subscribers: " + this._listeners.length, this._listeners);
+                "Registered subscribers: " + this.__listeners.length, this.__listeners);
 
             Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.events", this);
         }
@@ -81,12 +81,12 @@ namespace Ajs.Events {
 
             Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.events", this);
 
-            if (this._listeners.indexOf(listener) !== -1) {
-                this._listeners.splice(this._listeners.indexOf(listener));
+            if (this.__listeners.indexOf(listener) !== -1) {
+                this.__listeners.splice(this.__listeners.indexOf(listener));
             }
 
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.events", this,
-                "Registered subscribers: " + this._listeners.length, this._listeners);
+                "Registered subscribers: " + this.__listeners.length, this.__listeners);
 
             Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.events", this);
         }
@@ -104,8 +104,8 @@ namespace Ajs.Events {
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.events", this,
                 "Notifying subscribers. Sender: " + Ajs.Utils.getClassName(sender), sender, data);
 
-            for (let i: number = 0; i < this._listeners.length; i++) {
-                let result: boolean = this._listeners[i](sender, data);
+            for (let i: number = 0; i < this.__listeners.length; i++) {
+                let result: boolean = this.__listeners[i](sender, data);
                 if (!result) {
                     return;
                 }

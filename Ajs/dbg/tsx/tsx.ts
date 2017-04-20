@@ -25,9 +25,9 @@ IN THE SOFTWARE.
  * ajs.tsx "replaces" the React.js
  * <p>
  * TSX is very very very limited reactive renderer without updating support (so elements must be
- * removed and re-rendered completely. It does not support custom components as it is not neccessary
- * for debugging interface. Its purpose is just to make development of the debug module views easier
- * and better maintanable.
+ * removed and re-rendered completely. It does not support custom components implemented as HTML
+ * elements as it is not neccessary for debugging interface. Its purpose is just to make development
+ * of the debug module views easier and better maintanable.
  * </p>
  * <p>
  * <strong>
@@ -36,14 +36,10 @@ IN THE SOFTWARE.
  * </strong>
  * </p>
  * <p>
- * It makes possible usingof the TSX compiler within the Ajs. tsx is needed just for the debug namespace
+ * It makes possible usingof the TSX compiler within the Ajs. TSX is needed just for the debug namespace
  * to render components and because storing of the HTML in string is not nice and not well mainanable the
  * decision to use the TSX was made. It is not possible to use the Ajs internally as it would interferre
  * together.
- * </p>
- * <p>
- * If the build solution configuration is "Release" the tsx as well as all debugging functions will be
- * removed from the resulting Ajs and Application JavaScript code using the post-processor.
  * </p>
  */
 namespace Ajs.Dbg.Tsx {
@@ -64,7 +60,7 @@ namespace Ajs.Dbg.Tsx {
      */
     function renderStyle(style: string): HTMLElement {
         style = style.replace(/\^/g, "{").replace(/\$/g, "}");
-        let element: HTMLElement = Ajs.Dbg.console.config.styleRenderTarget.ownerDocument.createElement("style");
+        let element: HTMLElement = Ajs.ajsConfig.debugging.console.styleRenderTarget.ownerDocument.createElement("style");
         element.setAttribute("type", "text/css");
         element.textContent = style;
         return element;
@@ -80,8 +76,8 @@ namespace Ajs.Dbg.Tsx {
 
         let element: HTMLElement = null;
 
-        if (Ajs.Utils.HTMLTags.indexOf(tag.toUpperCase()) !== -1) {
-            element = Ajs.Dbg.console.config.styleRenderTarget.ownerDocument.createElement(tag);
+        if (Ajs.Utils.htmlTags.indexOf(tag.toUpperCase()) !== -1) {
+            element = Ajs.ajsConfig.debugging.console.bodyRenderTarget.ownerDocument.createElement(tag);
             if (children instanceof Array) {
                 processChildren(element, children);
             }
@@ -119,7 +115,7 @@ namespace Ajs.Dbg.Tsx {
 
             if (typeof child === "string" || typeof child === "number") {
                 child = "" + child;
-                let node: Text = Ajs.Dbg.console.config.styleRenderTarget.ownerDocument.createTextNode(child);
+                let node: Text = Ajs.ajsConfig.debugging.console.styleRenderTarget.ownerDocument.createTextNode(child);
                 element.appendChild(node);
             }
         }

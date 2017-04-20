@@ -40,18 +40,6 @@ The Visual Studio 2015 solution is consisted of three projects:
 
     See [AjsWebApp](https://github.com/atomsoftwarestudios/AjsWebApp) at GitHub for details.
 
-2) ToDos.boot project
-
-    is the configuration project for the Ajs Framework. It contains only one
-    TypeScript file - bootconfig.ts and tsconfig file for Debug and Release configuration.
-    The project has a pre-build action which takes care of selecting the correct tsconfig
-    configuration file based on the Visual Studio compilation configuration. This action
-    modifies the tsconfig.json file to inherit the correct config file.
-
-    The project is configured to compile TS to a single file - /bin/ToDos.Boot.js which is
-    afterwards collected by the AjsWebApp and placed to /js folder where is accessible by
-    the browser.
-
 3) ToDos
 
     contains implementation of the To Do's application. There are following important files and

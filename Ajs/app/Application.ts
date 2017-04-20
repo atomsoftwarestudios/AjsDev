@@ -31,8 +31,7 @@ IN THE SOFTWARE.
  * <p>As the application initialization can be an asynchronous process (resources
  * could be loading and additional user tasks can be done during the initialization)
  * so it is necessary to call the _initDone method once the initialization is completed.</p>
- * <h5>Application Initialization Example</h5>
- * #example app_init
+ * #example [Application Initialization Example]{/app_init.ts}
  *
  */
 namespace Ajs.App {
@@ -40,87 +39,350 @@ namespace Ajs.App {
     "use strict";
 
     /**
-     * The application class should be derived by the user application class in order
-     * to perform basic application tasks such as application initialization, application
-     * resource loading, routes setup, application state loading and so on
+     * Information for DI container configuration - what arguments are necessary to pass to constructor
+     * Used in compile time only
      */
-    export abstract class Application {
+    export interface ICPApplication {
+        container: DI.IContainer;
+        resourceManager: typeof Resources.IIResourceManager;
+        templateManager: typeof Templating.IITemplateManager;
+        navigator: typeof Navigation.IINavigator;
+        router: typeof Routing.IIRouter;
+        viewComponentManager: typeof MVVM.ViewModel.IIViewComponentManager;
+        config: any;
+    }
+
+    /**
+     * Provides methods to configure the application, framework, application and framework services and resources to be loaded
+     * <p>
+     * The class should be inherited by the user application class.
+     * </p>
+     * <p>
+     * The application class has methods to be called from the framework boot loader:
+     * <ul>
+     * <li>#see [configure]{Ajs.App.Application.configure} allow application to configure subsystems to be ready to serve user requests</li>
+     * <li>#see [initialize]{Ajs.App.Application.initialize} allow to perform additional initialization tasks (currently it does not do anyhing)</li>
+     * <li>#see [run]{Ajs.App.Application.run} loads configured resources and templates and starts the application</li>
+     * </ul>
+     * </p>
+     * <p>
+     * Methods which can be overriden by the custom application:
+     * <ul>
+     * <li>#see [_onError]{Ajs.App.Application._onError} allows application to configure handle unhandled exceptions in the way it needs
+     * (i.e. sending reports to server, restarting the app and so on). By default, the Framework error handler is provided to display
+     * errors on the user-defined error screen. If the error screen is not available the separate DIV element is added to the document for
+     * such purposes. For more details reffer to error handling guides.
+     * </li>
+     * <li>#see [_onConfigure]{Ajs.App.Application._onConfigure} allows application to configure both, framework and application services and
+     * to configure resources and templates to be loaded before the application will be started</li>
+     * <li>#see [_onInitialize]{Ajs.App.Application._onInitialize} allows to perform any additional, unspecified taks, such as initialize
+     * configured services</li>
+     * <li>#see [_onFinalize]{Ajs.App.Application._onInitialize} allows to perform custom action, such as storing the data to session/local
+     * store, show warning dialog, free resources when user is navigating out of the page or is closing the window. This method is initiated
+     * by the browser with the 'onbeforeunload' event</li>
+     * </ul>
+     * </p>
+     * <h4>Examples</h4>
+     * TBD
+     */
+    export class Application<T> implements IApplication {
+
+        /** Stores reference to #see [dependency injection container]{Ajs.DI.IContainer} */
+        private __container: DI.IContainer;
+        /** Stores reference to the #see [resource manager]{Ajs.Resources.IResourceManager} */
+        private __resourceManager: Resources.IResourceManager;
+        /** Stores reference to the #see [template manager]{Ajs.Templating.ITemplateManager} */
+        private __templateManager: Templating.ITemplateManager;
+        /** Stores reference to the #see [navigator]{Ajs.Navigation.INavigator} */
+        private __navigator: Navigation.INavigator;
+        /** Stores reference to the #see [router]{Ajs.Routing.IRouter} */
+        private __router: Routing.IRouter;
+        /** Stores reference to the #see [view component manager]{Ajs.MVVM.ViewModel.IViewComponentManager} */
+        private __viewComponentManager: MVVM.ViewModel.IViewComponentManager;
+
+        /** Stores list of resources to be loaded before the application starts #see [IResourceLists]{Ajs.App.IResourceLists} for details */
+        private __resources: IResourceLists;
+        /** Stores list of templates to be loaded before the application starts #see [IResourceLists]{Ajs.App.IResourceLists} for details */
+        private __templates: IResourceLists;
+
+        /** Stores the preference for loading resources and templates. See #see [LOADING_PREFERENCE]{Ajs.Resources.LOADING_PREFERENCE} for details */
+        protected _resourcesLoadingPreference: Resources.LOADING_PREFERENCE;
 
         /** Stores the configuration passed to the application from the boot config */
-        protected _config: IApplicationConfig;
-        /** Returns the application configuration */
-        public get config(): IApplicationConfig { return this._config; }
+        private __config: T;
+        /** Makes the application configuration available to inherited class */
+        protected get _config(): T { return this.__config; }
 
-        /** Indicates if the application was succesfully initialized.
-         *  _initDone should be called when the user application initialization routines finishes
-         */
-        protected _initialized: boolean;
-        /** Returns the application initialization status */
-        public get initialized(): boolean { return this._initialized; }
 
         /**
-         * Constructs the application object, stores the configuration to it and add event listener
-         * for beforeunload window event. The _finalize method is called when the navigation is
-         * going out of the page
-         * @param config Application configuration. TODO: Not in use now. It can be used by the user application
+         * Constructs the application object, stores the configuration to it and configures necessary event listeners
+         * <p>
+         * Consturctor is called from DI container. It is requested to be resolved by the boot loader once it
+         * configures core Ajs Framework services.
+         * </p>
+         * @param container instance of #see [dependency injection container]{Ajs.DI.IContainer}
+         * @param resourceManager instance of #see [resource manager]{Ajs.Resources.IResourceManager}
+         * @param templateManager instance of #see [template manager]{Ajs.Templating.ITemplateManager}
+         * @param navigator instance of #see [navigator]{Ajs.Navigation.INavigator}
+         * @param viewComponentManager  instance of #see [view component manager]{Ajs.MVVM.ViewModel.IViewComponentManager}
+         * @param config Application configuration object
          */
-        public constructor(config: IApplicationConfig) {
-            this._config = config;
-            window.addEventListener("error", (e: ErrorEvent) => this._handleError(e));
-            window.addEventListener("beforeunload", (e: Event) => this._finalize());
+        public constructor(
+            container: DI.IContainer,
+            resourceManager: Resources.IResourceManager,
+            templateManager: Templating.TemplateManager,
+            navigator: Navigation.INavigator,
+            router: Routing.IRouter,
+            viewComponentManager: MVVM.ViewModel.IViewComponentManager,
+            config: T) {
+
+            this.__container = container;
+            this.__resourceManager = resourceManager;
+            this.__templateManager = templateManager;
+            this.__navigator = navigator;
+            this.__router = router;
+            this.__viewComponentManager = viewComponentManager;
+            this.__config = config;
+
+            this.__resources = {};
+            this.__templates = {};
+
+            this._resourcesLoadingPreference = Resources.LOADING_PREFERENCE.SERVER;
+
+            window.addEventListener("error", (e: ErrorEvent) => this._onError(e));
+            window.addEventListener("beforeunload", (e: Event) => this.__finalize(e));
         }
 
         /**
+         * Called from boot to allow application developers to configure services and resources the application will use
+         * <p><strong>DON'T OVERRIDE! Should be Considered as a final method.</strong></p>
+         * <p>If application services/resources configuration is reqired the #see [_onConfigure]{Ajs.App.Application._onConfigure}
+         * method should to be overriden in inherited application class.</p>
+         * <p>
+         * Please note the Ajs Framework services are configured already at the time of Application.configure.
+         * Only application services should be configured in the #see [_configure]{Ajs.App.Application._onConfigure}
+         * method.
+         * </p>
+         * @param container Dependency injection container to be used to configure application services
+         */
+        public configure(container: DI.IContainer): void {
+            this._onConfigure(
+                container,
+                this.__resources,
+                this.__templates,
+                this.__navigator.redirections,
+                this.__router.routes,
+                this.__viewComponentManager);
+        }
+
+        /**
+         * Called from boot to allow application developers to perform custom initialization of the application
+         * <p><strong>DON'T OVERRIDE! Should be Considered as a final method.</strong></p>
+         * <p>If custom application initialization is required by the #see [_onInitialize]{Ajs.App.Application._onInitialize}
+         * method should to be overriden in inherited application class.</p>
+         * </p>
+         */
+        public initialize(): Promise<any> {
+            return this._onInitialize();
+        }
+
+        /**
+         * Starts the application
+         * <p><strong>DON'T OVERRIDE! Should be Considered as a final method.</strong></p>
+         * <p>
+         * The run function takes care of loading of configured resources and templates then it
+         * calls the navigator to simulate the navigation to the current page occured (it actually
+         * occured few moments ago), then navigator calls the router to load appropriate root view
+         * component for the current URL
+         * <p>
+         * @throws NotInitializedException Thrown when _run is called but the application was not
+         *                                 initialized by calling the _initDone method
+         */
+        public run(): void {
+            Promise.all([this.__loadResources(), this.__loadTemplates()])
+                .catch((reason: any) => {
+                    setTimeout(() => {
+                        throw reason;
+                    }, 0);
+                })
+                .then(() => {
+                    this.__navigator.canNavigate = true;
+                    this.__navigator.navigated();
+                });
+        }
+
+
+        /**
          * Handles unhandled exceptions on the application level
-         * <p>This handler can be overriden in the user application class to perform custom
-         * unhanlded exceptions handling (i.e. logging to console and sendind exceptions to
-         * server).
+         * <p>This handler can be overriden in the inherited application class to perform custom
+         * unhanlded exceptions handling (i.e. logging to console or sending exceptions to the
+         * server). By default, the #see [Ajs utility error handler]{Ajs.Utils.errorHandler} is used.
+         * </p>
          * @param e ErrorEvent or ajs.Exception to be handled
          */
-        protected _handleError(e: ErrorEvent | Exception): void {
+        protected _onError(e: ErrorEvent | Exception): void {
             Ajs.Utils.errorHandler(e);
         }
 
         /**
-         * MUST BE OVERRIDEN IN THE INHERITED APPLICATION CLASS
-         * Called from the framework during as a last step of the initialization procedure
-         * Must be overriden by the children class to initialize the user application. The
-         * overriden method (or async methods called in the chain) must make sure the
-         * this._initDone() method is called in order to run the application
+         * Can be overriden in inherited application class to configure services and resources the application will use
+         * <p>
+         * During the application configuration phase the application should register all framework and application services
+         * it will be using to the DI container and configure view component dependencies. As view components can't be
+         * designed and developed as injectable DI services it is neccessary to perform this task separately using the
+         * #see[View Component Manager]{Ajs.MVVM.ViewModel.ViewComponentManager].
+         * </p>
+         * <p>
+         * Example:
+         * </p>
+         * @param container Instance of #see[dependency injection container]{ Ajs.DI.IContainer }
+         * @param resources List of resources to be loaded before the application starts #see [IResourceLists]{Ajs.App.IResourceLists} for details
+         * @param templates List of templates to be loaded before the application starts #see [IResourceLists]{Ajs.App.IResourceLists} for details
+         * @param viewComponentManager Instance of #see[view component manager]{ Ajs.MVVM.ViewModel.IViewComponentManager }
          */
-        public abstract initialize(): void;
+        protected _onConfigure(
+            container: DI.IContainer,
+            resources: IResourceLists,
+            templates: IResourceLists,
+            redirections: Navigation.IRedirection[],
+            routes: Routing.IRoutes[],
+            viewComponentManager: MVVM.ViewModel.IViewComponentManager): void {
 
-        /**
-         * Must be called by inherited class super.initDone(); at the end of initialization
-         * of the user application in order the application will get started
-         */
-        protected _initDone(): void {
-            this._initialized = true;
-            this._run();
+            return;
+
         }
 
         /**
-         * Starts the application by navigating to the page specified in the url adress bar of the browser
-         * @throws NotInitializedException Thrown when _run is called but the application was not
-         *                                 initialized by calling the _initDone method
+         * Called during the boot sequence to allow customizable initialization of the application
+         * <p>
+         * Customized initialization of the application. At this time, no initialization tasks are
+         * performed by the framework. As initialization tasks could be asynchronous the Promise must be
+         * returned and resolved when the initialization tasks will be done.
+         * <p>
+         * <h5>Application initialization example</h5>
+         * <pre><code>// "synchronous" initialization
+         * protected _onInitialize(): Promise&lt;any&gt; {
+         *    this.__appStartTime = new Date();
+         *    return Promise.resolve();
+         * }
+         *
+         * // asynchronous initialization
+         * protected _onInitialize(): Promise&lt;any&gt; {
+         *    retrun new Promise&lt;void&gt;(
+         *       (resolve: () => void, reject: (reason: any) => void) => {
+         *          setTimeout(() => { resolve; }, 2000);
+         *       }
+         *    );
+         * }
+         * </code></pre>
+         * @returns Promise indicating the asynchronous initialization is done
          */
-        protected _run(): void {
-            if (!this._initialized) {
-                throw new NotInitializedException();
-            }
-            Ajs.Framework.navigator.canNavigate = true;
-            Ajs.Framework.navigator.navigated();
+        protected _onInitialize(): Promise<any> {
+            return Promise.resolve();
         }
 
         /**
-         * MUST BE OVERRIDEN IN THE INHERITED APPLICATION CLASS
-         * Called on window.beforeunload event in order to store the application state before
-         * user leaves the page or to cleanup procedures (such as clearing timers and so on). This
-         * method should not be used for displaying the dialog and asking user if he is sure to leave
-         * the page. This should be done directly in the user application by adding additional
-         * beforeunload event handler (will be usualy done in some root ViewComponent)
+         * Called when the window is closing or if user is navigfating out of the page or if user is reloading the page.
+         * At this point, actions related to releasing used resources or freeing a memory should be in
+         * case of desktop application. Hovewer, it is not reqiured in case of web application. This method can
+         * be overriden in order to store some data to the session/local stores, show warning dialog, free
+         * resources, whatever. To show warning message set the e.returnValue to "\o/", e.preventDefault to true
+         * and return the "\o/" string value rom the function.
+         * #See [MDN - beforeunload]{https://developer.mozilla.org/en-US/docs/Web/Events/beforeunload} for more
+         * details.
+         * @param e Updated onbeforeunload event object
+         * @returns Return void if no dialog should be shown, otherwise return "\o/" string
          */
-        protected abstract _finalize(): void;
+        protected _onFinalize(e: Event): void | "\o/" {
+            return;
+        }
+
+        /**
+         * Internal "beforeunload" event handler. Just calls the #see[_onFinalize]{Ajs.App.Application._onFinalize} to take app developer defined actions
+         * @param e Updated onbeforeunload event object
+         * @returns Return void if no dialog should be shown, otherwise return "\o/" string
+         */
+        private __finalize(e: Event): void | string {
+            return this._onFinalize(e);
+        }
+
+        /**
+         * Loads configured resources
+         * <p>
+         * Resources can be configured by overriding the #see [_onConfigure]{Ajs.App.Application._onConfigure} method.
+         * The #see [__resources]{Ajs.App.Application.__resources} property is passed to this function to allow
+         * configuration of initial resources the application has to load
+         * </p>
+         */
+        private __loadResources(): Promise<any> {
+
+            let _resourcesLoadingInfo: any[] = [
+                this.__resourceManager.getMultipleResources(
+                    this.__resources.localPermanent, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.PERMANENT,
+                    this._resourcesLoadingPreference),
+                this.__resourceManager.getMultipleResources(
+                    this.__resources.localLastRecentlyUsed, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this._resourcesLoadingPreference),
+                this.__resourceManager.getMultipleResources(
+                    this.__resources.sessionPermanent, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.PERMANENT,
+                    this._resourcesLoadingPreference),
+                this.__resourceManager.getMultipleResources(
+                    this.__resources.sessionLastRecentlyUsed, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this._resourcesLoadingPreference),
+                this.__resourceManager.getMultipleResources(
+                    this.__resources.memoryPermanent, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.PERMANENT,
+                    this._resourcesLoadingPreference),
+                this.__resourceManager.getMultipleResources(
+                    this.__resources.memoryLastRecentlyUsed, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this._resourcesLoadingPreference),
+                this.__resourceManager.getMultipleResources(
+                    this.__resources.direct, undefined, undefined)
+            ];
+
+            return Promise.all(_resourcesLoadingInfo)
+                .catch((reason: Exception) => {
+                    throw new FailedToLoadApplicationResourcesException(reason);
+                });
+        }
+
+        /**
+         * Loads configured templates
+         * <p>
+         * Resources can be configured by overriding the #see [_onConfigure]{Ajs.App.Application._onConfigure} method.
+         * The #see [__templates]{Ajs.App.Application.__templates} property is passed to this function to allow
+         * configuration of initial templates the application has to load
+         * </p>
+         */
+        private __loadTemplates(): Promise<any> {
+            let _resourcesLoadingInfo: any[] = [
+                this.__templateManager.loadTemplates(
+                    this.__templates.localPermanent, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.PERMANENT,
+                    this._resourcesLoadingPreference),
+                this.__templateManager.loadTemplates(
+                    this.__templates.localLastRecentlyUsed, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this._resourcesLoadingPreference),
+                this.__templateManager.loadTemplates(
+                    this.__templates.sessionPermanent, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.PERMANENT,
+                    this._resourcesLoadingPreference),
+                this.__templateManager.loadTemplates(
+                    this.__templates.sessionLastRecentlyUsed, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this._resourcesLoadingPreference),
+                this.__templateManager.loadTemplates(
+                    this.__templates.memoryPermanent, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.PERMANENT,
+                    this._resourcesLoadingPreference),
+                this.__templateManager.loadTemplates(
+                    this.__templates.memoryLastRecentlyUsed, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this._resourcesLoadingPreference),
+                this.__templateManager.loadTemplates(
+                    this.__templates.direct, undefined, undefined)
+            ];
+
+            return Promise.all(_resourcesLoadingInfo)
+                .catch((reason: Exception) => {
+                    throw new FailedToLoadApplicationTemplatesException(reason);
+                });
+        }
+
 
     }
 

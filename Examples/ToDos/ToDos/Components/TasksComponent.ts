@@ -7,54 +7,42 @@ namespace ToDos.Components {
 
     "use strict";
 
+    import ITask = DTO.ITask;
+    import ITasksModel = Models.Tasks.ITasksModel;
+
     export interface ITasksState {
-        tasks?: ToDos.Models.ITask[];
+        tasks?: DTO.ITask[];
         taskDescription?: string;
         actionLabel?: string;
         filter?: "All" | "Done" | "Undone";
     }
 
-    export class TasksComponent
-        extends Ajs.MVVM.ViewModel.ViewComponent<ITasksState, ITaskItemComponentEvents>
-        implements ITasksState, ITaskItemComponentEvents {
+    export interface ITaskComponent {
+    }
 
-        protected _tasksModel: ToDos.Models.TasksModel;
+    export interface ITaskComponentConfigParams {
+        tasksModel: Models.Tasks.ITasksModel;
+    }
+
+    @Ajs.viewcomponent()
+    export class TasksComponent
+        extends Ajs.MVVM.ViewModel.ViewComponent<ITasksState, ITaskItemComponentCommands>
+        implements ITasksState, ITaskItemComponentCommands {
+
+        protected _tasksModel: ITasksModel;
 
         protected _currentItem: number;
 
         protected _inputField: HTMLInputElement;
         public setInputField(value: HTMLInputElement): void { this._inputField = value; }
 
-        public tasks: ToDos.Models.ITask[];
+        public tasks: ITask[];
         public taskDescription: string;
         public actionLabel: string;
         public filter: "All" | "Done" | "Undone";
 
-        protected _defaultState(): ITasksState {
-            return({
-                tasks: [],
-                taskDescription: "",
-                actionLabel: "Add",
-                filter: "All"
-            });
-        }
-
-        protected _initialize(): void {
-            this._tasksModel = <ToDos.Models.TasksModel>Ajs.Framework.modelManager.getModelInstance(ToDos.Models.TasksModel);
-
-            this._currentItem = -1;
-            this._inputField = null;
-
-            this._update(true);
-        }
-
-        protected _finalize(): void {
-            Ajs.Framework.modelManager.freeModelInstance(ToDos.Models.TasksModel);
-            delete this._tasksModel;
-        }
-
         public onTaskItemEdit(key: number): void {
-            let task: ToDos.Models.ITask = this._tasksModel.getTaskByKey(key);
+            let task: ITask = this._tasksModel.getTaskByKey(key);
             this._currentItem = key;
             this.setState({
                 taskDescription: task.description
@@ -76,9 +64,38 @@ namespace ToDos.Components {
             this._update(false);
         }
 
-        protected _update(focus: boolean): void {
+        protected _onConfigure(tasksModel: ITasksModel) {
+
+            this._tasksModel = tasksModel;
+            this._tasksModel.initialize()
+                .then(() => {
+                    this._update(true)
+                });
+
+        }
+
+        protected _onDefaultState(): ITasksState {
+            return ({
+                tasks: [],
+                taskDescription: "",
+                actionLabel: "Add",
+                filter: "All"
+            });
+        }
+
+        protected _onInitialize(): void {
+            this._currentItem = -1;
+            this._inputField = null;
+        }
+
+        protected _onFinalize(): void {
+            this._tasksModel.release();
+            this._tasksModel = null;
+        }
+
+        private _update(focus: boolean): void {
             this._tasksModel.getTasks(this.filter)
-                .then((data: ToDos.Models.ITask[]) => {
+                .then((data: ITask[]) => {
 
                     let actionLabel: string = this._currentItem === -1 ? "Add" : "Update";
 
@@ -97,7 +114,8 @@ namespace ToDos.Components {
                 });
         }
 
-        public textChanged(e: Event): void {
+
+        protected _textChanged(e: Event): void {
             if (e.target instanceof HTMLInputElement) {
                 let input: HTMLInputElement = e.target;
                 this.setState({
@@ -106,7 +124,7 @@ namespace ToDos.Components {
             }
         }
 
-        public addUpdateTask(e: Event): void {
+        protected _addUpdateTask(e: Event): void {
             if (this.taskDescription !== "") {
                 if (this._currentItem === -1) {
                     this._tasksModel.addTask(this.taskDescription);
@@ -121,25 +139,23 @@ namespace ToDos.Components {
             }
         }
 
-        public submitOnEnter(e: KeyboardEvent): void {
+        protected _submitOnEnter(e: KeyboardEvent): void {
             if (e.keyCode === 13) {
-                this.addUpdateTask(e);
+                this._addUpdateTask(e);
             }
         }
 
-        public cancelUpdate(e: Event): void {
+        protected _cancelUpdate(e: Event): void {
             this._currentItem = -1;
             this.taskDescription = "";
             this._update(true);
         }
 
-        public setFilter(e: Event): void {
+        protected _setFilter(e: Event): void {
             this.filter = <any>(<HTMLSelectElement>e.target).value;
             this._update(false);
         }
 
     }
-
-    Ajs.Framework.viewComponentManager.registerComponents(TasksComponent);
 
 }

@@ -21,20 +21,25 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-///<reference path="../ajs.Exception.ts" />
+///<reference path="../Exception.ts" />
 
 namespace Ajs.App {
 
     "use strict";
 
     /**
-     * Thrown when the application recognizes it was not initialized before calling the _run method
+     * Thrown if multiple classes in the single program are using the @Ajs.application decorator
      */
-    export class NotInitializedException extends Ajs.Exception { }
+    export class OnlyOneApplicationIsAllowedException extends Ajs.Exception { }
 
     /**
-     * Thrown when the inherited application does not implement required functionality
+     * Thrown when the configured application resources can't be loaded
      */
-    export class NotImplementedException extends Ajs.Exception { }
+    export class FailedToLoadApplicationResourcesException extends Ajs.Exception { }
+
+    /**
+     * Thrown when the configured application templates can't be loaded
+     */
+    export class FailedToLoadApplicationTemplatesException extends Ajs.Exception { }
 
 }

@@ -18,7 +18,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace AjsDoc {
+namespace AjsDoc.AtsDoc {
 
     "use strict";
 
@@ -86,6 +86,9 @@ namespace AjsDoc {
 
             case atsdoc.SyntaxKind.CallSignature:
                 return plural ? "Call signatures" : "Call signature";
+
+            case atsdoc.SyntaxKind.MethodSignature:
+                return plural ? "Methods signatures" : "Method signature";
 
             default:
                 return node.kindString;

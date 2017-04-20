@@ -43,18 +43,20 @@ namespace Ajs.Dbg {
     }
 
     export function log(type: LogType, level: number, module: string, object: any, message?: string, ...data: any[]): void {
-        if (Ajs.Dbg.console !== null) {
+        if (container === undefined) {
+            return;
+        }
+
+        let logger: Modules.Logger.ILogger = container.resolve<Modules.Logger.ILogger>(Modules.Logger.IILogger, false);
+        if (logger !== null) {
             if (message) {
                 if (data instanceof Array) {
-                    (Ajs.Dbg.console.getModule("logger") as Ajs.Dbg.modules.logger.Logger).
-                        log(type, level, module, object, message, data);
+                    logger.log(type, level, module, object, message, data);
                 } else {
-                    (Ajs.Dbg.console.getModule("logger") as Ajs.Dbg.modules.logger.Logger).
-                        log(type, level, module, object, message);
+                    logger.log(type, level, module, object, message);
                 }
             } else {
-                (Ajs.Dbg.console.getModule("logger") as Ajs.Dbg.modules.logger.Logger).
-                    log(type, level, module, object);
+                logger.log(type, level, module, object);
             }
         }
     }

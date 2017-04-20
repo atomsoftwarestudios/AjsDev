@@ -14,6 +14,9 @@ http://ajsdoc.azurewebsites.net - logging on (console will popup 15s after refre
 
 both versions are not optimized from the size perspective (no uglify or other tools used yet) and are cappable of running offline in browser or as a web app for mobiles (icon on homescreens).
 
+The latest version of the AjsDoc is currently included in the [AjsDev repository](https://github.com/atomsoftwarestudios/AjsDev) at least
+until the framework version 1.0.0 will be released.
+
 ---
 
 ### Table of Contents
@@ -31,9 +34,15 @@ both versions are not optimized from the size perspective (no uglify or other to
 
 ### Introduction
 
-AjsDoc is an example application using the Ajs Framework. Currently, the Ajs Visual Studio Project is included in the AjsDoc Visual Studio Solution and the last recent version of the Ajs Framework is sotred in this repository as both projects are currently developed and debugged together.
+AjsDoc is the TypeScript documentation browser including guides and examples. It was developed as one of example application
+using the Ajs Framework.
 
-The JSON documentation data for AjsDoc are required to be generated with the TypeDoc (https://github.com/TypeStrong/typedoc).
+The AjsDoc is single page web application without need of any specific backends. The pure web server configured to support
+the Ajs Single Page applications is required (see http://ajsfw.azurewebsites.net/Web-Server-Requirements-and-Configuration) for
+details.
+
+The JSON documentation data for AjsDoc are required to be generated with the [AtsDoc](https://github.com/atomsoftwarestudios/AtsDoc)
+Node.js command line utility.
 
 ---
 
@@ -44,29 +53,30 @@ The JSON documentation data for AjsDoc are required to be generated with the Typ
       
 - Reference guide
       - Generated from TypeScript code using TypeDoc
-      - HTML Code documentation supported
+      - JsDoc with HTML markup documentation supported
       
 - HTML Code (both, static & code documentation)
-   - Supported tags (this will be highly probably changed to standard JSDoc):
-      - #example url
+   - Supported tags:
+      - #example [label]{url}
          - Includes the example to the HTML code (make sure the code is HTML escaped so < > & and others  are properly replaced)
-         - Must be on the separate line
-      - #chart url
+      - #chart [label]{url}
          - Includes svg chart to the HTML code
-	 - Must be on the separate line
+      - #see [label]{ulr}
+        - Inserts anchor link to the HTML code
 
 - Ajs Feature Examples (directly in the code)
    - Complete offline application support
    - Boot process and configuration
-   - Resource loading including the InitialProgressBar
+   - Dependency injection container usage
+   - InitialProgressBar
+   - Exception handling
    - Application resource loading and management
    - Templating
    - Visual State management
    - Visual State transition
    - View Component state management
-   - View Component state filtering
    - Session state management
-   - Models for the static JSON data
+   - Data models
    - Debugging tools
 
 - Tools
@@ -78,7 +88,7 @@ The JSON documentation data for AjsDoc are required to be generated with the Typ
 
 - The Visual Studio should be in version 2015 (Enterprise, Professional, Community) - curently tested with Enterprise version only.
 
-- The TypeScript 2.1.5 extension must be installed (https://www.typescriptlang.org/#download-links)
+- The TypeScript 2.2.1 extension must be installed (https://www.typescriptlang.org/#download-links)
 
 - GitHub extension for Visual Studio is highly recommended (https://visualstudio.github.com/)
 
@@ -104,23 +114,26 @@ Please, report all issues with the compilation and running here on GitHub.
 Please note the implementation of template(s) for all types is not currently complete. Feel free to contibute.
 ```
 
-The JSON data grabbed from the TypeDoc must be provided. The JSDoc code documentation can contain HTML tags to format the output as desired.
+#### Obtaining the package and deploying to the Web Server
 
-Following statements already are or will available (as TypeDoc filters the original JSoc):
+##### Web Server Configuration
 
-```
-#example <root_relative_path>            Inserts the example file to the target document
-#chart <root_relative_path>              Inserts the svg chart to the target document
-```
+The pure web server configured to support the Ajs Single Page applications is required (see http://ajsfw.azurewebsites.net/Web-Server-Requirements-and-Configuration)
 
-TBD
+##### Configuration
+
+The JSON data grabbed from the AtsDoc must be provided. The JSDoc code documentation can contain HTML tags to
+format the output as required.
 
 ---
 
-### Known bugs
+### Project management, Known bugs, change log
 
-Documentation for the latest version of the Ajs and AjsDoc can't be generated using the TypeDoc as it does not support some required features 
-(see [issue #399](https://github.com/TypeStrong/typedoc/issues/399) for details)
+The project is managed using the [GitHub project system](https://github.com/atomsoftwarestudios/AjsDoc/projects/1)
+
+Issues are managed using the [GitHub issue system](https://github.com/atomsoftwarestudios/AjsDoc/issues)
+
+[Change log](https://github.com/atomsoftwarestudios/AjsDoc/issues?q=is%3Aopen+is%3Aissue+label%3A%22Change+Log%22) is also part of the GitHub issue system
 
 ---
 

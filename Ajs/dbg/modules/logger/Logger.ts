@@ -29,22 +29,18 @@ IN THE SOFTWARE.
 /**
  * Contains view components of the log debug module
  */
-namespace Ajs.Dbg.modules.logger {
+namespace Ajs.Dbg.Modules.Logger {
 
     "use strict";
 
-    export interface ISameTypeCounterCollection {
-        [key: string]: number;
+    export interface ICPLogger {
+        console: typeof Ajs.Dbg.IIConsole;
+        config: ILoggerConfig;
     }
 
-    export interface IBreakPoint {
-        recordTypeId: string;
-        occurence: number;
-    }
+    export class Logger implements ILogger {
 
-    export class Logger implements Dbg.IConsoleModule {
-
-        protected _console: Ajs.Dbg.Console;
+        protected _console: Ajs.Dbg.IConsole;
         protected _config: ILoggerConfig;
 
         protected _initTime: number;
@@ -66,7 +62,7 @@ namespace Ajs.Dbg.modules.logger {
 
         protected _selectedItem: ILogRecord;
 
-        constructor(console: Ajs.Dbg.Console, config: ILoggerConfig) {
+        constructor(console: Ajs.Dbg.IConsole, config: ILoggerConfig) {
             this._initTime = (new Date()).getTime();
             this._console = console;
             this._config = config;
@@ -87,6 +83,8 @@ namespace Ajs.Dbg.modules.logger {
             } else {
                 alert("Breakpoints not supported");
             }
+
+            console.registerModule(this);
         }
 
         public setInfo(info: string): void {

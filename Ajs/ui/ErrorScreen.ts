@@ -46,7 +46,7 @@ namespace Ajs.UI {
             ErrorScreen._stackTrace = document.getElementById(errorScreenElementId + "StackTrace");
 
             if (!ErrorScreen._checkDOM()) {
-                console.error("Invalid error screen DOM specification!");
+                window.console.error("Invalid error screen DOM specification!");
             }
         }
 

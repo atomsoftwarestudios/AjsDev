@@ -29,18 +29,25 @@ namespace Ajs.Boot {
      * Boot module configuration
      */
     export interface IBootConfig {
+
         /**
-         * Specifies if the cahcable cached resources returned by the @see ajs.boot.getResourceLists
-         * are preferably loaded from server or the cache
+         * Specifies if errors should be shown
+         * this configuration option is ignored now
          */
-        bootResourcesLoadingPreference: Resources.LOADING_PREFERENCE;
+        showErrors: boolean;
 
         /**
          * Specifies if the offline support is required during the ajs boot
-         * If so it can take 500ms the ajs will get started as there is a fallback to make sure the
-         * application will get started even if Application Cache events will not be fired
+         * If so it can take 500ms the boot process will get started as there is a 500ms fallback
+         * which makes sure the application will get started even in case the Application Cache
+         * events will not be fired (this happens quiet often)
          */
         offlineSupport: boolean;
+
+        /**
+         * Specifies the error handler to be registered with window and used during the boot
+         */
+        errorHandler?: (e: Ajs.Exception | ErrorEvent) => void;
     }
 
 }

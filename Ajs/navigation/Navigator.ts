@@ -55,7 +55,10 @@ namespace Ajs.Navigation {
 
     "use strict";
 
-    import Router = Ajs.Routing.Router;
+    export interface ICPNavigator {
+        router: typeof Routing.IIRouter;
+        redirections?: IRedirection[];
+    }
 
     /**
      * Navigator is used for navigation throughout the Ajs Application
@@ -88,21 +91,20 @@ namespace Ajs.Navigation {
      * Navigator.registerRedirection } method.
      * </p>
      */
-    export class Navigator {
+    export class Navigator implements INavigator {
+
+        /** Reference to the router */
+        private __router: Routing.IRouter;
 
         /** Last url the navigator captured during various events */
         protected _lastUrl: string;
         /** Returns last url the navigator captured during various events */
         public get lastUrl(): string { return this._lastUrl; }
 
-        /** List of registered #see {IRedirection redirections#} */
+        /** List of registered #see [Redirections]{Ajs.Navigation.IRedirection} */
         protected _redirections: IRedirection[];
-        /** List of registered #see {IRedirection redirections#} */
+        /** Returns list of registered #see [Redirections]{Ajs.Navigation.IRedirection} */
         public get redirections(): IRedirection[] { return this._redirections; }
-
-        /** Reference to the router */
-        protected _router: Router;
-        public get router(): Router { return this.router; }
 
         /** Holds information if the navigator should process navigation events */
         protected _canNavigate: boolean;
@@ -116,7 +118,7 @@ namespace Ajs.Navigation {
          * @param router Router to be used to forward navigation events
          * @param redirections List of redirections to be registered (taken from #see {IAjsConfig ajs config});
          */
-        public constructor(router: Router, redirections?: IRedirection[]) {
+        public constructor(router: Routing.IRouter, redirections?: IRedirection[]) {
 
             Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.navigation", this);
 
@@ -124,14 +126,14 @@ namespace Ajs.Navigation {
                 "Registering redirections (" + (redirections ? redirections.length : 0) + ")", redirections);
 
             this._canNavigate = false;
-            this._router = router;
+            this.__router = router;
             this._lastUrl = null;
             this._redirections = redirections || [];
 
             Ajs.Dbg.log(Dbg.LogType.DomAddListener, 0, "ajs.navigation", this, "window.popstate");
-            window.addEventListener("popstate", (event: PopStateEvent) => { this._onPopState(event); });
+            window.addEventListener("popstate", (event: PopStateEvent) => { this.__onPopState(event); });
             Ajs.Dbg.log(Dbg.LogType.DomAddListener, 0, "ajs.navigation", this, "window.hashchange");
-            window.addEventListener("hashchange", (event: HashChangeEvent) => { this._onHashChange(event); });
+            window.addEventListener("hashchange", (event: HashChangeEvent) => { this.__onHashChange(event); });
 
             Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.navigation", this);
 
@@ -168,8 +170,8 @@ namespace Ajs.Navigation {
 
             if (window.location.href !== this._lastUrl && this._canNavigate) {
                 this._lastUrl = window.location.href;
-                if (!this._redirect(window.location.pathname)) {
-                    this._router.route();
+                if (!this.__redirect(window.location.pathname)) {
+                    this.__router.route();
                 }
             }
 
@@ -190,8 +192,8 @@ namespace Ajs.Navigation {
                 this._lastUrl = url;
                 window.history.pushState({}, "", url);
 
-                if (!this._redirect(url)) {
-                    this._router.route();
+                if (!this.__redirect(url)) {
+                    this.__router.route();
                 }
             }
 
@@ -239,7 +241,7 @@ namespace Ajs.Navigation {
          * Window.onpopstate event listener
          * @param event Event data passed from the browser
          */
-        protected _onPopState(event: PopStateEvent): void {
+        private __onPopState(event: PopStateEvent): void {
 
             Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.navigation", this);
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.navigation", this, "window.popstate event occured");
@@ -253,7 +255,7 @@ namespace Ajs.Navigation {
          * Window.onhashchange event listener
          * @param event Event data passed from the browser
          */
-        protected _onHashChange(event: HashChangeEvent): void {
+        private __onHashChange(event: HashChangeEvent): void {
             Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.navigation", this);
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.navigation", this, "window.hashchange event occured");
 
@@ -267,7 +269,7 @@ namespace Ajs.Navigation {
          * @param url Current url to be checked
          * @returns true if redirection was performed or false if the ure was not found in registered paths for redirection
          */
-        protected _redirect(url: string): boolean {
+        private __redirect(url: string): boolean {
             Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.navigation", this);
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.navigation", this, "Redirecting to " + url);
 
@@ -278,7 +280,7 @@ namespace Ajs.Navigation {
                     // rem by fn - state should not be stored during redirect
                     // window.history.pushState({}, "", this._redirections[i].target);
                     redirected = true;
-                    this._router.route(this._redirections[i].target);
+                    this.__router.route(this._redirections[i].target);
                     break;
                 }
             }

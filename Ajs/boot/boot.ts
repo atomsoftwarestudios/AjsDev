@@ -25,230 +25,293 @@ IN THE SOFTWARE.
 ///<reference path="../dbg/Console.ts" />
 ///<reference path="../dbg/log.ts" />
 
-/**
- * Boot namespace contains the boot loader and associated interfaces
- * <p>
- * _boot function is called automatically when window.onload event occur. It
- * loads resources configured in the ajs.boot.config and intializes and
- * starts the framework.
- * </p>
- * Boot expect the ajs.boot namespace contain following functions implementation:
- * <ul>
- *    <li>getResourceLists = function(): IResourceLists {
- *        let resourceLists: IResourceLists = { ... }; return resourceLists; }</li>
- *    <li>getAjsConfig(): IAajsConfig {
- *        let ajsConfig: IAjsConfig = { ... }; return ajsConfig; }</li>
- *    <li>getApplicationConfig = function(): ajs.app.IApplicationConfig {
- *        let applicationConfig = { ... }; return applicationConfig }</li>
- * </ul>
- */
 namespace Ajs.Boot {
 
     "use strict";
 
+    import Logger = Dbg.Modules.Logger;
+
     /**
-     * Holds collected ajs config
+     * Internal flag indicating the boot was configured already and another configuration call should be prevented
+     * This is important especially for offline timed fallback
      */
-    let config: IAjsConfig;
+    let bootConfigured: boolean = false;
+
+    /**
+     * Internal flag indicating the boot started and should not be started again
+     * This is important especially for offline timed fallback
+     */
     let bootStarted: boolean = false;
-
-    /**
-     * Function returning the Ajs Framework configuration.
-     * This function must be declared in the ajs.boot.config file (usually separate
-     * VS project) and loaded during the index.html loading
-     */
-    export let configureAjs: IConfgiureAjs;
-
-    /**
-     * Function returning the list of application resources to be loaded
-     * This function must be declared in the ajs.boot.config file (usually separate
-     * VS project) and loaded during the index.html loading
-     */
-    export let configureResources: IConfigureResources;
-
-    /**
-     * Function returning the application configuratopn
-     * This function must be declared in the ajs.boot.config file (usually separate
-     * VS project) and loaded during the index.html loading
-     */
-    export let configureApplication: IConfigureApplication;
-
-    /**
-     * Return default boot config
-     */
-    function _defaultConfig(): IBootConfig {
-        return {
-            offlineSupport: false,
-            bootResourcesLoadingPreference: Resources.LOADING_PREFERENCE.CACHE
-        };
-    }
 
     /**
      * Handles unhandled errors until framework event handler is assigned
      * @param e ErrorEvent or ajs.Exception to be handled
      */
-    function _bootErrorHandler(e: any): void {
-        Ajs.Utils.errorHandler(e);
+    function _bootErrorHandler(e: Exception | ErrorEvent): void {
+        if (bootConfig.bootConfig.showErrors) {
+            Utils.errorHandler(e);
+        } else {
+            if (e instanceof ErrorEvent) {
+                window.console.error(e.error);
+            } else {
+                window.console.error(e);
+            }
+        }
     }
 
-    function _getAjsConfig(): IAjsConfig {
-        // get Ajs config
-        if (!(configureAjs instanceof Function)) {
-            throw new ConfigureAjsFunctionNotDefinedException();
+    /**
+     * Prepares default boot configuration
+     * @returns default boot config
+     */
+    function _defaultBootConfig(): IBootConfig {
+        return {
+            showErrors: true,
+            offlineSupport: false,
+            errorHandler: _bootErrorHandler
+        };
+    }
+
+    function _defaultAjsConfig(): IAjsConfig {
+        return {
+            debugging: {
+                enabled: false,
+                console: {
+                    bodyRenderTarget: document.body,
+                    styleRenderTarget: document.body,
+                    showOnBootDelay: 0
+                },
+                modules: {
+                    logger: {
+                        enabled: false,
+                        logDataToConsole: false,
+                        logTypes: [
+                            Ajs.Dbg.LogType.Enter,
+                            Ajs.Dbg.LogType.Exit,
+                            Ajs.Dbg.LogType.Constructor,
+                            Ajs.Dbg.LogType.Info,
+                            Ajs.Dbg.LogType.Warning,
+                            Ajs.Dbg.LogType.Error,
+                            Ajs.Dbg.LogType.DomAddListener,
+                            Ajs.Dbg.LogType.DomRemoveListener,
+                            Ajs.Dbg.LogType.DomAppendChild,
+                            Ajs.Dbg.LogType.DomRemoveChild,
+                            Ajs.Dbg.LogType.DomReplaceChild
+                        ],
+                        sourceModules: [
+                            "ajs.app",
+                            "ajs.boot",
+                            "ajs.doc",
+                            "ajs.events",
+                            "ajs.mvvm.model",
+                            "ajs.mvvm.view",
+                            "ajs.mvvm.viewmodel",
+                            "ajs.navigation",
+                            "ajs.resources",
+                            "ajs.routing",
+                            "ajs.state",
+                            "ajs.templating",
+                            "ajs.ui",
+                            "ajs.utils"
+                        ],
+                        maxLevel: 9
+                    }
+                }
+            },
+            resourceManager: {
+                memoryCacheSize: 20 * 1024 * 1024,
+                localCacheSize: 2 * 1024 * 1024,
+                sessionCacheSize: 2 * 1024 * 1024,
+                removeResourcesOlderThan: Utils.maxDate()
+            },
+            redirections: [],
+            routes: [],
+            renderTarget: document.body
+        };
+    }
+
+    /**
+     * Configures Ajs Boot if it was not previously configured
+     */
+    function _configureBoot(): void {
+
+        if (bootConfigured) {
+            return;
         }
 
-        config = {};
-        configureAjs(config);
+        bootConfig.bootConfig = _defaultBootConfig();
 
-        if (config.boot === undefined) {
-            config.boot = _defaultConfig();
+        // if configureBoot function is declared, call it
+        if (configureBoot) {
+            configureBoot(bootConfig.bootConfig);
         }
 
-        return config;
+        bootConfigured = true;
+    }
+
+    /**
+     * Configures Ajs Framework and Application by calling appropriate user-defined functions
+     */
+    function _configure(): void {
+
+        ajsConfig = _defaultAjsConfig();
+
+        if (configureFramework instanceof Function) {
+            configureFramework(ajsConfig);
+        }
+
+        appConfig = {};
+
+        if (configureApp instanceof Function) {
+            configureApp(appConfig);
+        }
+
+        container = new DI.Container();
+        _configureAjsServices(container);
+    }
+
+    /**
+     * Configuration of Ajs Framework Services based on the configuration
+     * @param container
+     */
+    function _configureAjsServices(container: Ajs.DI.IContainer): void {
+
+        if (Ajs.ajsConfig.debugging.enabled) {
+
+            container
+                .addSingleton<Dbg.IConsole, Dbg.ICPConsole>(
+                Dbg.IIConsole, Ajs.Dbg.Console, {
+                    config: ajsConfig.debugging.console
+                });
+
+            if (Ajs.ajsConfig.debugging.modules.logger.enabled) {
+                container
+
+                    // console -> used to display the logger menu & data
+                    .addSingleton<Logger.ILogger, Logger.ICPLogger>(
+                    Dbg.Modules.Logger.IILogger, Dbg.Modules.Logger.Logger, {
+                        console: Ajs.Dbg.IIConsole,
+                        config: ajsConfig.debugging.modules.logger
+                    });
+            }
+
+        }
+
+        container
+            .addSingleton<Resources.IResourceManager, Resources.ICPResourceManager>(
+            Resources.IIResourceManager, Resources.ResourceManager, {
+                config: ajsConfig.resourceManager
+            })
+
+            // resourceManager -> storing/loading of states from appropriate storages
+            .addSingleton<State.IStateManager, State.ICPStateManager>(
+            State.IIStateManager, State.StateManager, {
+                resourceManager: Resources.IIResourceManager
+            })
+
+            // resourceManager -> loading of stylesheets to be rendered
+            .addSingleton<Doc.IDocumentManager, Doc.ICPDocumentManager>(
+            Doc.IIDocumentManager, Doc.DocumentManager, {
+                resourceManager: Resources.IIResourceManager,
+                renderTarget: ajsConfig.renderTarget
+            })
+
+            // documentManager -> used to collect IDs for components, render target and dom updates
+            .addSingleton<MVVM.View.IViewManager, MVVM.View.ICPViewManager>(
+            MVVM.View.IIViewManager, MVVM.View.ViewManager, {
+                documentManager: Doc.IIDocumentManager
+            })
+
+            // resourceManager -> loading of template files
+            .addSingleton<Templating.ITemplateManager, Templating.ICPTemplateManager>(
+            Templating.IITemplateManager, Templating.TemplateManager, {
+                resourceManager: Resources.IIResourceManager
+            })
+
+            // templateManager -> getting information about visual components
+            // documentManager -> passing DM to created view components
+            // viewManager -> setting of root view component, getting unique ID's of components, passing to view components
+            .addSingleton<MVVM.ViewModel.IViewComponentManager, MVVM.ViewModel.ICPViewComponentManager>(
+            MVVM.ViewModel.IIViewComponentManager, MVVM.ViewModel.ViewComponentManager, {
+                container: container,
+                templateManager: Templating.IITemplateManager,
+                documentManager: Doc.IIDocumentManager,
+                viewManager: MVVM.View.IIViewManager,
+            })
+
+            // viewComponentManager -> creating and displaying of the root view components
+            .addSingleton<Routing.IRouter, Routing.ICPRouter>(
+            Routing.IIRouter, Routing.Router, {
+                viewComponentManager: MVVM.ViewModel.IIViewComponentManager,
+                routes: ajsConfig.routes
+            })
+
+            // router -> navigator calls router to show the configured view component
+            .addSingleton<Navigation.INavigator, Navigation.ICPNavigator>(
+            Navigation.IINavigator, Navigation.Navigator, {
+                router: Routing.IIRouter,
+                redirections: ajsConfig.redirections
+            })
+
+            // resource manager -> loading of application resources
+            // template manager -> loading of application templates
+            .addSingleton<App.IApplication, Ajs.App.ICPApplication>(
+            App.IIApplication, bootConfig.applicationConstructor, {
+                config: appConfig,
+                container: container,
+                resourceManager: Resources.IIResourceManager,
+                templateManager: Templating.IITemplateManager,
+                viewComponentManager: MVVM.ViewModel.IIViewComponentManager,
+                navigator: Navigation.IINavigator,
+                router: Routing.IIRouter
+            });
+
     }
 
     /**
      * Main entry point (executed on application cache events cahced/noupdate/error or window.onload event)
      * Initializes the framework and initiate loading of configured resources)
      */
-    function _boot(config?: IAjsConfig): void {
+    function _boot(): void {
 
-        window.addEventListener("error", _bootErrorHandler);
+        // configure boot
+        _configureBoot();
 
-        // use passed config or obtain it from configuration function
-        config = config || _getAjsConfig();
-
-        // if debugging is configured, start it up
-        if (config.debugging) {
-            Ajs.Dbg.init(config.debugging);
+        // check if application is set (the Application class is decorated with Ajs.application decorator
+        if (!(Ajs.bootConfig.applicationConstructor instanceof Function)) {
+            throw new ApplicationNotConfiguredException();
         }
 
-        // do some basic logging
-        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", null, "Ajs Framework, (c)2016-2017 Atom Software Studios, s.r.o");
+        _configure();
 
-        Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.boot", this);
+        // do some logging
+        Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", null, productName + " " + version + ", " + copyright);
 
-        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", null, "Booting up Ajs Framework");
+        // instanitate app
+        let application: App.IApplication = container.resolve<App.IApplication>(App.IIApplication);
 
-        // initialize config
-        Ajs.Framework.initialize(config);
+        // app starts its own error handler so its possible to unregister the boot one
+        window.removeEventListener("error", (<EventListener>Ajs.bootConfig.bootConfig.errorHandler));
 
-        window.removeEventListener("error", _bootErrorHandler);
-
-        // continue by loading resources and application configuration
-        _loadResources();
-
-        Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
-
-    }
-
-    /**
-     * Loads resources and continues to the _config function
-     */
-    function _loadResources(): void {
-
-        Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.boot", this);
-
-        if (!(configureResources instanceof Function)) {
-            throw new ConfigureResourcesFunctionNotDefinedException();
-        }
-
-        let res: IResourceLists = {};
-        configureResources(res);
-
-        // prepare information about resources to be loaded - always prefer to update resources prior using them from cache
-        // review if it is possible to use cached resources rather than server ones
-        let _resourcesLoadingInfo: any[] = [
-            Framework.resourceManager.getMultipleResources(
-                res.localPermanent, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.PERMANENT,
-                config.boot.bootResourcesLoadingPreference),
-            Framework.resourceManager.getMultipleResources(
-                res.localLastRecentlyUsed, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.LASTRECENTLYUSED,
-                config.boot.bootResourcesLoadingPreference),
-            Framework.resourceManager.getMultipleResources(
-                res.sessionPermanent, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.PERMANENT,
-                config.boot.bootResourcesLoadingPreference),
-            Framework.resourceManager.getMultipleResources(
-                res.sessionLastRecentlyUsed, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.LASTRECENTLYUSED,
-                config.boot.bootResourcesLoadingPreference),
-            Framework.resourceManager.getMultipleResources(
-                res.memoryPermanent, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.PERMANENT,
-                config.boot.bootResourcesLoadingPreference),
-            Framework.resourceManager.getMultipleResources(
-                res.memoryLastRecentlyUsed, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.LASTRECENTLYUSED,
-                config.boot.bootResourcesLoadingPreference),
-            Framework.resourceManager.getMultipleResources(
-                res.direct, undefined, undefined)
-        ];
-
-        // wait till resources are loaded and
-        Promise.all(_resourcesLoadingInfo).
-            // continue by configuring application
-            then(
-                () => {
-                    _configureApplication();
-                }
-            ).
-            // catch the problem
-            catch((e: Ajs.Exception) => {
-                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.boot", this,
-                    "Something went wrong during resource loading " + e, e);
-
-                Ajs.Exception.throwAsync(new ResourcesLoadingFailedException(e));
+        // configure and run the application
+        application.configure(container);
+        application.initialize()
+            .then(() => {
+                application.run();
+            })
+            .catch((reason: any) => {
+                setTimeout(() => {
+                    throw new ApplicationException(reason);
+                }, 0);
             });
 
         Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
     }
 
     /**
-     * Configures the application before it is started
-     */
-    function _configureApplication(): void {
-
-        Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.boot", this);
-
-        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", this, "Getting the Application config");
-
-        if (!(configureApplication instanceof Function)) {
-            Ajs.Dbg.log(Dbg.LogType.Error, 0, this, "GetApplicationConfigFunctionNotDefinedException");
-            throw new GetApplicationConfigFunctionNotDefinedException();
-        }
-
-        let appConfig: Ajs.App.IApplicationInfo = <any>{};
-        configureApplication(appConfig);
-
-        Ajs.Framework.configureApplication(appConfig);
-
-        _start();
-
-        Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
-    }
-
-    /**
-     *  Start the framework / application
-     */
-    function _start(): void {
-
-        Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.boot", this);
-
-        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", this, "Starting the framework");
-
-        Ajs.Framework.start();
-
-        Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
-    }
-
-    /**
-     * Performs update of cached files (cleans all caches and forces window to reload)
+     * Called when browser recognizes the application cache manifest has been modified and it is necessary to reload them
      * <p>
-     * It is called when the application cache recognizes there are updated files on the server.
-     * It is simplest possible solution to load updated application resources.
-     * </p>
-     * <p>
-     * the update of cached files is ready. at this time it is not possile to configure what will happen next
-     * its hardcoded the complete resource cache managed by the resource manager will be cleaned up and reload is perofrmed
-     * to ensure the latest boot/ajs versions are in use and also latest versions of the application code and application
-     * resources will be used
+     * If such event is detected the page gets automatically reloaded to ensure that latest versions of app cached resources
+     * are in use
      * </p>
      */
     function _update(): void {
@@ -317,18 +380,21 @@ namespace Ajs.Boot {
         // this is fallback if no event is called
         window.addEventListener("load", () => {
 
-            let cfg: IAjsConfig = _getAjsConfig();
+            _configureBoot();
 
-            if (cfg && cfg.boot && cfg.boot.offlineSupport) {
+            // setup error handler
+            window.addEventListener("error", (<EventListener>Ajs.bootConfig.bootConfig.errorHandler));
+
+            if (Ajs && Ajs.bootConfig && Ajs.bootConfig.bootConfig.offlineSupport) {
                 setTimeout(() => {
                     if (!bootStarted) {
                         bootStarted = true;
-                        _boot(cfg);
+                        _boot();
                     }
                 }, 500);
             } else {
                 bootStarted = true;
-                _boot(cfg);
+                _boot();
             }
 
         });

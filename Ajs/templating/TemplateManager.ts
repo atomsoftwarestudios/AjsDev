@@ -25,21 +25,20 @@ namespace Ajs.Templating {
 
     "use strict";
 
-    export class TemplateManager {
+    export interface ICPTemplateManager {
+        resourceManager: typeof Resources.IIResourceManager
+    }
 
-        protected _resourceManager: Resources.ResourceManager;
-        public get resourceManager(): Resources.ResourceManager { return this._resourceManager; }
+    export class TemplateManager implements TemplateManager {
 
-        protected _templates: ITemplatesCollection;
-        public get templates(): ITemplatesCollection { return this._templates; }
-
-        protected _visualComponents: IVisualComponentCollection;
-        public get VisualComponents(): IVisualComponentCollection { return this._visualComponents; }
+        private __resourceManager: Resources.ResourceManager;
+        private __templates: ITemplatesCollection;
+        private __visualComponents: IVisualComponentCollection;
 
         public constructor(resourceManager: Resources.ResourceManager) {
-            this._resourceManager = resourceManager;
-            this._templates = {};
-            this._visualComponents = {};
+            this.__resourceManager = resourceManager;
+            this.__templates = {};
+            this.__visualComponents = {};
         }
 
         public loadTemplates(
@@ -53,6 +52,10 @@ namespace Ajs.Templating {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.templating", this);
 
+            if (!(paths instanceof Array)) {
+                paths = [];
+            }
+
             return new Promise<Template[]>(
 
                 async (resolve: (templates: Template[]) => void, reject: (reason?: any) => void) => {
@@ -63,7 +66,7 @@ namespace Ajs.Templating {
                         // load all template resources
                         let resourcePromises: Promise<Resources.IResource>[] = [];
                         for (let i: number = 0; i < paths.length; i++) {
-                            resourcePromises.push(this._resourceManager.getResource(paths[i], storageType, cachePolicy, loadingPreference));
+                            resourcePromises.push(this.__resourceManager.getResource(paths[i], storageType, cachePolicy, loadingPreference));
                         }
 
                         // wait for all resources to be loaded
@@ -73,7 +76,13 @@ namespace Ajs.Templating {
                         let styleSheetLoaders: Promise<void>[] = [];
 
                         for (let i: number = 0; i < resources.length; i++) {
-                            let template: Template = new Template(this, resources[i], storageType, cachePolicy);
+                            let template: Template = new Template(
+                                this.__resourceManager,
+                                this,
+                                resources[i],
+                                storageType,
+                                cachePolicy
+                            );
                             templates.push(template);
                             styleSheetLoaders.push(template.loadStyleSheets());
                         }
@@ -82,7 +91,7 @@ namespace Ajs.Templating {
                         await Promise.all(styleSheetLoaders);
 
                     } catch (e) {
-                        throw new FailedToLoadTemplatesException(e);
+                        reject(e);
                     }
 
                     // finish
@@ -93,28 +102,28 @@ namespace Ajs.Templating {
         }
 
         public getTemplate(name: string): Template {
-            if (this._templates.hasOwnProperty(name)) {
-                return this._templates[name];
+            if (this.__templates.hasOwnProperty(name)) {
+                return this.__templates[name];
             }
             return null;
         }
 
         public registerVisualComponent(name: string, visualComponent: IVisualComponent): void {
             if (visualComponent && visualComponent !== null) {
-                this._visualComponents[name] = visualComponent;
+                this.__visualComponents[name] = visualComponent;
             }
         }
 
         public getVisualComponent(name: string): IVisualComponent {
-            if (this._visualComponents.hasOwnProperty(name.toUpperCase())) {
-                return this._visualComponents[name.toUpperCase()];
+            if (this.__visualComponents.hasOwnProperty(name.toUpperCase())) {
+                return this.__visualComponents[name.toUpperCase()];
             }
             return null;
         }
 
         public getVisualComponentTemplate(name: string): Template {
-            if (this._visualComponents.hasOwnProperty(name)) {
-                let templateName: string = this._visualComponents[name].templateName;
+            if (this.__visualComponents.hasOwnProperty(name)) {
+                let templateName: string = this.__visualComponents[name].templateName;
                 let template: Template = this.getTemplate(templateName);
                 return template;
             }

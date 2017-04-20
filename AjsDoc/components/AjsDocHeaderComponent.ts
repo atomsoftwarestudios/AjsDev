@@ -21,26 +21,38 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace AjsDoc {
+namespace AjsDoc.Components {
 
     "use strict";
 
     export interface IAjsDocHeaderComponentState extends Ajs.MVVM.ViewModel.IViewComponentState {
     }
 
+    export interface ICPAjsDocHeaderComponent {
+        headerLabel: string;
+        headerDescription: string;
+    }
+
+    @Ajs.viewcomponent()
     export class AjsDocHeaderComponent
         extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocHeaderComponentState, any>
         implements IAjsDocHeaderComponentState {
 
+        protected __headerLabel: string;
+        protected __headerDescription: string;
+
+        protected _onConfigure(headerLabel: string, headerDescription: string) {
+            this.__headerLabel = headerLabel;
+            this.__headerDescription = headerDescription;
+        }
+
         public get headerLabel(): string {
-            return (<IAjsDocBrowserConfig>Ajs.Framework.appConfig.config).headerLabel;
+            return this.__headerLabel;
         }
 
         public get headerDescription(): string {
-            return (<IAjsDocBrowserConfig>Ajs.Framework.appConfig.config).headerDescription;
+            return this.__headerDescription;
         }
     }
-
-    Ajs.Framework.viewComponentManager.registerComponents(AjsDocHeaderComponent);
 
 }

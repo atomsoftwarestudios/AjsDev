@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace AjsDoc {
+namespace AjsDoc.Components {
 
     "use strict";
 
@@ -45,6 +45,7 @@ namespace AjsDoc {
 
     export interface IAjsDocArticleComponentState extends Ajs.MVVM.ViewModel.IViewComponentState {
         caption?: string;
+        translatedKindString?: string;
         description?: string;
         longDescription?: string;
         hierarchy?: IHierarchyNodeState;
@@ -71,11 +72,12 @@ namespace AjsDoc {
         indexSignatures?: atsdoc.IATsDocNode[];
     }
 
+    @Ajs.viewcomponent()
     export class AjsDocArticleComponent
         extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocArticleComponentState, any>
         implements IAjsDocArticleComponentState {
 
-        protected _renderedListener: Ajs.Events.IListener<void>;
+        protected _renderedListener: Ajs.Events.IListener<Ajs.MVVM.View.IViewManager>;
 
         public caption?: string;
         public description?: string;
@@ -141,17 +143,17 @@ namespace AjsDoc {
             super.setState(state);
         }
 
-        protected _initialize(): void {
-            this._renderedListener = (sender: Ajs.MVVM.ViewModel.ViewComponent<any, any>) => {
+        protected _onInitialize(): void {
+            this._renderedListener = (sender: Ajs.MVVM.ViewModel.IViewComponent) => {
                 this._rendered();
                 return true;
             };
 
-            this.ajs.view.renderDoneNotifier.subscribe(this._renderedListener);
+            this.ajs.viewManager.renderDoneNotifier.subscribe(this._renderedListener);
         }
 
-        protected _finalize(): void {
-            this.ajs.view.renderDoneNotifier.unsubscribe(this._renderedListener);
+        protected _onFinalize(): void {
+            this.ajs.viewManager.renderDoneNotifier.unsubscribe(this._renderedListener);
         }
 
         protected _rendered(): void {
@@ -162,7 +164,5 @@ namespace AjsDoc {
         }
 
     }
-
-    Ajs.Framework.viewComponentManager.registerComponents(AjsDocArticleComponent);
 
 }

@@ -25,7 +25,7 @@ namespace Ajs.Utils {
 
     "use strict";
 
-    export let HTMLTags: string[] = [
+    export let htmlTags: string[] = [
         "A",
         "ABBR",
         "ACRONYM",

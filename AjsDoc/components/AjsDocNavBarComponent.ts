@@ -21,7 +21,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace AjsDoc {
+namespace AjsDoc.Components {
 
     "use strict";
 
@@ -29,14 +29,12 @@ namespace AjsDoc {
         items?: AjsDocNavBarComponent[];
     }
 
+    @Ajs.viewcomponent()
     export class AjsDocNavBarComponent
         extends Ajs.MVVM.ViewModel.ViewComponent<IAjsDocNavBarComponentState, any>
         implements IAjsDocNavBarComponentState {
 
         public items: AjsDocNavBarComponent[];
     }
-
-    /** Register the component to ViewComponentManager */
-    Ajs.Framework.viewComponentManager.registerComponents(AjsDocNavBarComponent);
 
 }

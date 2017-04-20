@@ -30,6 +30,11 @@ namespace Ajs.Doc {
 
     "use strict";
 
+    export interface ICPDocumentManager {
+        resourceManager: typeof Resources.IIResourceManager;
+        renderTarget: Element;
+    }
+
     /**
      * Document manager is wrapper around the DOM Document with support of additional features
      * <p>
@@ -46,40 +51,54 @@ namespace Ajs.Doc {
      * in the application cache.
      * </p>
      */
-    export class DocumentManager {
+    export class DocumentManager implements IDocumentManager {
 
-        /** Stores target documnent - the managed document */
-        protected _targetDocument: Document;
+        /** Stores reference to resource manager */
+        private __resourceManager: Resources.IResourceManager;
+
+        /** Stores target document - the managed document */
+        private __targetDocument: Document;
 
         /** Stores the render target */
-        protected _renderTarget: Element;
-        public get renderTarget(): Element { return this._renderTarget; }
+        private __renderTarget: Element;
+        public get renderTarget(): Element { return this.__renderTarget; }
 
         /** Stores list of stylesheets applied from templates */
-        protected _styleSheets: string[];
+        private __styleSheets: string[];
 
-        /** Unique ID generator */
-        protected _uniqueId: number;
-        public get uniqeId(): number { this._uniqueId++; return this._uniqueId; };
+        /** Internal uniwue ID generator for rendered elements */
+        private __uniqueId: number;
+        protected get _uniqeId(): number { this.__uniqueId++; return this.__uniqueId; };
 
         /** Workaround for Safari Mobile - don't remove anything before touch end! */
-        protected _touchEventsCount: number;
+        private __touchEventsCount: number;
 
         /**
          * Constructs the document manager
          * @param targetDocument The document to be managed
          */
-        constructor(renderTarget: Element) {
+        constructor(
+            resourceManager: Resources.IResourceManager,
+            renderTarget: Element) {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Constructor, 0, "ajs.doc", this);
+
+            if (renderTarget === undefined || renderTarget === null) {
+
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Warning, 0, "ajs.doc", this,
+                    "Render target not set or does not exist in the document. Using document.body");
+
+                renderTarget = document.body;
+            }
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                 "Managing the DOM document", renderTarget.ownerDocument);
 
-            this._renderTarget = renderTarget;
-            this._targetDocument = renderTarget.ownerDocument;
-            this._styleSheets = [];
-            this._touchEventsCount = 0;
+            this.__resourceManager = resourceManager;
+            this.__renderTarget = renderTarget;
+            this.__targetDocument = renderTarget.ownerDocument;
+            this.__styleSheets = [];
+            this.__touchEventsCount = 0;
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
         }
@@ -92,26 +111,26 @@ namespace Ajs.Doc {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
-                "Cleaning up the target document and render target", this._targetDocument, renderTarget);
+                "Cleaning up the target document and render target", this.__targetDocument, renderTarget);
 
             // check if the renderTarget requested to be clean is in the managed document
-            if (renderTarget.ownerDocument !== this._targetDocument) {
+            if (renderTarget.ownerDocument !== this.__targetDocument) {
                 Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
-                    "Render target is not contained in the managed document", this._targetDocument, renderTarget);
+                    "Render target is not contained in the managed document", this.__targetDocument, renderTarget);
                 throw new RenderTargetNotInManagedDocumentException();
             }
 
             // remove managed stylesheets
-            let styleSheets: NodeListOf<HTMLStyleElement> = this._targetDocument.head.getElementsByTagName("style");
+            let styleSheets: NodeListOf<HTMLStyleElement> = this.__targetDocument.head.getElementsByTagName("style");
             for (let i: number = 0; i < styleSheets.length; i++) {
                 if (styleSheets.item(i).hasAttribute("id") &&
-                    this._styleSheets.indexOf(styleSheets.item(i).getAttribute("id")) !== -1) {
-                    this._targetDocument.head.removeChild(styleSheets.item(i));
+                    this.__styleSheets.indexOf(styleSheets.item(i).getAttribute("id")) !== -1) {
+                    this.__targetDocument.head.removeChild(styleSheets.item(i));
                 }
             }
 
             // clean stylesheets
-            this._styleSheets = [];
+            this.__styleSheets = [];
 
             // removes tree bottom down from node
             function removeTree(node: INode): void {
@@ -137,8 +156,8 @@ namespace Ajs.Doc {
             }
 
             // all elements in render target
-            for (let i: number = 0; i < this._renderTarget.childNodes.length; i++) {
-                removeTree(this._renderTarget.childNodes.item(i) as INode);
+            for (let i: number = 0; i < this.__renderTarget.childNodes.length; i++) {
+                removeTree(this.__renderTarget.childNodes.item(i) as INode);
             }
 
             renderTarget.innerHTML = "";
@@ -159,9 +178,9 @@ namespace Ajs.Doc {
                 "Updating DOM structure", source, target);
 
             // check if the renderTarget requested to be updated is in the managed document
-            if (target.ownerDocument !== this._targetDocument) {
+            if (target.ownerDocument !== this.__targetDocument) {
                 Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
-                    "Render target is not contained in the managed document", this._targetDocument, target);
+                    "Render target is not contained in the managed document", this.__targetDocument, target);
                 throw new RenderTargetNotInManagedDocumentException();
             }
 
@@ -180,7 +199,7 @@ namespace Ajs.Doc {
                     // if the obesrver is the same object, just update it
                     if (nodeToUpdate === null) {
 
-                        if (target === this._renderTarget) {
+                        if (target === this.__renderTarget) {
                             nodeToUpdate = this._appendNode(src, tgt);
                         } else {
                             // otherwise insert new node with a different observer before
@@ -194,7 +213,7 @@ namespace Ajs.Doc {
 
                 } else {
                     Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
-                        "Target or its parent is unknown!", this._targetDocument, target);
+                        "Target or its parent is unknown!", this.__targetDocument, target);
                     throw new TargetOrParentIsUnknownException();
                 }
 
@@ -256,7 +275,7 @@ namespace Ajs.Doc {
                 return null;
             }
 
-            return searchNode(id, (this._targetDocument.body as Node) as INode);
+            return searchNode(id, (this.__targetDocument.body as Node) as INode);
         }
 
         /**
@@ -467,9 +486,9 @@ namespace Ajs.Doc {
             }
 
             // check if the renderTarget requested to be removed is in the managed document
-            if (target.ownerDocument !== this._targetDocument) {
+            if (target.ownerDocument !== this.__targetDocument) {
                 Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
-                    "Render target is not contained in the managed document", this._targetDocument, target);
+                    "Render target is not contained in the managed document", this.__targetDocument, target);
                 throw new RenderTargetNotInManagedDocumentException();
             }
 
@@ -694,8 +713,8 @@ namespace Ajs.Doc {
 
             for (let i: number = 0; i < template.styleSheets.length; i++) {
                 let id: string = template.name + i;
-                if (this._styleSheets.indexOf(id) === -1) {
-                    this._styleSheets.push(id);
+                if (this.__styleSheets.indexOf(id) === -1) {
+                    this.__styleSheets.push(id);
                     styleSheetsToProcess.push(this._processStyleSheet(template, i));
                 }
             }
@@ -710,7 +729,7 @@ namespace Ajs.Doc {
 
                             let id: string = template.name + i;
 
-                            let style: HTMLElement = this._targetDocument.createElement("style");
+                            let style: HTMLElement = this.__targetDocument.createElement("style");
                             style.setAttribute("type", "text/css");
                             style.setAttribute("id", id);
                             style.textContent = template.styleSheets[i];
@@ -718,14 +737,14 @@ namespace Ajs.Doc {
                             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                                 "Adding processed stylesheet to the render target", template.styleSheets[i]);
 
-                            this._targetDocument.head.appendChild(style);
+                            this.__targetDocument.head.appendChild(style);
                         }
                     } catch (e) {
 
                         Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, "ajs.doc", this,
                             "Required CSS resource can't be reached", e);
 
-                        throw new CSSRequiredResourceNotLoadedException(e);
+                        reject(new CSSRequiredResourceNotLoadedException(e));
 
                     }
 
@@ -773,7 +792,7 @@ namespace Ajs.Doc {
                     if (url[2].substr(0, 4) !== "data") {
 
                         resourcesPromises.push(
-                            template.templateManager.resourceManager.getResource(url[2], template.storageType)
+                            this.__resourceManager.getResource(url[2], template.storageType)
                         );
                     }
                 }

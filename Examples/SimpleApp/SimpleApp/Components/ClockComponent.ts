@@ -3,7 +3,7 @@ License
 Copyright (c)Year, Company. All rights reserved.
 **************************************************************************** */
 
-namespace SimpleApp.Components {
+namespace ToDos.Components {
 
     "use strict";
 
@@ -13,35 +13,42 @@ namespace SimpleApp.Components {
         time?: string;
     }
 
+    @Ajs.viewcomponent()
     export class ClockComponent extends viewModel.ViewComponent<IClockComponentState, any> {
 
-        protected _navigatedListener: Ajs.Events.IListener<void>;
-        protected _timer: number;
+        private __navigatedListener: Ajs.Events.IListener<any>;
+        private __timer: number;
 
         public time: string;
 
-        protected _initialize(): void {
+        public get isTimeSet(): boolean {
+            return this.time && this.time !== null;
+        }
 
-            this._navigatedListener = (sender: any) => {
-                this._navigated();
+        protected _onInitialize(): void {
+
+            this.__navigatedListener = (sender: any): boolean => {
+                this.__navigated();
                 return true;
             };
 
-            this.ajs.view.navigationNotifier.subscribe(this._navigatedListener);
+            this.ajs.viewManager.navigationNotifier.subscribe(this.__navigatedListener);
         }
 
-        protected _finalize(): void {
-            this.ajs.view.navigationNotifier.unsubscribe(this._navigatedListener);
-            clearInterval(this._timer);
+        protected _onFinalize(): void {
+
+            this.ajs.viewManager.navigationNotifier.unsubscribe(this.__navigatedListener);
+
+            clearInterval(this.__timer);
         }
 
-        protected _navigated(): void {
-            if (this._timer === undefined) {
-                this._timer = setInterval(() => this._update(), 200);
+        private __navigated(): void {
+            if (this.__timer === undefined) {
+                this.__timer = setInterval(() => this.__update(), 200);
             }
         }
 
-        protected _update(): void {
+        private __update(): void {
 
             let d: Date = new Date();
             let t: string =
@@ -59,7 +66,5 @@ namespace SimpleApp.Components {
         }
 
     }
-
-    Ajs.Framework.viewComponentManager.registerComponents(ClockComponent);
 
 }
