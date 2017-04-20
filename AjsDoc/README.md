@@ -133,7 +133,7 @@ The project is managed using the [GitHub project system](https://github.com/atom
 
 Issues are managed using the [GitHub issue system](https://github.com/atomsoftwarestudios/AjsDoc/issues)
 
-[Change log](https://github.com/atomsoftwarestudios/AjsDoc/issues?q=is%3Aopen+is%3Aissue+label%3A%22Change+Log%22) is also part of the GitHub issue system
+[Change log](https://github.com/atomsoftwarestudios/AjsDoc/labels/Change%20Log) is also part of the GitHub issue system
 
 ---
 

@@ -159,7 +159,6 @@
     <TypeScriptCompile Include="Utils\Utils.ts" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="changelog.txt" />
     <Content Include="tsconfig.json" />
     <None Include="README.MD" />
     <None Include="tsconfig.common.json">
