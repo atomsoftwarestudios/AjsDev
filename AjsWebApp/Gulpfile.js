@@ -975,6 +975,9 @@ function awatcher() {
             // create FSWatcher instance
             awatcherInstance.watcher = fs.watch(awatcherInstance.path, awatcherInstance.params, fileChangeCallback);
             index_1.printf("FS Warcher started");
+            if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.waiting"))) {
+                fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.waiting"));
+            }
         };
         // start watching
         awatcherInstance.start = function (path, params, callback) {
@@ -989,8 +992,10 @@ function awatcher() {
         awatcherInstance.pause = function () {
             process.nextTick(function () {
                 index_1.printf("Closing FS watcher...");
-                awatcherInstance.watcher.close();
-                awatcherInstance.watcher = null;
+                if (awatcherInstance && awatcherInstance.watcher && awatcherInstance.watcher !== null) {
+                    awatcherInstance.watcher.close();
+                    awatcherInstance.watcher = null;
+                }
                 index_1.printf("FS watcher closed.");
             });
         };
@@ -1095,9 +1100,6 @@ function watcher() {
             return;
         }
         awatcherInstance.resume();
-        if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.waiting"))) {
-            fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.waiting"));
-        }
         paused = false;
         index_1.printf("Watcher is resumed.");
         index_1.printf();
@@ -1117,7 +1119,7 @@ function watcher() {
     /** checks if the watcher should be paused (by existence of the watcher.pause file) and resume if not */
     function checkPausedAndResume() {
         if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.pause"))) {
-            setTimeout(checkPausedAndResume, 500);
+            setTimeout(checkPausedAndResume, 100);
             return;
         }
         index_1.printf();
@@ -1128,7 +1130,7 @@ function watcher() {
         }
         reloadSolutionAndResume();
     }
-    function pauseWatcher() {
+    function pauseWatcherInternal() {
         index_1.printf();
         index_1.printf("Pausing the watcher.");
         awatcherInstance.pause();
@@ -1178,7 +1180,7 @@ function watcher() {
         }
         // watcher pause added / changed -> pause
         if (file.path.lastIndexOf("watcher.pause") !== -1 && (file.event === "add" || file.event === "change") && !paused) {
-            pauseWatcher();
+            pauseWatcherInternal();
             return;
         }
         // project related resource resoruce added/modified (i.e. compiled)

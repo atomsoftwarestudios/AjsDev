@@ -1406,6 +1406,10 @@ function awatcher(): Promise<void> {
 
                 printf("FS Warcher started");
 
+                if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.waiting"))) {
+                    fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.waiting"));
+                }
+
             };
 
             // start watching
@@ -1435,8 +1439,10 @@ function awatcher(): Promise<void> {
 
                 process.nextTick(function (): void {
                     printf("Closing FS watcher...");
-                    awatcherInstance.watcher.close();
-                    awatcherInstance.watcher = null;
+                    if (awatcherInstance && awatcherInstance.watcher && awatcherInstance.watcher !== null) {
+                        awatcherInstance.watcher.close();
+                        awatcherInstance.watcher = null;
+                    }
                     printf("FS watcher closed.");
                 });
 
@@ -1596,10 +1602,6 @@ function watcher(): Promise<void> | undefined {
 
         awatcherInstance.resume();
 
-        if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.waiting"))) {
-            fs.unlinkSync(path.normalize(__dirname + "/buildtools/watcher.waiting"));
-        }
-
         paused = false;
 
         printf("Watcher is resumed.");
@@ -1626,7 +1628,7 @@ function watcher(): Promise<void> | undefined {
     function checkPausedAndResume(): void {
 
         if (fs.existsSync(path.normalize(__dirname + "/buildtools/watcher.pause"))) {
-            setTimeout(checkPausedAndResume, 500);
+            setTimeout(checkPausedAndResume, 100);
             return;
         }
 
@@ -1641,7 +1643,7 @@ function watcher(): Promise<void> | undefined {
         reloadSolutionAndResume();
     }
 
-    function pauseWatcher(): void {
+    function pauseWatcherInternal(): void {
         printf();
         printf("Pausing the watcher.");
         awatcherInstance.pause();
@@ -1703,7 +1705,7 @@ function watcher(): Promise<void> | undefined {
         // watcher pause added / changed -> pause
 
         if (file.path.lastIndexOf("watcher.pause") !== -1 && (file.event === "add" || file.event === "change") && !paused) {
-            pauseWatcher();
+            pauseWatcherInternal();
             return;
         }
 
