@@ -45,6 +45,12 @@ namespace Ajs.Boot {
         offlineSupport: boolean;
 
         /**
+         * Specifies the timeout for how long will be Ajs waiting for app cache event after onLoad event
+         * When the specified timeout will be reached the boot will start event without a app cache event
+         */
+        offlineFallbackTimeout: number;
+
+        /**
          * Specifies the error handler to be registered with window and used during the boot
          */
         errorHandler?: (e: Ajs.Exception | ErrorEvent) => void;

@@ -60,17 +60,21 @@ namespace Ajs.Boot {
     }
 
     /**
-     * Prepares default boot configuration
+     * Setup default boot configuration
      * @returns default boot config
      */
     function _defaultBootConfig(): IBootConfig {
         return {
             showErrors: true,
             offlineSupport: false,
+            offlineFallbackTimeout: 500,
             errorHandler: _bootErrorHandler
         };
     }
 
+    /**
+     * Setup default Ajs configuration
+     */
     function _defaultAjsConfig(): IAjsConfig {
         return {
             debugging: {
@@ -151,7 +155,7 @@ namespace Ajs.Boot {
     /**
      * Configures Ajs Framework and Application by calling appropriate user-defined functions
      */
-    function _configure(): void {
+    function _configureAjs(): void {
 
         ajsConfig = _defaultAjsConfig();
 
@@ -281,7 +285,7 @@ namespace Ajs.Boot {
             throw new ApplicationNotConfiguredException();
         }
 
-        _configure();
+        _configureAjs();
 
         // do some logging
         Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", null, productName + " " + version + ", " + copyright);
@@ -289,7 +293,7 @@ namespace Ajs.Boot {
         // instanitate app
         let application: App.IApplication = container.resolve<App.IApplication>(App.IIApplication);
 
-        // app starts its own error handler so its possible to unregister the boot one
+        // app started its own error handler so its possible to unregister the boot one
         window.removeEventListener("error", (<EventListener>Ajs.bootConfig.bootConfig.errorHandler));
 
         // configure and run the application
@@ -391,7 +395,7 @@ namespace Ajs.Boot {
                         bootStarted = true;
                         _boot();
                     }
-                }, 500);
+                }, bootConfig.bootConfig.offlineFallbackTimeout);
             } else {
                 bootStarted = true;
                 _boot();
