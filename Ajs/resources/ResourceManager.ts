@@ -1032,7 +1032,7 @@ namespace Ajs.Resources {
 
             // if the resource was not loaded neither cached, exception
             if (!loaded) {
-                throw new ResourceFailedToLoadException(response.httpStatus.toString());
+                throw new ResourceFailedToLoadException(resource.url + ": HTTP Status:" + response.httpStatus.toString());
             }
 
             // if the resource is script and should be executed, do it
