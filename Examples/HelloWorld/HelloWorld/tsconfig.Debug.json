@@ -1,6 +1,7 @@
 {
   // TypeScript 2.2 compiler configuration
   // DEBUG CONFIGURATION
+  "$schema": "http://json.schemastore.org/tsconfig#",
 
   "extends": "./tsconfig.common.json",
 
@@ -9,6 +10,8 @@
     "declaration": true,
     // generate source maps
     "sourceMap": true,
+    // source map root
+    "mapRoot": "/js",
     // sources root directory
     "sourceRoot": "/src/HelloWorld",
     // remove comments

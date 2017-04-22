@@ -1,6 +1,7 @@
 {
   // TypeScript 2.2 compiler configuration
   // RELEASE CONFIGURATION
+  "$schema": "http://json.schemastore.org/tsconfig#",
 
   "extends": "./tsconfig.common.json",
 
