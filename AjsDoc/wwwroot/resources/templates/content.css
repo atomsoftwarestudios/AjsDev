@@ -19,6 +19,10 @@
     text-align: justify;
 }
 
+.ajsDocArticleContent .ajsDocToc {
+    display: none;
+}
+
 .ajsDocArticleContent .ajs-logo {
     display: inline-block;
     width: 110px;

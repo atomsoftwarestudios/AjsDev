@@ -1,51 +1,173 @@
 {
-  "defaultPath": "/resources/content/01 Introduction.html",
+  "defaultPath": "/resources/content/index.html",
   "toc": {
     "children": [
-      { "path": "/resources/content/01 Introduction.html"}, 
-      { "path": "/resources/content/02 Design requirements.html"}, 
       {
-        "path": "/resources/content/03 Visual Studio Solution Setup.html",
-        "children": [
-          { "path": "/resources/content/03/01 Application developers.html"}, 
-          { "path": "/resources/content/03/02 Contributors.html"}
-        ]
-      }, 
-      { "path": "/resources/content/04 Web Server Requirements and Configuration.html"}, 
+        "label": "Introduction",
+        "path": "/resources/content/index.html",
+        "children": []
+      },
       {
-        "path": "/resources/content/05 How it works.html",
+        "label": "Design Requirements",
+        "path": "/resources/content/Design-requirements.html",
+        "children": []
+      },
+      {
+        "label": "How it Works",
+        "path": "/resources/content/How-it-Works/index.html",
         "children": [
-          { "path": "/resources/content/05/01 Overview.html"}, 
-          { "path": "/resources/content/05/02 Offline Application Support.html"}, 
-          { "path": "/resources/content/05/03 Boot Process.html"}, 
-          { "path": "/resources/content/05/04 Navigation and Routing.html"}, 
-          { "path": "/resources/content/05/05 Resource Management and Caching.html"}, 
           {
-            "path": "/resources/content/05/06 MVVM architecture.html",
+            "label": "How it Works",
+            "path": "/resources/content/How-it-Works/index.html",
+            "children": []
+          },
+          {
+            "label": "Offline Applications Support",
+            "path": "/resources/content/How-it-Works/Offline-Application-Support.html",
+            "children": []
+          },
+          {
+            "label": "Index.html",
+            "path": "/resources/content/How-it-Works/Index.html.html",
+            "children": []
+          },
+          {
+            "label": "Ajs Boot Process",
+            "path": "/resources/content/How-it-Works/Boot-Process.html",
+            "children": []
+          },
+          {
+            "label": "Services and Dependecy Injection",
+            "path": "/resources/content/How-it-Works/Services-and-Dependency-Injection.html",
+            "children": []
+          },
+          {
+            "label": "Navigation and Routing",
+            "path": "/resources/content/How-it-Works/Navigation-and-Routing.html",
+            "children": []
+          },
+          {
+            "label": "Resource Management and Caching",
+            "path": "/resources/content/How-it-Works/Resource-Management-and-Caching.html",
+            "children": []
+          },
+          {
+            "label": "MVVM Architecture",
+            "path": "/resources/content/How-it-Works/MVVM-Architecture/index.html",
             "children": [
               {
-                "path": "/resources/content/05/06/01 View and its components.html",
+                "label": "MVVM Architecture",
+                "path": "/resources/content/How-it-Works/MVVM-Architecture/index.html",
+                "children": []
+              },
+              {
+                "label": "View and View Components",
+                "path": "/resources/content/How-it-Works/MVVM-Architecture/View-and-Components/index.html",
                 "children": [
-                  { "path": "/resources/content/05/06/01/01 View.html"}, 
-                  { "path": "/resources/content/05/06/01/02 Visual Components and Visual Styles.html"}, 
-                  { "path": "/resources/content/05/06/01/03 View Components.html"}
+                  {
+                    "label": "View and View Components",
+                    "path": "/resources/content/How-it-Works/MVVM-Architecture/View-and-Components/index.html",
+                    "children": []
+                  },
+                  {
+                    "label": "View",
+                    "path": "/resources/content/How-it-Works/MVVM-Architecture/View-and-Components/View.html",
+                    "children": []
+                  },
+                  {
+                    "label": "Visual Components and Layouts",
+                    "path": "/resources/content/How-it-Works/MVVM-Architecture/View-and-Components/Visual-Components-and-Layouts.html",
+                    "children": []
+                  },
+                  {
+                    "label": "View Components",
+                    "path": "/resources/content/How-it-Works/MVVM-Architecture/View-and-Components/View-Components.html",
+                    "children": []
+                  }
                 ]
-              }, 
-              { "path": "/resources/content/05/06/02 Models.html"}
+              },
+              {
+                "label": "Models",
+                "path": "/resources/content/How-it-Works/MVVM-Architecture/Models.html",
+                "children": []
+              }
+            ]
+          },
+          {
+            "label": "Debugging Tools",
+            "path": "/resources/content/How-it-Works/Debugging-Tools/index.html",
+            "children": [
+              {
+                "label": "Debugging tools",
+                "path": "/resources/content/How-it-Works/Debugging-Tools/index.html",
+                "children": []
+              },
+              {
+                "label": "Ajs Debugging Console",
+                "path": "/resources/content/How-it-Works/Debugging-Tools/Console.html",
+                "children": []
+              },
+              {
+                "label": "Logger",
+                "path": "/resources/content/How-it-Works/Debugging-Tools/Logger.html",
+                "children": []
+              }
             ]
           }
         ]
-      }, 
+      },
       {
-        "path": "/resources/content/06 Debugging tools.html",
+        "label": "Visal Studio Setup",
+        "path": "/resources/content/Visual-Studio-Setup/index.html",
         "children": [
-          { "path": "/resources/content/06/01 Logger.html"}, 
-          { "path": "/resources/content/06/02 Resource manager info.html"}
+          {
+            "label": "Visual Studio Solution Setup",
+            "path": "/resources/content/Visual-Studio-Setup/index.html",
+            "children": []
+          },
+          {
+            "label": "Application Developers",
+            "path": "/resources/content/Visual-Studio-Setup/Application-Developers.html",
+            "children": []
+          },
+          {
+            "label": "Contributors",
+            "path": "/resources/content/Visual-Studio-Setup/Contributors.html",
+            "children": []
+          }
         ]
-      }, 
-      { "path": "/resources/content/97 Special thanks.html"}, 
-      { "path": "/resources/content/98 License.html"}, 
-      { "path": "/resources/content/99 Changelog.html"}
+      },
+      {
+        "label": "Publishing Applications",
+        "path": "/resources/content/Publishing-Applications/index.html",
+        "children": [
+          {
+            "label": "Publishing Applications",
+            "path": "/resources/content/Publishing-Applications/index.html",
+            "children": []
+          },
+          {
+            "label": "Web Server Requirements and Configuration",
+            "path": "/resources/content/Publishing-Applications/Web-Server-Requirements-and-Configuration.html",
+            "children": []
+          }
+        ]
+      },
+      {
+        "label": "Special Thanks",
+        "path": "/resources/content/Special-thanks.html",
+        "children": []
+      },
+      {
+        "label": "Change Log",
+        "path": "/resources/content/Changelog.html",
+        "children": []
+      },
+      {
+        "label": "License",
+        "path": "/resources/content/License.html",
+        "children": []
+      }
     ]
   }
 }
