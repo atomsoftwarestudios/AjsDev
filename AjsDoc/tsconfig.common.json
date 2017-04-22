@@ -1,6 +1,7 @@
 {
   // TypeScript 2.1 compiler configuration
   // COMMON CONFIGURATION (DEBUG/RELEASE)
+  "$schema": "http://json.schemastore.org/tsconfig#",
 
   "compilerOptions": {
     "declaration": true,
@@ -29,6 +30,7 @@
   ],
   "exclude": [
     "./bin/**/*",
+    "./buildtools/**/*",
     "./wwwroot/**/*"
   ]
 
