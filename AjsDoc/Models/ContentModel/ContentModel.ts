@@ -226,10 +226,9 @@ namespace AjsDoc.Models.ContentModel {
             } else {
                 article.parent = parent;
                 article.key = key;
-                article.label = this.__getLabel(article);
+                article.label = article.label || "";
                 article.navPath = parent && parent !== null ? parent.navPath + "/" : "";
                 article.navPath += article.label.replace(/ /g, "-");
-                article.label = article.label.substr(article.label.indexOf(" ") + 1);
 
                 if (article.children instanceof Array) {
                     for (let i: number = 0; i < article.children.length; i++) {
@@ -238,27 +237,6 @@ namespace AjsDoc.Models.ContentModel {
                 }
             }
 
-        }
-
-        /**
-         * Parses the article path and returns only the article name from it (the last path part without a extension)
-         * @param article Article which's path has to be parsed
-         */
-        private __getLabel(article: DTO.IArticleData): string {
-
-            let path: string;
-            let label: string;
-
-            if (article.hasOwnProperty("path")) {
-                path = (article as DTO.IArticleData).path;
-            } else {
-                return "";
-            }
-
-            label = path.substr(path.lastIndexOf("/") + 1);
-            label = label.substr(0, label.lastIndexOf("."));
-
-            return label;
         }
 
         /**
@@ -280,7 +258,7 @@ namespace AjsDoc.Models.ContentModel {
                 items: [],
             };
 
-            if (article.parent !== null && article.parent) {
+            /*if (article.parent !== null && article.parent) {
                 menu.items.push({
                     key: article.navPath,
                     label: article.label,
@@ -289,14 +267,14 @@ namespace AjsDoc.Models.ContentModel {
                     expandable: false,
                     menuLabel: true
                 });
-            }
+            }*/
 
             for (let i: number = 0; i < article.children.length; i++) {
                 let item: Components.IAjsDocMenuItemComponentState = {
                     key: article.navPath,
                     label: article.children[i].label,
                     path: article.children[i].navPath,
-                    selected: article.children[i].navPath === ("/" + navPath),
+                    selected: (article.navPath === ("/" + navPath) && i === 0) || article.children[i].navPath === ("/" + navPath),
                     expandable: article.children[i].children instanceof Array && article.children[i].children.length > 0,
                     menuLabel: false
                 };
@@ -388,24 +366,16 @@ namespace AjsDoc.Models.ContentModel {
                 navPath = "/" + navPath;
             }
 
-            let found: boolean = false;
-            while (article !== null && !found) {
-                if (article.navPath === navPath) {
-                    found = true;
+            let nodeStack: DTO.IArticleData[] = [article];
+            article = null;
+
+            while (nodeStack.length > 0) {
+                let a: DTO.IArticleData = nodeStack.pop();
+                if (a.navPath === navPath) {
+                    article = a;
                     break;
-                } else {
-                    let newArticle: DTO.IArticleData = null;
-                    if (article.children) {
-                        for (let i: number = 0; i < article.children.length; i++) {
-                            let artPath: string = article.children[i].navPath;
-                            if (navPath.substr(0, artPath.length) === artPath) {
-                                newArticle = article.children[i];
-                                break;
-                            }
-                        }
-                    }
-                    article = newArticle;
                 }
+                nodeStack = nodeStack.concat(a.children);
             }
 
             if (article === null) {
