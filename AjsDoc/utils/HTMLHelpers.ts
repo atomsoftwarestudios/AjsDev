@@ -163,7 +163,7 @@ namespace AjsDoc.Utils {
 
             let iTags: IDocTag[] = [];
 
-            let tags: RegExpMatchArray = text.match(/#[a-zA-Z]*[\s]?\[[a-zA-Z\s\-\+_0-9]*\]\s*\{[a-zA-Z0-9\-._~:/?#\[\]@!$&%'()*+,;=]*\}/gm);
+            let tags: RegExpMatchArray = text.match(/#[a-zA-Z]*[\s]?\[[a-zA-Z0-9\s\-\+_\-\.]*\]\s*\{[a-zA-Z0-9\-._~:/?#\[\]@!$&%'()*+,;=]*\}/gm);
 
             if (tags === undefined || tags === null || tags.length === 0) {
                 return iTags;
