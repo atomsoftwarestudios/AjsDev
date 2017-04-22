@@ -30,8 +30,8 @@ namespace AjsDoc {
     Ajs.configureFramework = (config: Ajs.IAjsConfig): void => {
 
         config.redirections = [
-            { path: "", target: "/01-Introduction" },
-            { path: "/", target: "/01-Introduction" },
+            { path: "", target: "/Introduction" },
+            { path: "/", target: "/Introduction" },
             { path: "/ref", target: "/ref/" },
             { path: "/ref/", target: "/ref/" }
         ];
@@ -89,7 +89,10 @@ namespace AjsDoc {
                 "/resources/examples/ajs.boot.config.ts",
                 "/resources/examples/app_init.ts",
                 "/resources/examples/viewComponent_placeholder.ts",
-                "/resources/charts/appcache.svg"
+                "/resources/charts/ajs-boot.svg",
+                "/resources/charts/appcache.svg",
+                "/resources/charts/index-load.svg",
+                "/resources/charts/mvvm.svg"
             ]
         };
 
