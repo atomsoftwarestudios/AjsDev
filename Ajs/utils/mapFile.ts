@@ -87,9 +87,6 @@ namespace Ajs.Utils {
                         if (mapFile.length > 1) {
                             mapFileUrl = mapFile[1].split("=")[1];
                         }
-                        let anchor: HTMLAnchorElement = document.createElement("a");
-                        anchor.href = srcUrl;
-                        mapFileUrl = anchor.pathname.substr(0, anchor.pathname.lastIndexOf("/") + 1) + mapFileUrl;
 
                         getFile(mapFileUrl, (content: string) => {
                             let smc: SourceMap.SourceMapConsumer = new SourceMap.SourceMapConsumer(content);
