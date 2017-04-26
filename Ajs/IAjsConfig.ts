@@ -39,6 +39,13 @@ namespace Ajs {
                 logger: Ajs.Dbg.Modules.Logger.ILoggerConfig;
             }
         };
+        
+        /**
+         * Name of the indexed db used internally within the Ajs
+         * Ajs can use the IndexedDb feature to store resources as it is less limited on the size
+         * compared to local / session storages
+         */
+        indexedDbName?: string;
 
         /**
          * Configuration of the resource manager
