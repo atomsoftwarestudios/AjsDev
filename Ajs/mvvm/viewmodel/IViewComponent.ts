@@ -29,9 +29,9 @@ namespace Ajs.MVVM.ViewModel {
 
         readonly componentViewId: number;
         ajs: IViewComponentProperties<any, any>;
-        configure(...services: any[]): void;
-        initialize(): void;
-        destroy(): void;
+        configure(...services: any[]): Promise<void>;
+        initialize(): Promise<void>;
+        destroy(): Promise<void>;
         setState(state: any): void;
         clearState(render: boolean): void;
         render(parentElement: HTMLElement, clearStateChangeOnly: boolean, attributes?: NamedNodeMap): HTMLElement;

@@ -36,7 +36,9 @@ namespace Ajs.MVVM.ViewModel {
             component: CtorTyped<IViewComponent>,
             dependencies: ConfigParams): IViewComponentManager;
 
-        createViewComponent(name: string, id: string, parentComponent: IViewComponent, state?: IViewComponentState): IViewComponent;
+        navigationNotifier: Ajs.Events.Notifier<IViewComponentManager>;
+
+        createViewComponent(name: string, id: string, parentComponent: IViewComponent, state?: IViewComponentState): Promise<IViewComponent>;
 
         removeComponentInstance(component: IViewComponent): void;
 
@@ -50,7 +52,7 @@ namespace Ajs.MVVM.ViewModel {
 
         getFirstComponentInstance<T extends IViewComponent>(component: typeof ViewComponent, id?: string, userKey?: string): T;
 
-        setRootViewComponentName(name: string): void;
+        setRootViewComponent(name: string): Promise<void>;
 
         onNavigate(): void;
     }

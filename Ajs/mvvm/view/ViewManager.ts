@@ -21,8 +21,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-///<reference path="../../doc/DocumentManager.ts" />
-///<reference path="../viewmodel/ViewComponentManager.ts" />
+///<reference path="../../Doc/DocumentManager.ts" />
+///<reference path="../ViewModel/ViewComponentManager.ts" />
 
 /**
  * View namespace is dedicated to view and its exceptions only
@@ -68,7 +68,7 @@ namespace Ajs.MVVM.View {
 
         /** Root view component currently in use */
         private __rootViewComponent: Ajs.MVVM.ViewModel.IViewComponent;
-        public set rootViewComponent(value: Ajs.MVVM.ViewModel.IViewComponent) { this._rootUpdated(value); }
+        public set rootViewComponent(value: Ajs.MVVM.ViewModel.IViewComponent) { this.__rootViewComponent = value; }
 
         /** Specifies the root component for the current state change. Component is then rendered (including its children) if neccessary. */
         private __stateChangeRootComponent: Ajs.MVVM.ViewModel.IViewComponent;
@@ -78,10 +78,6 @@ namespace Ajs.MVVM.View {
 
         /** Used for rendering of view components after the state change and applying the changes to the render target */
         private __shadowDom: Document;
-
-        /** Notifies subscribers (usually view components) the Navigation event occured */
-        private __navigationNotifier: Ajs.Events.Notifier<IViewManager>;
-        public get navigationNotifier(): Ajs.Events.Notifier<IViewManager> { return this.__navigationNotifier; }
 
         /** Notifies subcribers (usually view components) the rendering of the component is finished */
         private __renderDoneNotifier: Ajs.Events.Notifier<IViewManager>;
@@ -109,7 +105,6 @@ namespace Ajs.MVVM.View {
             Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.mvvm.view", this, "", documentManager);
 
             // instantiate notifiers
-            this.__navigationNotifier = new Ajs.Events.Notifier<IViewManager>();
             this.__renderDoneNotifier = new Ajs.Events.Notifier<IViewManager>();
 
             // store the document manager
@@ -130,10 +125,11 @@ namespace Ajs.MVVM.View {
         }
 
         /**
-         * Called from router when navigation occurs but root component remains the same
+         * Cleans the target document before the new root component is set (called from VCM)
          */
-        public onNavigate(): void {
-            this.__navigationNotifier.notify(this);
+        public cleanTargetDocument(): void {
+            // clean the target document (styles + render target)
+            this.__documentManager.clean(this.__documentManager.renderTarget);
         }
 
         /**
@@ -338,40 +334,6 @@ namespace Ajs.MVVM.View {
 
             Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
 
-        }
-
-        /**
-         * Called internally when the view root component is updated (usually initiated by the router)
-         * <p>
-         * Performs the target document clean up and initiates a state change and initial rendering of the rootview component
-         * including its children
-         * </p>
-         * @param rootComponentName
-         */
-        protected _rootUpdated(rootViewComponent: Ajs.MVVM.ViewModel.IViewComponent): void {
-
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
-
-            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
-                "Root component updated: " + rootViewComponent);
-
-            // clean the target document including the render target
-            this.__documentManager.clean(this.__documentManager.renderTarget);
-
-            // destroy the previous root component (including all its children)
-            if (this.__rootViewComponent !== null) {
-                this.__rootViewComponent.destroy();
-            }
-
-            this.__rootViewComponent = rootViewComponent;
-
-            // hopefully the root component suscribed navigated event
-            this.__navigationNotifier.notify(this);
-
-            // render
-            this.render(this.__rootViewComponent);
-
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
         }
 
     }

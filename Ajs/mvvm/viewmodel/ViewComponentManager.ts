@@ -57,6 +57,12 @@ namespace Ajs.MVVM.ViewModel {
         private __componentDependencies: IViewComponentDependencies[];
         private __componentInstances: IInstancedViewComponentsCollection;
 
+        private __rootViewComponent: IViewComponent;
+
+        /** Notifies subscribers (usually view components) the Navigation event occured */
+        private __navigationNotifier: Ajs.Events.Notifier<IViewComponentManager>;
+        public get navigationNotifier(): Ajs.Events.Notifier<IViewComponentManager> { return this.__navigationNotifier; }
+
         public constructor(
             container: DI.IContainer,
             documentManager: Doc.IDocumentManager,
@@ -67,9 +73,12 @@ namespace Ajs.MVVM.ViewModel {
             this.__documentManager = documentManager;
             this.__templateManager = templateManager;
             this.__viewManager = viewManager;
-            this.__componentInstances = {};
             this.__components = {};
             this.__componentDependencies = [];
+            this.__componentInstances = {};
+            this.__rootViewComponent = null;
+
+            this.__navigationNotifier = new Ajs.Events.Notifier<IViewComponentManager>();
 
             // to review
             if (Ajs.viewComponentsToRegister instanceof Array) {
@@ -107,11 +116,11 @@ namespace Ajs.MVVM.ViewModel {
          * @param parentComponent
          * @param state
          */
-        public createViewComponent(
+        public async createViewComponent(
             name: string,
             id: string,
             parentComponent: IParentViewComponent,
-            state?: IViewComponentState): IViewComponent {
+            state?: IViewComponentState): Promise<IViewComponent> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
@@ -169,10 +178,10 @@ namespace Ajs.MVVM.ViewModel {
             let dependencies: any[] = this.__resolveComponentDependencies(viewComponent);
 
             // configure component with resolved dependencies
-            viewComponent.configure.apply(viewComponent, dependencies);
+            await viewComponent.configure.apply(viewComponent, dependencies);
 
             // initialize constructed and configured component
-            viewComponent.initialize();
+            await viewComponent.initialize();
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
 
@@ -293,19 +302,42 @@ namespace Ajs.MVVM.ViewModel {
             return null;
         }
 
-        public setRootViewComponentName(name: string): void {
+        public async setRootViewComponent(name: string): Promise<void> {
 
-            // create the view component including its component tree with the default state
-            this.__viewManager.rootViewComponent = this.createViewComponent(
-                name,
-                "rootViewComponent",
-                null
-            );
+            // at least Visual component must exist for given root component name
+            let visualComponent: Templating.IVisualComponent;
+            visualComponent = this.__templateManager.getVisualComponent(name);
 
+            // throw error if it does not 
+            if (visualComponent === null) {
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.mvvm.view", this,
+                    "Visual component is not defined (probably the appropriate template is not loaded): " + name);
+                throw new VisualComponentNotRegisteredException(name);
+            }
+
+            // destroy the previous root component (including all its children)
+            if (this.__rootViewComponent !== null) {
+                this.__rootViewComponent.destroy();
+            }
+
+            // prepare target for new VC
+            this.__viewManager.cleanTargetDocument();
+
+            // create VC and store root component locally
+            this.__rootViewComponent = await this.createViewComponent(name, "rootViewComponent", null);
+
+            // update view manager root component
+            this.__viewManager.rootViewComponent = this.__rootViewComponent;
+
+            // call onNavigate
+            this.__navigationNotifier.notify(this);
+
+            // render
+            this.__viewManager.render(this.__rootViewComponent);
         }
 
         public onNavigate(): void {
-            this.__viewManager.onNavigate();
+            this.__navigationNotifier.notify(this);
         }
 
         /**
@@ -314,14 +346,13 @@ namespace Ajs.MVVM.ViewModel {
          */
         private __registerComponent(componentConstructor: CtorTyped<IViewComponent>): void {
             if (componentConstructor instanceof Function) {
-                let componentName: string = "";
-                let parseName: string[] = /^function\s+([\w\$]+)\s*\(/.exec(componentConstructor.toString());
-                componentName = parseName ? parseName[1] : "";
-                componentName = componentName.toUpperCase();
+
+                let componentName: string = Utils.getClassName(componentConstructor).toUpperCase();
 
                 if (this.__components[componentName] === undefined) {
                     this.__components[componentName] = componentConstructor;
                 }
+
             }
         }
 

@@ -29,11 +29,11 @@ namespace Ajs.MVVM.View {
 
     export interface IViewManager {
 
-        readonly navigationNotifier: Events.INotifier<IViewManager>;
+        //readonly navigationNotifier: Events.INotifier<IViewManager>;
         readonly renderDoneNotifier: Events.INotifier<IViewManager>;
         getNewComponentId(): number;
         rootViewComponent: ViewModel.IViewComponent;
-        onNavigate(): void;
+        cleanTargetDocument(): void;
         stateChangeBegin(viewComponent: ViewModel.IViewComponent): void;
         stateChangeEnd(viewComponent: ViewModel.IViewComponent): void;
         notifyParentsChildrenStateChange(parentViewComponent: ViewModel.IParentViewComponent);
