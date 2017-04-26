@@ -27,6 +27,8 @@ namespace Ajs.Resources {
 
     export interface IResourceRequest extends XMLHttpRequest {
         resourceRequestData: IResourceRequestData;
+        resolve: (data: IResourceResponseData) => void;
+        reject: (reason: any) => void;
     }
 
 }

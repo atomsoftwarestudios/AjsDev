@@ -27,15 +27,20 @@ namespace Ajs.Resources {
 
     /** Resource manager configuration */
     export interface IResourceManagerConfig {
+
         /** Maximum amount of the memory to be used by the resources in the StoreMemory */
-
         memoryCacheSize: number;
+
         /** Maximum amount of the memory to be used by the resources in the SessionStorage */
-
         sessionCacheSize: number;
-        /** Maximum amount of the memory to be used by the resources in the LocalStorage */
 
+        /** Maximum amount of the memory to be used by the resources in the LocalStorage */
         localCacheSize: number;
+
+        /** Maximum amount of the memory to be used by the resources in the LocalStorage */
+        indexedBbCacheSize: number;
+
+
         /** If resources are updated (i.e.) by new release the cache can be invalidated
          *  by setting this value to the same date as the resource release date
          */

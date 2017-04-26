@@ -28,8 +28,8 @@ namespace Ajs.Resources {
     /** Managed resource descriptor */
     export interface IManagedResource {
         url: string;
-        storageType: STORAGE_TYPE;
-        cachePolicy: CACHE_POLICY;
+        storageType: StorageType;
+        cachePolicy: CachePolicy;
     }
 
 }

@@ -30,15 +30,15 @@ namespace Ajs.Resources {
         /** Unique resource locator */
         url: string;
         /** Type of the resource */
-        type: RESOURCE_TYPE;
+        type: ResourceType;
         /** Resource data */
         data: any;
         /** Indicates if the resource is cached in one of stores */
         cached: boolean;
         /** Storage used to store the resource */
-        storage: AjsStorage;
+        storage: Storages.IAjsStorage;
         /** Cache policy */
-        cachePolicy: CACHE_POLICY;
+        cachePolicy: CachePolicy;
         /** Last resource modification time (in the storage, not on the server) */
         lastModified: Date;
     }

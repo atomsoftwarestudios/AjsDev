@@ -35,11 +35,6 @@ namespace Ajs.Resources {
      */
     export class ResourceLoader {
 
-        public constructor() {
-            Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.resources", this);
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
-        }
-
         /**
          * Initiates loading of the resource
          * @param loadEndHandler Handler to be called when the resource loading finishes
@@ -48,89 +43,83 @@ namespace Ajs.Resources {
          * @param userData User data object to be passed to the handler
          * @param lastModified Information about resource last modification date/time
          */
-        public loadResource(url: string, isBinary: boolean, lastModified?: Date): Promise<IResourceResponseData> {
+        public async loadResource(url: string, isBinary: boolean, lastModified?: Date): Promise<IResourceResponseData> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRES, this, LOG_REQUESTING_RESOURCE + url, isBinary, lastModified);
 
-            let response: Promise<IResourceResponseData> = new Promise<IResourceResponseData>(
-                (resolve: (data: IResourceResponseData) => void, reject: (reason?: any) => void) => {
+            // prepare data for the loader
+            lastModified = lastModified || Ajs.Utils.minDate();
 
-                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                        "Requesting [GET] resource '" + url + "'", isBinary, lastModified);
+            let requestData: IResourceRequestData = {
+                url: url,
+                isBinary: isBinary,
+                lastModified: lastModified,
+                startTime: new Date(),
+            };
 
-                    // prepare data for the loader
-                    lastModified = lastModified || Ajs.Utils.minDate();
-
-                    let requestData: IResourceRequestData = {
-                        url: url,
-                        isBinary: isBinary,
-                        lastModified: lastModified,
-                        startTime: new Date(),
-                        loadEndHandler: (responseData: IResourceResponseData): void => {
-                            resolve(responseData);
-                        }
-                    };
-
-                    this._loadResource(requestData);
-
-                }
-            );
-
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
-
-            return response;
+            return this.__loadResource(requestData);
         }
 
         /**
          * Contructs the XHR, registers readystatechange listener and sends GET request it to the server
          * @param requestData Request data
          */
-        protected _loadResource(requestData: IResourceRequestData): void {
+        private __loadResource(requestData: IResourceRequestData): Promise<IResourceResponseData> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            return new Promise<IResourceResponseData>(
+                (resolve: (data: IResourceResponseData) => void, reject: (reason: any) => void) => {
 
-            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                "Initializing the XHR");
+                    Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRES, this, LOG_XHR_INIT);
 
-            // setup the xhr
-            let xhr: IResourceRequest = new XMLHttpRequest() as IResourceRequest;
+                    let xhr: IResourceRequest = new XMLHttpRequest() as IResourceRequest;
+                    xhr.open("GET", encodeURI(requestData.url));
+                    xhr.resourceRequestData = requestData;
 
-            xhr.open("GET", encodeURI(requestData.url));
-            xhr.resourceRequestData = requestData;
+                    if (requestData.isBinary) {
+                        xhr.responseType = "arraybuffer";
+                    }
 
-            if (requestData.isBinary) {
-                xhr.responseType = "arraybuffer";
-            }
+                    if (requestData.lastModified !== null) {
+                        xhr.setRequestHeader("If-Modified-Since", Ajs.Utils.ie10UTCDate(requestData.lastModified));
+                    }
 
-            // ie9 does not support loadend event
-            xhr.addEventListener("readystatechange", (event: Event) => {
-                this._xhrStatusChanged(event);
-            });
+                    xhr.addEventListener("readystatechange", (e: Event) => {
+                        this._xhrStatusChanged(e, resolve);
+                    });
 
-            if (requestData.lastModified !== null) {
-                xhr.setRequestHeader("If-Modified-Since", Ajs.Utils.ie10UTCDate(requestData.lastModified));
-            }
+                    /* We don't care about errors here, its solved in above layer in a different way
 
-            // send request to the server
-            xhr.send();
+                    xhr.addEventListener("error", (e: Event) => {
+                        reject(e);
+                    });
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
+                    xhr.addEventListener("abort", (e: Event) => {
+                        reject(e);
+                    });
+
+                    xhr.addEventListener("timeout", (e: Event) => {
+                        reject(e);
+                    });
+                    */
+
+                    // send request to the server
+                    xhr.send();
+                }
+            );
 
         }
 
         /**
-         * Called when XHR changes the loading status
+         * Called when XHR changes the loading status. Resolves or rejects the promise.
          * @param e XHR State change event data
          */
-        protected _xhrStatusChanged(e: Event): void {
-
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+        protected _xhrStatusChanged(e: Event, resolve: (data: IResourceResponseData) => void): void {
 
             let xhr: IResourceRequest = e.target as IResourceRequest;
             let requestData: IResourceRequestData = xhr.resourceRequestData;
 
-            Ajs.Dbg.log(Dbg.LogType.Info, 3, "ajs.resources", this,
-                "Url: " + xhr.resourceRequestData.url + ", XHR readyState: " + xhr.readyState);
+            Ajs.Dbg.log(Dbg.LogType.Info, 3, LOG_AJSRES, this,
+                LOG_XHR_READY_STATE + xhr.readyState + LOG_XHR_READY_STATE_URL + xhr.resourceRequestData.url);
 
             // if completed
             if (xhr.readyState === xhr.DONE) {
@@ -143,9 +132,9 @@ namespace Ajs.Resources {
                     endTime: new Date()
                 };
 
-                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                    "XHR for '" + requestData.url + "' ready in " + (responseData.endTime.getTime() - responseData.startTime.getTime()) +
-                    "ms with " + xhr.status + " " + xhr.statusText);
+                Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRES, this,
+                    LOG_XHR_FOR + requestData.url + LOG_XHR_RDY_IN + (responseData.endTime.getTime() - responseData.startTime.getTime()) +
+                    LOG_XHR_MS + xhr.status + " " + xhr.statusText);
 
                 // for text data
                 // index.html should never pass the resource manager so if it passes
@@ -154,7 +143,7 @@ namespace Ajs.Resources {
                     let tmp: string = responseData.data.substr(0, 50);
                     if (tmp.indexOf("<!--offline-->") !== -1) {
                         responseData.httpStatus = 304;
-                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Offline mode detected, index.html served");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRES, this, LOG_XHR_OFFLINE_DETECTED);
                     }
                 }
 
@@ -171,24 +160,13 @@ namespace Ajs.Resources {
                     }
                     if (str.indexOf("<!--offline-->") !== -1) {
                         responseData.httpStatus = 304;
-                        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Offline mode detected, index.html served");
+                        Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRES, this, LOG_XHR_OFFLINE_DETECTED);
                     }
                 }
 
-                // call the handler
-                if (requestData.loadEndHandler instanceof Function) {
-
-                    requestData.loadEndHandler(responseData);
-
-                } else {
-
-                    Ajs.Dbg.log(Dbg.LogType.Error, 0, "Load end handler is not function", this);
-                    throw new LoadEndHandlerIsNotFunctionException();
-
-                }
+                // resolve the request promise
+                resolve(responseData);
             }
-
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
         }
 

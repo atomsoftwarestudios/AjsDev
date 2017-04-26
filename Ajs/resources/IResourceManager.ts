@@ -49,22 +49,23 @@ namespace Ajs.Resources {
 
         readonly managedResources: IManagedResource[];
 
+        initialize(): Promise<void>;
         registerManagedResources(managedResources: IManagedResource[]): void;
-        getCachedResource(url: string, storageType: STORAGE_TYPE): ICachedResource;
-        setCachedResource(url: string, data: any, storageType: STORAGE_TYPE, cachePolicy: CACHE_POLICY): void;
-        removeCachedResource(url: string, storageType: STORAGE_TYPE): void;
-        cleanCaches(): void;
+        getCachedResource(url: string, storageType: StorageType): Promise<Storages.ICachedResource>;
+        setCachedResource(url: string, data: any, storageType: StorageType, cachePolicy: CachePolicy): Promise<void>;
+        removeCachedResource(url: string, storageType: StorageType): Promise<void>;
+        cleanCaches(): Promise<void>;
         getResource(
             url: string,
-            storageType: STORAGE_TYPE,
-            cachePolicy?: CACHE_POLICY,
-            loadingPreference?: LOADING_PREFERENCE,
+            storageType: StorageType,
+            cachePolicy?: CachePolicy,
+            loadingPreference?: LoadingPreference,
             runScript?: boolean): Promise<IResource>;
         getMultipleResources(
             urls: string[],
-            storageType: STORAGE_TYPE,
-            cachePolicy?: CACHE_POLICY,
-            loadingPreference?: LOADING_PREFERENCE,
+            storageType: StorageType,
+            cachePolicy?: CachePolicy,
+            loadingPreference?: LoadingPreference,
             runScripts?: boolean): Promise<IResource[]>;
 
     }

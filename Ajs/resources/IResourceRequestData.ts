@@ -31,7 +31,6 @@ namespace Ajs.Resources {
         isBinary: boolean;
         lastModified: Date;
         startTime: Date;
-        loadEndHandler: IResourceLoadEndHandler;
     }
 
 }
