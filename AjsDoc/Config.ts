@@ -49,17 +49,15 @@ namespace AjsDoc {
 
     Ajs.configureApp = (config: IAjsDocBrowserConfig): void => {
 
-        // const APP_RESOURCES_LOADING_PREFERENCE: ajs.resources.LOADING_PREFERENCE = ajs.resources.LOADING_PREFERENCE.SERVER;
-        const APP_RESOURCES_LOADING_PREFERENCE: Ajs.Resources.LOADING_PREFERENCE = Ajs.Resources.LOADING_PREFERENCE.CACHE;
-
         config.modelInitializationTimeout = 10000;
+
         config.headerLabel = "Ajs Framework";
         config.headerDescription = "Developer's guide";
 
         config.dataStorageOptions = {
-            storageType: Ajs.Resources.STORAGE_TYPE.LOCAL,
-            cachePolicy: Ajs.Resources.CACHE_POLICY.PERMANENT,
-            loadingPreference: APP_RESOURCES_LOADING_PREFERENCE
+            storageType: Ajs.Resources.StorageType.IndexedDb,
+            cachePolicy: Ajs.Resources.CachePolicy.Permanent,
+            loadingPreference: Ajs.Resources.LoadingPreference.Cache
         };
 
         config.dataSources = {
@@ -73,8 +71,10 @@ namespace AjsDoc {
             charts: "/resources/charts"
         };
 
+        config.resourcesLoadingPreference = Ajs.Resources.LoadingPreference.Cache;
+
         config.resources = {
-            localPermanent: [
+            indexedDbPermanent: [
                 "/js/ajsdoc.lib.js",
                 "/resources/css/hljsvs.css",
                 "/resources/img/ajs-logo.png",
@@ -97,7 +97,7 @@ namespace AjsDoc {
         };
 
         config.templates = {
-            localPermanent: [
+            indexedDbPermanent: [
                 "/resources/templates/ajsdoc.html"
             ]
         };

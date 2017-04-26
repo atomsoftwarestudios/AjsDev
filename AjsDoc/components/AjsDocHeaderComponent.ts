@@ -41,7 +41,7 @@ namespace AjsDoc.Components {
         protected __headerLabel: string;
         protected __headerDescription: string;
 
-        protected _onConfigure(headerLabel: string, headerDescription: string) {
+        protected async _onConfigure(headerLabel: string, headerDescription: string): Promise<void> {
             this.__headerLabel = headerLabel;
             this.__headerDescription = headerDescription;
         }

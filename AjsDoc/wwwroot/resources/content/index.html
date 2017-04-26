@@ -47,14 +47,21 @@
 
     <p>
         AJS (pronounce /aɪs/) is JavaScript MVVM Single Page Application framework written in TypeScript focused to the rapid web browser application development, team role separation, offline
-        web applications and great user experience. It is developed with TypeScript (currently 2.5.1) with transpillation target ECMA5 and focusing standard web browsers.
+        web applications and great user experience. It is developed with TypeScript (currently 2.2.1) with transpillation target ECMA5. It is developed in order to support standard web browsers
+        starting with IE10.
     </p>
 
     <p>
-        The code is written in the C# way so classes and interfaces are split to separate files and the design of the code overall is similar to the C#. Also, the MVVM concept has its inspiration
-        in "Windows Forms" or the Borland "Delphi" concept (its probably more similiar to WPF as it is using separate language for template definition) except the data binding which is not supported
-        now. The view state is managed in the React way but it is extended about templating in separate HTML files instead of JSXs. Ofcourse, everything is adopted to the Web environment so all the
-        Web and Browser functionalities known to web users will stay the same.
+        Ajs is provided with set of development tools focusing the Visual Studio (not Code, full one), currently in version 2015, support for VS 2017 is planned soon. This set of tools includes
+        project and item templates, WebApp packer simplifying and speeding up the development process, documentation generator and documentation viewer (the same one you are looking to now).
+        All tools are designed to add missing features for VS or make the development faster and easier. Also, setting up the development environment is easy and fast with this set of tools.
+    </p>
+
+    <p>
+        The Ajs Framework code is written in the C# way so classes and interfaces are split to separate files and the design of the code overall is similar to the C#. Also, the MVVM concept has
+        its inspiration in "Windows Forms" or the Borland "Delphi" concept (its probably more similiar to WPF as it is using separate language for template definition) except the data binding which
+        is not supported now. The view state is managed in the React way but it is extended about templating in separate HTML files instead of JSXs. Ofcourse, everything is adopted to the Web environment
+        so all the Web and Browser functionalities known to web users will stay the same.
     </p>
 
     <p>
@@ -63,8 +70,11 @@
     </p>
 
     <p>
-        Set of development tools will grow as there will be need for it. Everything will be focused on the Visual Studio and MS Build and the Windows platform but another fork to support other
-        development tools, IDEs and platforms can be maintained by the community.
+        Issues, changelog and project management of the Ajs Framework project can be found at <a href="https://github.com/atomsoftwarestudios/Ajs">GitHub</a>
+    </p>
+    <p>
+        Until the Ajs Framework version 1.0.0 will be released the source code for complete set of tools including examples is managed in <a href="https://github.com/atomsoftwarestudios/AjsDev">GitHub AjsDev</a>
+        repository.
     </p>
 
     <!--
@@ -129,6 +139,16 @@
     </div>
 
     <div class="feature">
+        <h4>Services and Dependency Injection container</h4>
+
+        <ul>
+            <li>Lightweight, configurable DI container</li>
+            <li>Ajs Components designed as injectable services</li>
+            <li>Easy custom service development and injection</li>
+        </ul>
+    </div>
+
+    <div class="feature">
         <h4>Navigation &amp; Routing &amp; Redirection management</h4>
 
         <ul>
@@ -154,10 +174,11 @@
         <h4>MVVM Architecture</h4>
 
         <ul>
-            <li>Model View View Model architecture</li>
-            <li>Innovative approach to Veiw with the Visual and View Components</li>
-            <li>View Component (ViewModel) drives the flow through the application</li>
-            <li>Models fully controllable by developers</li>
+            <li>Standard, Model View View Model architecture</li>
+            <li>No data-binding at this time</li>
+            <li>View/Components/Models injected automatically based on the HTML template</li>
+            <li>Configurable dependencies of the ViewModel on models</li>
+            <li>Simple, injectable models</li>
         </ul>
     </div>
 
@@ -206,9 +227,9 @@
         <h4>Development tools</h4>
 
         <ul>
-            <li>
-                <strong>Under development</strong>
-            </li>
+            <li>AjsWebApp - Configurable reach application builder for Visual Studio</li>
+            <li>Solution, project and item templates speeding up the solution built-up</li>
+            <li>Documentation generator with Documentation browser</li>
         </ul>
     </div>
 
@@ -216,7 +237,7 @@
     <div class="clear"></div>
 
     <p>
-        See <a href="/02-Design-requirements" onclick="return Ajs.Framework.navigator.linkClicked(event);">Design requirements</a> section for more details under which conditions it was developed and which considerations were made.
+        See <a href="/Design-Requirements">Design requirements</a> section for more details under which conditions it was developed and which considerations were made.
     </p>
 
 </div>

@@ -50,24 +50,24 @@ namespace AjsDoc.Components {
         public guides: boolean;
         public references: boolean;
 
-        protected _navigatedListener: Ajs.Events.IListener<Ajs.MVVM.View.ViewManager>;
+        protected _navigatedListener: Ajs.Events.IListener<Ajs.MVVM.ViewModel.IViewComponentManager>;
 
         protected _onDefaultState(): IAjsDocContextSwitcherState {
             return this._prepareState();
         }
 
-        protected _onConfigure(stateManager: Ajs.State.IStateManager): void {
+        protected async _onConfigure(stateManager: Ajs.State.IStateManager): Promise<void> {
             this.__stateManager = stateManager;
         }
 
-        protected _onInitialize(): void {
+        protected async _onInitialize(): Promise<void> {
 
-            this._lastGuidePath = this.__stateManager.getSessionState(sessionStateGuidePath);
+            this._lastGuidePath = await this.__stateManager.getSessionState(sessionStateGuidePath);
             if (this._lastGuidePath === null) {
                 this._lastGuidePath = "";
             }
 
-            this._lastReferencePath = this.__stateManager.getSessionState(sessionStateReferencePath);
+            this._lastReferencePath = await this.__stateManager.getSessionState(sessionStateReferencePath);
             if (this._lastReferencePath === null) {
                 this._lastReferencePath = "ref";
             }
@@ -77,11 +77,11 @@ namespace AjsDoc.Components {
                 return true;
             };
 
-            this.ajs.viewManager.navigationNotifier.subscribe(this._navigatedListener);
+            this.ajs.viewComponentManager.navigationNotifier.subscribe(this._navigatedListener);
         }
 
-        protected _finalize(): void {
-            this.ajs.viewManager.navigationNotifier.unsubscribe(this._navigatedListener);
+        protected async _finalize(): Promise<void> {
+            this.ajs.viewComponentManager.navigationNotifier.unsubscribe(this._navigatedListener);
         }
 
         protected _prepareState(): IAjsDocContextSwitcherState {

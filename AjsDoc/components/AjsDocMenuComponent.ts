@@ -75,9 +75,9 @@ namespace AjsDoc.Components {
         private __previousRefNode: atsdoc.IATsDocNode;
         private __previousArticle: DTO.IArticleData;
 
-        protected _onConfigure(
+        protected async _onConfigure(
             programModel: Models.ProgramModel.IProgramModel,
-            contentModel: Models.ContentModel.IContentModel): void {
+            contentModel: Models.ContentModel.IContentModel): Promise<void> {
 
             this.__programModel = programModel;
             this.__contentModel = contentModel;
@@ -86,7 +86,7 @@ namespace AjsDoc.Components {
             this.__contentModel.initialize();
         }
 
-        protected _onInitialize(): void {
+        protected async _onInitialize(): Promise<void> {
 
             this.__previousContext = null;
             this.__previousRefNode = null;
@@ -94,7 +94,7 @@ namespace AjsDoc.Components {
 
         }
 
-        protected _onFinalize(): void {
+        protected async _onFinalize(): Promise<void> {
 
             this.__programModel.release();
             this.__programModel === null;

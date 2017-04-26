@@ -139,11 +139,11 @@ namespace AjsDoc.Components {
         }
 
 
-        public setState(state: IAjsDocArticleComponentState): void {
-            super.setState(state);
+        public setState(state: IAjsDocArticleComponentState): Promise<void> {
+            return super.setState(state);
         }
 
-        protected _onInitialize(): void {
+        protected async _onInitialize(): Promise<void> {
             this._renderedListener = (sender: Ajs.MVVM.ViewModel.IViewComponent) => {
                 this._rendered();
                 return true;
@@ -152,7 +152,7 @@ namespace AjsDoc.Components {
             this.ajs.viewManager.renderDoneNotifier.subscribe(this._renderedListener);
         }
 
-        protected _onFinalize(): void {
+        protected async _onFinalize(): Promise<void> {
             this.ajs.viewManager.renderDoneNotifier.unsubscribe(this._renderedListener);
         }
 

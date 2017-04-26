@@ -40,9 +40,9 @@ namespace AjsDoc.Utils {
         examplesPath: string;
         chartsPaths: string;
         resourceManager: Ajs.Resources.IResourceManager;
-        storageType: Ajs.Resources.STORAGE_TYPE;
-        cachePolicy: Ajs.Resources.CACHE_POLICY;
-        loadingPreference: Ajs.Resources.LOADING_PREFERENCE;
+        storageType: Ajs.Resources.StorageType;
+        cachePolicy: Ajs.Resources.CachePolicy;
+        loadingPreference: Ajs.Resources.LoadingPreference;
     }
 
     /**
@@ -60,11 +60,11 @@ namespace AjsDoc.Utils {
         /** Reference to configured resource manager */
         private __resourceManager: Ajs.Resources.IResourceManager;
         /** Configuration of the storage to be used to load external files */
-        private __storageType: Ajs.Resources.STORAGE_TYPE;
+        private __storageType: Ajs.Resources.StorageType;
         /** Cache policy to be used while loading external files from the server */
-        private __cachePolicy: Ajs.Resources.CACHE_POLICY;
+        private __cachePolicy: Ajs.Resources.CachePolicy;
         /** Loading preference to be used whe the file is loaded */
-        private __loadingPreference: Ajs.Resources.LOADING_PREFERENCE;
+        private __loadingPreference: Ajs.Resources.LoadingPreference;
 
         /** root path to external example files */
         private __examplesPath: string;
@@ -85,9 +85,9 @@ namespace AjsDoc.Utils {
             examplesPath: string,
             chartsPaths: string,
             resourceManager: Ajs.Resources.IResourceManager,
-            storageType: Ajs.Resources.STORAGE_TYPE,
-            cachePolicy: Ajs.Resources.CACHE_POLICY,
-            loadingPreference: Ajs.Resources.LOADING_PREFERENCE) {
+            storageType: Ajs.Resources.StorageType,
+            cachePolicy: Ajs.Resources.CachePolicy,
+            loadingPreference: Ajs.Resources.LoadingPreference) {
 
             this.__examplesPath = examplesPath;
             this.__chartsPath = chartsPaths;

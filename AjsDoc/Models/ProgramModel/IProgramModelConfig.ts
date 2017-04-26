@@ -25,9 +25,9 @@ namespace AjsDoc.Models.ProgramModel {
     export interface IProgramModelConfig {
         initializationTimeout: number;
         programUrl: string;
-        storageType: Ajs.Resources.STORAGE_TYPE;
-        cachePolicy: Ajs.Resources.CACHE_POLICY;
-        loadingPreference: Ajs.Resources.LOADING_PREFERENCE;
+        storageType: Ajs.Resources.StorageType;
+        cachePolicy: Ajs.Resources.CachePolicy;
+        loadingPreference: Ajs.Resources.LoadingPreference;
     }
 
 }

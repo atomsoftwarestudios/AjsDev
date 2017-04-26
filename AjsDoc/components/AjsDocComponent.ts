@@ -49,7 +49,7 @@ namespace AjsDoc.Components {
         private __contentModel: Models.ContentModel.IContentModel;
 
         /** Listener to the browser navigation event */
-        private __navigatedListener: Ajs.Events.IListener<Ajs.MVVM.View.IViewManager>;
+        private __navigatedListener: Ajs.Events.IListener<Ajs.MVVM.ViewModel.IViewComponentManager>;
 
         /**
          * Sets the empty state to the whole layout
@@ -85,21 +85,21 @@ namespace AjsDoc.Components {
          * Synchronous initialization of the view component
          * Subscribes to the navigation notifier
          */
-        protected _onInitialize(): void {
+        protected async _onInitialize(): Promise<void> {
 
             this.__navigatedListener = (sender: Ajs.MVVM.View.IViewManager): boolean => {
                 this.__updateView();
                 return true;
             };
 
-            this.ajs.viewManager.navigationNotifier.subscribe(this.__navigatedListener);
+            this.ajs.viewComponentManager.navigationNotifier.subscribe(this.__navigatedListener);
         }
 
         /**
          * Unsubscribe event listeners and frees models
          */
-        protected _onFinalize(): void {
-            this.ajs.viewManager.navigationNotifier.unsubscribe(this.__navigatedListener);
+        protected async _onFinalize(): Promise<void> {
+            this.ajs.viewComponentManager.navigationNotifier.unsubscribe(this.__navigatedListener);
 
             this.__progModel.release();
             this.__progModel === null;
