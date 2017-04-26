@@ -14,6 +14,12 @@
     "sourceRoot": "/src/Ajs",
     // remove comments
     "removeComments": false
-  }
+  },
+
+  // exclude all .Release.ts files
+  "exclude": [
+    "./bin/**/*",
+    "./**/*.Release.ts"
+  ]
 
 }

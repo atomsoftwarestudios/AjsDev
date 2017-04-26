@@ -10,6 +10,12 @@
     "sourceMap": false,
     // remove comments
     "removeComments": true
-  }
+  },
+
+  // exclude all .Debug.ts files
+  "exclude": [
+    "./bin/**/*",
+    "./**/*.Debug.ts"
+  ]
 
 }
