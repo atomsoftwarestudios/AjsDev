@@ -19,10 +19,11 @@ namespace ToDos {
             viewComponentManager: Ajs.MVVM.ViewModel.IViewComponentManager): void {
 
             container
-                .addScoped<Models.Tasks.ITasksModel, Models.Tasks.ICPTasksModel>(
-                Models.Tasks.IITaksModel, Models.Tasks.TasksModel, {
-                    container: container
-                });
+                .addScoped<Models.Tasks.ITasksModel>(
+                    Models.Tasks.IITaksModel,
+                    Models.Tasks.TasksModel,
+                    container
+                );
 
             viewComponentManager.
                 addComponentDependencies<Components.ITaskComponentConfigParams>(

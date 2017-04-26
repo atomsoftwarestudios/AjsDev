@@ -25,10 +25,6 @@ namespace Ajs.Resources {
 
     "use strict";
 
-    export interface ICPResourceManager {
-        config?: IResourceManagerConfig;
-    }
-
     /**
      * Resource manager takes care of loading of resources from the server and caching them in the appropriate cache
      * <ul>
@@ -50,6 +46,7 @@ namespace Ajs.Resources {
 
         private __initialized: boolean;
 
+        private __ajsIndexedDb: AjsIndexedDb.IAjsIndexedDb;
         private __config: IResourceManagerConfig;
 
         /** Stores referrence to the ResourceLoader object */
@@ -82,8 +79,10 @@ namespace Ajs.Resources {
          * not be avalilable after browser restart)
          * <p>
          */
-        public constructor(config?: IResourceManagerConfig) {
+        public constructor(ajsIndexedDb: AjsIndexedDb.IAjsIndexedDb, config: IResourceManagerConfig) {
             Dbg.log(Dbg.LogType.Constructor, 0, LOG_AJSRES, this);
+
+            this.__ajsIndexedDb = ajsIndexedDb;
 
             // store config locally
             if (config === undefined) {

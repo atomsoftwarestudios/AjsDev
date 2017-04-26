@@ -25,7 +25,8 @@ namespace Ajs.DI {
 
     "use strict";
 
+    export class ServiceConfigurationNotMatchCServiceConstructorException extends Ajs.Exception { }
+
     export class UnableToResolveDependencyException extends Ajs.Exception { }
 
-    export class InvalidConstructorParameterException extends Ajs.Exception { }
 }

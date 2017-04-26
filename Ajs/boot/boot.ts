@@ -207,97 +207,106 @@ namespace Ajs.Boot {
         if (Ajs.ajsConfig.debugging.enabled) {
 
             container
-                .addSingleton<Dbg.IConsole, Dbg.ICPConsole>(
-                Dbg.IIConsole, Ajs.Dbg.Console, {
-                    config: ajsConfig.debugging.console
-                });
+                .addSingleton<Dbg.IConsole>(Dbg.IIConsole, Ajs.Dbg.Console, ajsConfig.debugging.console);
 
             if (Ajs.ajsConfig.debugging.modules.logger.enabled) {
                 container
 
                     // console -> used to display the logger menu & data
-                    .addSingleton<Logger.ILogger, Logger.ICPLogger>(
-                    Dbg.Modules.Logger.IILogger, Dbg.Modules.Logger.Logger, {
-                        console: Ajs.Dbg.IIConsole,
-                        config: ajsConfig.debugging.modules.logger
-                    });
+                    .addSingleton<Logger.ILogger>(
+                        Dbg.Modules.Logger.IILogger,
+                        Dbg.Modules.Logger.Logger,
+                        Ajs.Dbg.IIConsole,
+                        ajsConfig.debugging.modules.logger
+                    );
             }
 
         }
 
         container
-            .addSingleton<AjsIndexedDb.IAjsIndexedDb, AjsIndexedDb.ICPAjsIndexedDb>(
-            AjsIndexedDb.IIAjsIndexedDB, AjsIndexedDb.AjsIndexedDb, {
-                dbName: ajsConfig.indexedDbName
-            })
+            .addSingleton<AjsIndexedDb.IAjsIndexedDb>(
+                AjsIndexedDb.IIAjsIndexedDB,
+                AjsIndexedDb.AjsIndexedDb,
+                ajsConfig.indexedDbName
+            )
 
-            .addSingleton<Resources.IResourceManager, Resources.ICPResourceManager>(
-            Resources.IIResourceManager, Resources.ResourceManager, {
-                config: ajsConfig.resourceManager
-            })
+            // - IIAjsIndexedDb -> used by IndexedDb storage provider
+            .addSingleton<Resources.IResourceManager>(
+                Resources.IIResourceManager,
+                Resources.ResourceManager,
+                AjsIndexedDb.IIAjsIndexedDB,
+                ajsConfig.resourceManager
+            )
 
-            // resourceManager -> storing/loading of states from appropriate storages
-            .addSingleton<State.IStateManager, State.ICPStateManager>(
-            State.IIStateManager, State.StateManager, {
-                resourceManager: Resources.IIResourceManager
-            })
+            // - IIResourceManager -> storing/loading of states from appropriate storages
+            .addSingleton<State.IStateManager>(
+                State.IIStateManager, State.StateManager,
+                Resources.IIResourceManager
+            )
 
-            // resourceManager -> loading of stylesheets to be rendered
-            .addSingleton<Doc.IDocumentManager, Doc.ICPDocumentManager>(
-            Doc.IIDocumentManager, Doc.DocumentManager, {
-                resourceManager: Resources.IIResourceManager,
-                renderTarget: ajsConfig.renderTarget
-            })
+            // - IIResourceManager -> loading of stylesheets to be rendered
+            .addSingleton<Doc.IDocumentManager>(
+            Doc.IIDocumentManager, Doc.DocumentManager,
+                Resources.IIResourceManager,
+                ajsConfig.renderTarget
+            )
 
-            // documentManager -> used to collect IDs for components, render target and dom updates
-            .addSingleton<MVVM.View.IViewManager, MVVM.View.ICPViewManager>(
-            MVVM.View.IIViewManager, MVVM.View.ViewManager, {
-                documentManager: Doc.IIDocumentManager
-            })
+            // - IIDocumentManager -> used to collect IDs for components, render target and dom updates
+            .addSingleton<MVVM.View.IViewManager>(
+                MVVM.View.IIViewManager,
+                MVVM.View.ViewManager,
+                Doc.IIDocumentManager
+            )
 
-            // resourceManager -> loading of template files
-            .addSingleton<Templating.ITemplateManager, Templating.ICPTemplateManager>(
-            Templating.IITemplateManager, Templating.TemplateManager, {
-                resourceManager: Resources.IIResourceManager
-            })
+            // - IIResourceManager -> loading of template files
+            .addSingleton<Templating.ITemplateManager>(
+                Templating.IITemplateManager,
+                Templating.TemplateManager,
+                Resources.IIResourceManager
+            )
 
-            // templateManager -> getting information about visual components
-            // documentManager -> passing DM to created view components
-            // viewManager -> setting of root view component, getting unique ID's of components, passing to view components
-            .addSingleton<MVVM.ViewModel.IViewComponentManager, MVVM.ViewModel.ICPViewComponentManager>(
-            MVVM.ViewModel.IIViewComponentManager, MVVM.ViewModel.ViewComponentManager, {
-                container: container,
-                templateManager: Templating.IITemplateManager,
-                documentManager: Doc.IIDocumentManager,
-                viewManager: MVVM.View.IIViewManager,
-            })
+            // container -> Instancing of Models on which ViewComponents depends
+            // - IITemplateManager -> getting information about visual components
+            // - IIDocumentManager -> passing DM to created view components
+            // - IIViewManager -> setting of root view component, getting unique ID's of components, passing to view components
+            .addSingleton<MVVM.ViewModel.IViewComponentManager>(
+                MVVM.ViewModel.IIViewComponentManager,
+                MVVM.ViewModel.ViewComponentManager,
+                container,
+                Doc.IIDocumentManager,
+                Templating.IITemplateManager,
+                MVVM.View.IIViewManager,
+            )
 
-            // viewComponentManager -> creating and displaying of the root view components
-            .addSingleton<Routing.IRouter, Routing.ICPRouter>(
-            Routing.IIRouter, Routing.Router, {
-                viewComponentManager: MVVM.ViewModel.IIViewComponentManager,
-                routes: ajsConfig.routes
-            })
+            // - IIViewComponentManager -> notifying about root view component changes based on routes config
+            .addSingleton<Routing.IRouter>(
+                Routing.IIRouter,
+                Routing.Router,
+                MVVM.ViewModel.IIViewComponentManager,
+                ajsConfig.routes
+            )
 
-            // router -> navigator calls router to show the configured view component
-            .addSingleton<Navigation.INavigator, Navigation.ICPNavigator>(
-            Navigation.IINavigator, Navigation.Navigator, {
-                router: Routing.IIRouter,
-                redirections: ajsConfig.redirections
-            })
+            // - IIRouter -> navigator calls router to show the configured view component
+            .addSingleton<Navigation.INavigator>(
+                Navigation.IINavigator,
+                Navigation.Navigator,
+                Routing.IIRouter,
+                ajsConfig.redirections
+            )
 
-            // resource manager -> loading of application resources
-            // template manager -> loading of application templates
-            .addSingleton<App.IApplication, Ajs.App.ICPApplication>(
-            App.IIApplication, bootConfig.applicationConstructor, {
-                config: appConfig,
-                container: container,
-                resourceManager: Resources.IIResourceManager,
-                templateManager: Templating.IITemplateManager,
-                viewComponentManager: MVVM.ViewModel.IIViewComponentManager,
-                navigator: Navigation.IINavigator,
-                router: Routing.IIRouter
-            });
+            // - IIResourceManager -> loading of application resources
+            // - IITemplateManager -> loading of application templates
+            .addSingleton<App.IApplication>(
+                App.IIApplication,
+                bootConfig.applicationConstructor,
+                container,
+                Resources.IIResourceManager,
+                Templating.IITemplateManager,
+                Navigation.IINavigator,
+                Routing.IIRouter,
+                MVVM.ViewModel.IIViewComponentManager,
+                appConfig
+            );
 
     }
 
@@ -354,9 +363,11 @@ namespace Ajs.Boot {
      * </p>
      */
     function _update(): void {
-        // does not make sense to log, reload performed
+        _configureAjs();
 
-        let resMan: Ajs.Resources.ResourceManager = new Ajs.Resources.ResourceManager();
+        let resMan: Ajs.Resources.ResourceManager = new Ajs.Resources.ResourceManager(
+            new AjsIndexedDb.AjsIndexedDb(ajsConfig.indexedDbName), ajsConfig.resourceManager);
+
         resMan.initialize()
             .then(() => {
                 resMan.cleanCaches()

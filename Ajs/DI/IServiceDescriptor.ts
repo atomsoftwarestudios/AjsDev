@@ -31,7 +31,7 @@ namespace Ajs.DI {
     export interface IServiceDescriptor {
         serviceInterfaceIdentifier: any;
         serviceConstructor: any;
-        serviceParameters: any;
+        serviceConfiguration: any[];
     }
 
 }

@@ -30,11 +30,11 @@ namespace Ajs.State {
     /**
      * Prefix for the key used to store the Application state value
      */
-    const APP_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "APPSTATE.";
+    export const APP_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "APPSTATE.";
 
     /**
      * Prefix for the key used to store the Session state value
      */
-    const SESS_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "SESSTATE.";
+    export const SESS_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "SESSTATE.";
 
 }

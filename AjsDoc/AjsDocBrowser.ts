@@ -48,43 +48,46 @@ namespace AjsDoc {
 
             container
 
-                .addScoped<Utils.IHTMLHelpers, Utils.ICPHTMLHelpers>(
-                Utils.IIHTMLHelpers, Utils.HTMLHelpers, {
-                    examplesPath: this._config.contentFolders.examples,
-                    chartsPaths: this._config.contentFolders.charts,
-                    resourceManager: Ajs.Resources.IIResourceManager,
-                    storageType: this._config.dataStorageOptions.storageType,
-                    cachePolicy: this._config.dataStorageOptions.cachePolicy,
-                    loadingPreference: this._config.dataStorageOptions.loadingPreference
-                })
+                .addScoped<Utils.IHTMLHelpers>(
+                    Utils.IIHTMLHelpers,
+                    Utils.HTMLHelpers,
+                    this._config.contentFolders.examples,
+                    this._config.contentFolders.charts,
+                    Ajs.Resources.IIResourceManager,
+                    this._config.dataStorageOptions.storageType,
+                    this._config.dataStorageOptions.cachePolicy,
+                    this._config.dataStorageOptions.loadingPreference
+                )
 
-                .addScoped<Models.ProgramModel.IProgramModel, Models.ProgramModel.ICPProgramModel>(
-                Models.ProgramModel.IIProgramModel, Models.ProgramModel.ProgramModel, {
-                    container: container,
-                    resourceManager: Ajs.Resources.IIResourceManager,
-                    htmlHelpers: Utils.IIHTMLHelpers,
-                    config: {
+                .addScoped<Models.ProgramModel.IProgramModel>(
+                    Models.ProgramModel.IIProgramModel,
+                    Models.ProgramModel.ProgramModel,
+                    container,
+                    Ajs.Resources.IIResourceManager,
+                    Utils.IIHTMLHelpers,
+                    {
                         storageType: this._config.dataStorageOptions.storageType,
                         cachePolicy: this._config.dataStorageOptions.cachePolicy,
                         loadingPreference: this._config.dataStorageOptions.loadingPreference,
                         initializationTimeout: this._config.modelInitializationTimeout,
                         programUrl: this._config.dataSources.program
                     }
-                })
+                )
 
-                .addScoped<Models.ContentModel.IContentModel, Models.ContentModel.ICPContentModel>(
-                Models.ContentModel.IIContentModel, Models.ContentModel.ContentModel, {
-                    container: container,
-                    resourceManager: Ajs.Resources.IIResourceManager,
-                    htmlHelpers: Utils.IIHTMLHelpers,
-                    config: {
+                .addScoped<Models.ContentModel.IContentModel>(
+                    Models.ContentModel.IIContentModel,
+                    Models.ContentModel.ContentModel,
+                    container,
+                    Ajs.Resources.IIResourceManager,
+                    Utils.IIHTMLHelpers,
+                    {
                         storageType: this._config.dataStorageOptions.storageType,
                         cachePolicy: this._config.dataStorageOptions.cachePolicy,
                         loadingPreference: this._config.dataStorageOptions.loadingPreference,
                         initializationTimeout: this._config.modelInitializationTimeout,
                         tocUrl: this._config.dataSources.toc
                     }
-                });
+                );
 
             // configure VCM (View Component dependencies)
 

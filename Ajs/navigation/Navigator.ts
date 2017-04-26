@@ -55,11 +55,6 @@ namespace Ajs.Navigation {
 
     "use strict";
 
-    export interface ICPNavigator {
-        router: typeof Routing.IIRouter;
-        redirections?: IRedirection[];
-    }
-
     /**
      * Navigator is used for navigation throughout the Ajs Application
      * <p>

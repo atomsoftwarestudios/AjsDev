@@ -25,10 +25,6 @@ namespace Ajs.Templating {
 
     "use strict";
 
-    export interface ICPTemplateManager {
-        resourceManager: typeof Resources.IIResourceManager
-    }
-
     export class TemplateManager implements TemplateManager {
 
         private __resourceManager: Resources.IResourceManager;

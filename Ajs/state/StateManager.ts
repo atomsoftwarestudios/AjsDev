@@ -98,20 +98,6 @@ namespace Ajs.State {
     "use strict";
 
     /**
-     * Prefix for the key used to store the Application state value
-     */
-    const APP_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "APPSTATE.";
-
-    /**
-     * Prefix for the key used to store the Session state value
-     */
-    const SESS_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "SESSTATE.";
-
-    export interface ICPStateManager {
-        resourceManager: typeof Resources.IIResourceManager;
-    }
-
-    /**
      * State manager is used for the application and session state persistance
      * State manager currently supports only string values so if it is required to store
      * arbitrary object it is necessary to JSONize it first.

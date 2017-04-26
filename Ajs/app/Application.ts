@@ -38,21 +38,7 @@ namespace Ajs.App {
 
     "use strict";
 
-    /**
-     * Information for DI container configuration - what arguments are necessary to pass to constructor
-     * Used in compile time only
-     */
-    export interface ICPApplication {
-        container: DI.IContainer;
-        resourceManager: typeof Resources.IIResourceManager;
-        templateManager: typeof Templating.IITemplateManager;
-        navigator: typeof Navigation.IINavigator;
-        router: typeof Routing.IIRouter;
-        viewComponentManager: typeof MVVM.ViewModel.IIViewComponentManager;
-        config: any;
-    }
-
-    /**
+     /**
      * Provides methods to configure the application, framework, application and framework services and resources to be loaded
      * <p>
      * The class should be inherited by the user application class.

@@ -25,11 +25,6 @@ namespace Ajs.Routing {
 
     "use strict";
 
-    export interface ICPRouter {
-        viewComponentManager: typeof MVVM.ViewModel.IIViewComponentManager;
-        routes?: IRoutes[];
-    }
-
     export class Router implements IRouter {
 
         private __viewComponentManager: MVVM.ViewModel.IViewComponentManager;

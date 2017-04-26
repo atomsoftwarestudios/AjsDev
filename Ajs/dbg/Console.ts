@@ -31,10 +31,6 @@ namespace Ajs.Dbg {
 
     "use strict";
 
-    export interface ICPConsole {
-        config: IConsoleConfig;
-    }
-
     export class Console implements IConsole {
 
         // config

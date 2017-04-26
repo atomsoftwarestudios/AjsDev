@@ -32,24 +32,24 @@ namespace Ajs.DI {
      */
     export interface IContainer {
 
-        addTransient<ServiceInterface extends IServiceType, ConstructorParams extends IServiceConstructorParameters>(
-            interfaceIdentifier: IServiceInterfaceIdentifier<ServiceInterface>,
-            classToConstruct: Ctor,
-            constructorParameters: ConstructorParams): Container;
+        addTransient<S>(
+            serviceInterfaceIdentifier: S,
+            serviceConstructor: CtorTyped<S>,
+            ...serviceConfiguration: any[]): Container;
 
-        addScoped<ServiceInterface extends IServiceType, ConstructorParams extends IServiceConstructorParameters>(
-            interfaceIdentifier: IServiceInterfaceIdentifier<ServiceInterface>,
-            classToConstruct: Ctor,
-            constructorParameters: ConstructorParams): Container;
+        addScoped<S>(
+            serviceInterfaceIdentifier: S,
+            serviceConstructor: CtorTyped<S>,
+            ...serviceConfiguration: any[]): Container;
 
-        addSingleton<ServiceInterface extends IServiceType, ConstructorParams extends IServiceConstructorParameters>(
-            interfaceIdentifier: IServiceInterfaceIdentifier<ServiceInterface>,
-            classToConstruct: Ctor,
-            constructorParameters: ConstructorParams): Container;
+        addSingleton<S>(
+            serviceInterfaceIdentifier: S,
+            classToConstruct: CtorTyped<S>,
+            ...serviceConfiguration: any[]): Container;
 
-        resolve<ServiceInterface extends IServiceType>(
-            interfaceIdentifier: IServiceInterfaceIdentifier<ServiceInterface>,
-            throwUnresolvedException?: boolean): ServiceInterface;
+        resolve<S>(
+            serviceInterfaceIdentifier: S,
+            throwUnresolvedException?: boolean): S;
 
         releaseSingletonInstanceReference(serviceInstance: any): void;
 

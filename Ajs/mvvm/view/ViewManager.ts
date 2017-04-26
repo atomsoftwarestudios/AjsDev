@@ -31,10 +31,6 @@ namespace Ajs.MVVM.View {
 
     "use strict";
 
-    export interface ICPViewManager {
-        documentManager?: typeof Doc.IIDocumentManager;
-    }
-
     /**
      * View class represents a view composed from the view components. It manages the tree of instanced view components to be displayed.
      * <p>

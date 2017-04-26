@@ -25,10 +25,6 @@ namespace Ajs.AjsIndexedDb {
 
     "use strict";
 
-    export interface ICPAjsIndexedDb {
-        dbName: string;
-    }
-
     /**
      * AjsIndexedDB is used for internal purposes of AJs Framework.
      * <p>It is not supposed to be used by the application.</p>

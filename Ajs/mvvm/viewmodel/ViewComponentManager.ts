@@ -25,13 +25,6 @@ namespace Ajs.MVVM.ViewModel {
 
     "use strict";
 
-    export interface ICPViewComponentManager {
-        container: typeof DI.IIContainer;
-        documentManager: typeof Doc.IIDocumentManager;
-        templateManager: typeof Templating.IITemplateManager;
-        viewManager: typeof MVVM.View.IIViewManager;
-    }
-
     /**
      * Default time to wait for initialization of newly created view component
      * <p>

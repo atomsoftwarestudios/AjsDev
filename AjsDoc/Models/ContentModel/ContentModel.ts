@@ -23,18 +23,6 @@ namespace AjsDoc.Models.ContentModel {
     "use strict";
 
     /**
-     * List of the ContentModel constructor parameters
-     * Its not necessary to define it but it is usefull to see what parameters
-     * must be configured when configuring the DI container
-     */
-    export interface ICPContentModel {
-        container: Ajs.DI.IContainer;
-        resourceManager: Ajs.Resources.IResourceManager;
-        htmlHelpers: typeof Utils.IIHTMLHelpers;
-        config: IContentModelConfig;
-    }
-
-    /**
      * Content model is a content data provider for the AjsDoc component. It is designed as Ajs injectable service.
      * Model is added as a scoped service to the DI container and constructed and initialized when the
      * AjsDocComponent (the site root compoent) is instanced (see AjsDoc application class for details).

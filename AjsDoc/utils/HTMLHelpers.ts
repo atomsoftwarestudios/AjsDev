@@ -36,15 +36,6 @@ namespace AjsDoc.Utils {
         setupHTMLContent(text: string, baseUrl?: string): Promise<string>;
     }
 
-    export interface ICPHTMLHelpers {
-        examplesPath: string;
-        chartsPaths: string;
-        resourceManager: Ajs.Resources.IResourceManager;
-        storageType: Ajs.Resources.StorageType;
-        cachePolicy: Ajs.Resources.CachePolicy;
-        loadingPreference: Ajs.Resources.LoadingPreference;
-    }
-
     /**
      * HTML Helper class is used to prepare the Ajs data consumable by Ajs and replace AjsDoc tags with appropriate file content
      * <p>

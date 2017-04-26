@@ -30,7 +30,7 @@ namespace Ajs.App {
      * As the application is registered automatically using the #see [@Ajs.application]{Ajs.App.application}
      * factory this is not used at this time.
      */
-    export const IIApplication: IApplication = <any>{ __isAjsService: true };
+    export const IIApplication: IApplication = DI.II;
 
     /**
      * Provides interface to the application. This interface is used from the framework side.

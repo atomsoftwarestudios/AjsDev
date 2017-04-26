@@ -7,10 +7,6 @@ namespace ToDos.Models.Tasks {
 
     "use strict";
 
-    export interface ICPTasksModel {
-        container: Ajs.DI.IContainer;
-    }
-
     export class TasksModel extends Ajs.MVVM.Model.Model implements ITasksModel {
 
         /*

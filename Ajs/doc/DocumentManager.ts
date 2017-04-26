@@ -30,11 +30,6 @@ namespace Ajs.Doc {
 
     "use strict";
 
-    export interface ICPDocumentManager {
-        resourceManager: typeof Resources.IIResourceManager;
-        renderTarget: Element;
-    }
-
     /**
      * Document manager is wrapper around the DOM Document with support of additional features
      * <p>

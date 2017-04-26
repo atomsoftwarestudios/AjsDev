@@ -25,10 +25,6 @@ namespace Ajs.MVVM.Model {
 
     "use strict";
 
-    export interface ICPModelParameters {
-        container: DI.IContainer;
-    }
-
     export class Model implements IModel {
 
         private __container: DI.IContainer;

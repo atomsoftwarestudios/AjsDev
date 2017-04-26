@@ -76,20 +76,6 @@ namespace AjsDoc.Models.ProgramModel {
         [index: string]: atsdoc.IATsDocNode[];
     }
 
-
-    /**
-     * List of the ProgramModel constructor parameters
-     * Its not necessary to define it but it is usefull to see what parameters
-     * must be configured when configuring the DI container
-     */
-
-    export interface ICPProgramModel {
-        container: Ajs.DI.IContainer;
-        resourceManager: Ajs.Resources.IResourceManager;
-        htmlHelpers: typeof Utils.IIHTMLHelpers;
-        config: IProgramModelConfig;
-    }
-
     /**
      * Program model is a program data provider for the AjsDoc component. It is designed as Ajs injectable service.
      * <p>
