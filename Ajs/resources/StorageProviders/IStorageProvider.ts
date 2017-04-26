@@ -21,18 +21,18 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace Ajs.Resources {
+namespace Ajs.Resources.StorageProviders {
 
     "use strict";
 
     /** this should be Storage interface from the lib.d.ts but not possible to implement with ES5 */
     export interface IStorageProvider {
         readonly length: number;
-        clear(): void;
-        getItem(key: string): string | null;
-        key(index: number): string | null;
-        removeItem(key: string): void;
-        setItem(key: string, data: string): void;
+        initialize(): Promise<void>
+        clear(): Promise<void>;
+        getItem(key: string): Promise<string | null>;
+        removeItem(key: string): Promise<void>;
+        setItem(key: string, data: string): Promise<void>;
     }
 
 }
