@@ -105,8 +105,8 @@ namespace Ajs.App {
         /** Stores list of templates to be loaded before the application starts #see [IResourceLists]{Ajs.App.IResourceLists} for details */
         private __templates: IResourceLists;
 
-        /** Stores the preference for loading resources and templates. See #see [LOADING_PREFERENCE]{Ajs.Resources.LOADING_PREFERENCE} for details */
-        protected _resourcesLoadingPreference: Resources.LOADING_PREFERENCE;
+        /** Stores the preference for loading resources and templates. See #see [LOADING_PREFERENCE]{Ajs.Resources.LoadingPreference} for details */
+        protected _resourcesLoadingPreference: Resources.LoadingPreference;
 
         /** Stores the configuration passed to the application from the boot config */
         private __config: T;
@@ -147,7 +147,11 @@ namespace Ajs.App {
             this.__resources = {};
             this.__templates = {};
 
-            this._resourcesLoadingPreference = Resources.LOADING_PREFERENCE.SERVER;
+            if (config.hasOwnProperty("resourcesLoadingPreference")) {
+                this._resourcesLoadingPreference = (<any>config).resourcesLoadingPreference;
+            } else {
+                this._resourcesLoadingPreference = Resources.LoadingPreference.Server;
+            }
 
             window.addEventListener("error", (e: ErrorEvent) => this._onError(e));
             window.addEventListener("beforeunload", (e: Event) => this.__finalize(e));
@@ -182,7 +186,8 @@ namespace Ajs.App {
          * method should to be overriden in inherited application class.</p>
          * </p>
          */
-        public initialize(): Promise<any> {
+        public async initialize(): Promise<any> {
+            await this.__resourceManager.initialize();
             return this._onInitialize();
         }
 
@@ -199,15 +204,18 @@ namespace Ajs.App {
          *                                 initialized by calling the _initDone method
          */
         public run(): void {
-            Promise.all([this.__loadResources(), this.__loadTemplates()])
+            Promise.all(
+                [this.__loadResources(),
+                this.__loadTemplates()
+                ])
+                .then(() => {
+                    this.__navigator.canNavigate = true;
+                    this.__navigator.navigated();
+                })
                 .catch((reason: any) => {
                     setTimeout(() => {
                         throw reason;
                     }, 0);
-                })
-                .then(() => {
-                    this.__navigator.canNavigate = true;
-                    this.__navigator.navigated();
                 });
         }
 
@@ -318,22 +326,28 @@ namespace Ajs.App {
 
             let _resourcesLoadingInfo: any[] = [
                 this.__resourceManager.getMultipleResources(
-                    this.__resources.localPermanent, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.PERMANENT,
+                    this.__resources.localPermanent, Resources.StorageType.Local, Resources.CachePolicy.Permanent,
                     this._resourcesLoadingPreference),
                 this.__resourceManager.getMultipleResources(
-                    this.__resources.localLastRecentlyUsed, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this.__resources.localLastRecentlyUsed, Resources.StorageType.Local, Resources.CachePolicy.LastRecentlyUsed,
                     this._resourcesLoadingPreference),
                 this.__resourceManager.getMultipleResources(
-                    this.__resources.sessionPermanent, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.PERMANENT,
+                    this.__resources.sessionPermanent, Resources.StorageType.Session, Resources.CachePolicy.Permanent,
                     this._resourcesLoadingPreference),
                 this.__resourceManager.getMultipleResources(
-                    this.__resources.sessionLastRecentlyUsed, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this.__resources.sessionLastRecentlyUsed, Resources.StorageType.Session, Resources.CachePolicy.LastRecentlyUsed,
                     this._resourcesLoadingPreference),
                 this.__resourceManager.getMultipleResources(
-                    this.__resources.memoryPermanent, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.PERMANENT,
+                    this.__resources.indexedDbPermanent, Resources.StorageType.IndexedDb, Resources.CachePolicy.Permanent,
                     this._resourcesLoadingPreference),
                 this.__resourceManager.getMultipleResources(
-                    this.__resources.memoryLastRecentlyUsed, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this.__resources.indexedDbLastRecentlyUsed, Resources.StorageType.IndexedDb, Resources.CachePolicy.LastRecentlyUsed,
+                    this._resourcesLoadingPreference),
+                this.__resourceManager.getMultipleResources(
+                    this.__resources.memoryPermanent, Resources.StorageType.Memory, Resources.CachePolicy.Permanent,
+                    this._resourcesLoadingPreference),
+                this.__resourceManager.getMultipleResources(
+                    this.__resources.memoryLastRecentlyUsed, Resources.StorageType.Memory, Resources.CachePolicy.LastRecentlyUsed,
                     this._resourcesLoadingPreference),
                 this.__resourceManager.getMultipleResources(
                     this.__resources.direct, undefined, undefined)
@@ -356,22 +370,28 @@ namespace Ajs.App {
         private __loadTemplates(): Promise<any> {
             let _resourcesLoadingInfo: any[] = [
                 this.__templateManager.loadTemplates(
-                    this.__templates.localPermanent, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.PERMANENT,
+                    this.__templates.localPermanent, Resources.StorageType.Local, Resources.CachePolicy.Permanent,
                     this._resourcesLoadingPreference),
                 this.__templateManager.loadTemplates(
-                    this.__templates.localLastRecentlyUsed, Resources.STORAGE_TYPE.LOCAL, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this.__templates.localLastRecentlyUsed, Resources.StorageType.Local, Resources.CachePolicy.LastRecentlyUsed,
                     this._resourcesLoadingPreference),
                 this.__templateManager.loadTemplates(
-                    this.__templates.sessionPermanent, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.PERMANENT,
+                    this.__templates.sessionPermanent, Resources.StorageType.Session, Resources.CachePolicy.Permanent,
                     this._resourcesLoadingPreference),
                 this.__templateManager.loadTemplates(
-                    this.__templates.sessionLastRecentlyUsed, Resources.STORAGE_TYPE.SESSION, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this.__templates.sessionLastRecentlyUsed, Resources.StorageType.Session, Resources.CachePolicy.LastRecentlyUsed,
                     this._resourcesLoadingPreference),
                 this.__templateManager.loadTemplates(
-                    this.__templates.memoryPermanent, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.PERMANENT,
+                    this.__templates.indexedDbPermanent, Resources.StorageType.IndexedDb, Resources.CachePolicy.Permanent,
                     this._resourcesLoadingPreference),
                 this.__templateManager.loadTemplates(
-                    this.__templates.memoryLastRecentlyUsed, Resources.STORAGE_TYPE.MEMORY, Resources.CACHE_POLICY.LASTRECENTLYUSED,
+                    this.__templates.indexedDbLastRecentlyUsed, Resources.StorageType.IndexedDb, Resources.CachePolicy.LastRecentlyUsed,
+                    this._resourcesLoadingPreference),
+                this.__templateManager.loadTemplates(
+                    this.__templates.memoryPermanent, Resources.StorageType.Memory, Resources.CachePolicy.Permanent,
+                    this._resourcesLoadingPreference),
+                this.__templateManager.loadTemplates(
+                    this.__templates.memoryLastRecentlyUsed, Resources.StorageType.Memory, Resources.CachePolicy.LastRecentlyUsed,
                     this._resourcesLoadingPreference),
                 this.__templateManager.loadTemplates(
                     this.__templates.direct, undefined, undefined)

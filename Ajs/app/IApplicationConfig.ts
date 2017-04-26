@@ -25,26 +25,14 @@ namespace Ajs.App {
 
     "use strict";
 
-    /** Output of the ajs.boot.getResourceLists function contains all resources to be loaded */
-    export interface IResourceLists {
-        /** loads resources to the local store with the permanent caching policy */
-        localPermanent?: string[];
-        /** loads resources to the local store with the last recently used caching policy */
-        localLastRecentlyUsed?: string[];
-        /** loads resources to the session store with the permanent caching policy */
-        sessionPermanent?: string[];
-        /** loads resources to the session store with the last recently used caching policy */
-        sessionLastRecentlyUsed?: string[];
-        /** loads resources to the memory store with the permanent caching policy */
-        memoryPermanent?: string[];
-        /** loads resources to the memory store with the last recently used caching policy */
-        memoryLastRecentlyUsed?: string[];
-        /** loads resources to the indexedDb store with the permanent caching policy */
-        indexedDbPermanent?: string[];
-        /** loads resources to the indexedDb store with the last recently used caching policy */
-        indexedDbLastRecentlyUsed?: string[];
-        /** loads resources directly from the server without using of the store */
-        direct?: string[];
+    /**
+     * Provides interface to the application configuration.
+     * Every application must have at least configured the resources loading preference.
+     */
+    export interface IApplicationConfig {
+
+        resourcesLoadingPreference: Resources.LoadingPreference;
+        
     }
 
 }
