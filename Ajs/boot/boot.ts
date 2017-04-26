@@ -38,6 +38,11 @@ namespace Ajs.Boot {
     let bootConfigured: boolean = false;
 
     /**
+     * This variable is used to prevent boot when AppCache update event is raised, because it directs browser to reload application
+     */
+    let preventBoot: boolean = false;
+
+    /**
      * Internal flag indicating the boot started and should not be started again
      * This is important especially for offline timed fallback
      */
@@ -82,7 +87,7 @@ namespace Ajs.Boot {
                 console: {
                     bodyRenderTarget: document.body,
                     styleRenderTarget: document.body,
-                    showOnBootDelay: 0
+                    showOnBootDelay: 2000
                 },
                 modules: {
                     logger: {
@@ -115,16 +120,36 @@ namespace Ajs.Boot {
                             "ajs.state",
                             "ajs.templating",
                             "ajs.ui",
-                            "ajs.utils"
+                            "ajs.utils",
+                            "Ajs.AjsIndexedDb",
+                            "Ajs.App",
+                            "Ajs.Boot",
+                            "Ajs.Doc",
+                            "Ajs.Events",
+                            "Ajs.MVVM.Model",
+                            "Ajs.MVVM.View",
+                            "Ajs.MVVM.ViewModel",
+                            "Ajs.Navigation",
+                            "Ajs.Resources",
+                            "Ajs.Resources.Storages",
+                            "Ajs.Resources.StorageProviders",
+                            "Ajs.Resources",
+                            "Ajs.Routing",
+                            "Ajs.State",
+                            "Ajs.Templating",
+                            "Ajs.UI",
+                            "Ajs.Utils"
                         ],
                         maxLevel: 9
                     }
                 }
             },
+            indexedDbName: "Ajs",
             resourceManager: {
                 memoryCacheSize: 20 * 1024 * 1024,
                 localCacheSize: 2 * 1024 * 1024,
                 sessionCacheSize: 2 * 1024 * 1024,
+                indexedBbCacheSize: 20 * 1024 * 1024,
                 removeResourcesOlderThan: Utils.maxDate()
             },
             redirections: [],
@@ -201,6 +226,11 @@ namespace Ajs.Boot {
         }
 
         container
+            .addSingleton<AjsIndexedDb.IAjsIndexedDb, AjsIndexedDb.ICPAjsIndexedDb>(
+            AjsIndexedDb.IIAjsIndexedDB, AjsIndexedDb.AjsIndexedDb, {
+                dbName: ajsConfig.indexedDbName
+            })
+
             .addSingleton<Resources.IResourceManager, Resources.ICPResourceManager>(
             Resources.IIResourceManager, Resources.ResourceManager, {
                 config: ajsConfig.resourceManager
@@ -277,6 +307,10 @@ namespace Ajs.Boot {
      */
     function _boot(): void {
 
+        if (preventBoot) {
+            return;
+        }
+
         // configure boot
         _configureBoot();
 
@@ -303,9 +337,10 @@ namespace Ajs.Boot {
                 application.run();
             })
             .catch((reason: any) => {
-                setTimeout(() => {
-                    throw new ApplicationException(reason);
-                }, 0);
+                Utils.nextTickAsync()
+                    .then(() => {
+                        throw new ApplicationException(reason);
+                    });
             });
 
         Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
@@ -319,12 +354,23 @@ namespace Ajs.Boot {
      * </p>
      */
     function _update(): void {
-
         // does not make sense to log, reload performed
 
         let resMan: Ajs.Resources.ResourceManager = new Ajs.Resources.ResourceManager();
-        resMan.cleanCaches();
-        window.location.reload();
+        resMan.initialize()
+            .then(() => {
+                resMan.cleanCaches()
+                    .then(() => {
+                        window.location.reload();
+                    })
+                    .catch((reason: any) => {
+                        window.location.reload();
+                    });
+            })
+            .catch((reason: any) => {
+                window.location.reload();
+            });
+
     }
 
     /**
@@ -371,11 +417,10 @@ namespace Ajs.Boot {
             // to ensure the latest boot/ajs versions are in use and also latest versions of the application code and application
             // resources will be used
             window.applicationCache.addEventListener("updateready", () => {
-                applicationCache.swapCache();
-                if (!bootStarted) {
-                    bootStarted = true;
-                    _update();
-                }
+                // applicationCache.swapCache();
+                preventBoot = true;
+                bootStarted = true;
+                _update();
             });
 
             // if appcache is not supported make sure the framework will boot
