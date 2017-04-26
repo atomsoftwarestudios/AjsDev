@@ -32,7 +32,7 @@ namespace Ajs.App {
     export interface IApplicationConfig {
 
         resourcesLoadingPreference: Resources.LoadingPreference;
-        
+
     }
 
 }
