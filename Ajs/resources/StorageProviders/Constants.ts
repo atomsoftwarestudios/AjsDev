@@ -23,10 +23,6 @@ IN THE SOFTWARE.
 
 namespace Ajs.Resources {
 
-    "use strict";
-
-    export interface IResourceLoadEndHandler {
-        (response: IResourceResponseData): void;
-    }
+    export const INDEXDB_STORAGE_PROVIDER_STORAGE_NAME: string = "AJSRESOURCES";
 
 }
