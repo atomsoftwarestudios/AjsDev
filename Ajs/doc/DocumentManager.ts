@@ -790,9 +790,11 @@ namespace Ajs.Doc {
                     }
 
                     if (url[2].substr(0, 4) !== "data") {
-
                         resourcesPromises.push(
-                            this.__resourceManager.getResource(url[2], template.storageType)
+                            this.__resourceManager.getResource(
+                                url[2], template.storageType,
+                                template.cachePolicy,
+                                template.loadingPreference)
                         );
                     }
                 }
