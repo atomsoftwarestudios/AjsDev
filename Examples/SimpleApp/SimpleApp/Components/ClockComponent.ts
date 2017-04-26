@@ -25,19 +25,19 @@ namespace ToDos.Components {
             return this.time && this.time !== null;
         }
 
-        protected _onInitialize(): void {
+        protected async _onInitialize(): Promise<void> {
 
             this.__navigatedListener = (sender: any): boolean => {
                 this.__navigated();
                 return true;
             };
 
-            this.ajs.viewManager.navigationNotifier.subscribe(this.__navigatedListener);
+            this.ajs.viewComponentManager.navigationNotifier.subscribe(this.__navigatedListener);
         }
 
-        protected _onFinalize(): void {
+        protected async _onFinalize(): Promise<void> {
 
-            this.ajs.viewManager.navigationNotifier.unsubscribe(this.__navigatedListener);
+            this.ajs.viewComponentManager.navigationNotifier.unsubscribe(this.__navigatedListener);
 
             clearInterval(this.__timer);
         }

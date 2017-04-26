@@ -30,7 +30,7 @@ namespace ToDos {
                     tasksModel: Models.Tasks.IITaksModel
                 });
 
-            this._resourcesLoadingPreference = Ajs.Resources.LOADING_PREFERENCE.SERVER;
+            this._resourcesLoadingPreference = Ajs.Resources.LoadingPreference.Server;
            
             templates.direct = [
                 "/templates/default.html"

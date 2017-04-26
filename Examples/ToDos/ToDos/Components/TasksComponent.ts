@@ -34,7 +34,9 @@ namespace ToDos.Components {
         protected _currentItem: number;
 
         protected _inputField: HTMLInputElement;
-        public setInputField(value: HTMLInputElement): void { this._inputField = value; }
+        public setInputField(value: HTMLInputElement): void {
+            this._inputField = value;
+        }
 
         public tasks: ITask[];
         public taskDescription: string;
@@ -44,34 +46,27 @@ namespace ToDos.Components {
         public onTaskItemEdit(key: number): void {
             let task: ITask = this._tasksModel.getTaskByKey(key);
             this._currentItem = key;
-            this.setState({
+            this.__update({
                 taskDescription: task.description
-            });
-            this._update(true);
+            }, true);
         }
 
         public onTaskItemDelete(key: number): void {
             this._tasksModel.deleteTask(key);
             this._currentItem = -1;
-            this.setState({
+            this.__update({
                 taskDescription: ""
-            });
-            this._update(false);
+            }, false);
         }
 
         public onTaskItemDoneChanged(key: number, state: boolean): void {
             this._tasksModel.taskDone(key, state);
-            this._update(false);
+            this.__update({}, false);
         }
 
-        protected _onConfigure(tasksModel: ITasksModel) {
-
+        protected async _onConfigure(tasksModel: ITasksModel): Promise<void> {
             this._tasksModel = tasksModel;
-            this._tasksModel.initialize()
-                .then(() => {
-                    this._update(true)
-                });
-
+            await this._tasksModel.initialize()
         }
 
         protected _onDefaultState(): ITasksState {
@@ -83,37 +78,16 @@ namespace ToDos.Components {
             });
         }
 
-        protected _onInitialize(): void {
+        protected async _onInitialize(): Promise<void> {
             this._currentItem = -1;
             this._inputField = null;
+            await this.__update({}, true);
         }
 
-        protected _onFinalize(): void {
+        protected async _onFinalize(): Promise<void> {
             this._tasksModel.release();
             this._tasksModel = null;
         }
-
-        private _update(focus: boolean): void {
-            this._tasksModel.getTasks(this.filter)
-                .then((data: ITask[]) => {
-
-                    let actionLabel: string = this._currentItem === -1 ? "Add" : "Update";
-
-                    this.setState({
-                        tasks: data,
-                        actionLabel: actionLabel
-                    });
-
-                    if (focus && this._inputField !== null) {
-                        this._inputField.focus();
-                    }
-
-                })
-                .catch((reason: Ajs.Exception) => {
-                    throw new Ajs.Exception("Unable to get the model data", reason);
-                });
-        }
-
 
         protected _textChanged(e: Event): void {
             if (e.target instanceof HTMLInputElement) {
@@ -131,11 +105,10 @@ namespace ToDos.Components {
                 } else {
                     this._tasksModel.updateTaskDescription(this._currentItem, this.taskDescription);
                 }
-                this.setState({
-                    taskDescription: ""
-                });
                 this._currentItem = -1;
-                this._update(true);
+                this.__update({
+                    taskDescription: ""
+                }, true);
             }
         }
 
@@ -148,12 +121,32 @@ namespace ToDos.Components {
         protected _cancelUpdate(e: Event): void {
             this._currentItem = -1;
             this.taskDescription = "";
-            this._update(true);
+            this.__update({
+                taskDescription: ""
+            }, true);
         }
 
         protected _setFilter(e: Event): void {
             this.filter = <any>(<HTMLSelectElement>e.target).value;
-            this._update(false);
+            this.__update({}, false);
+        }
+
+
+        private async __update(state: any, focus: boolean): Promise<void> {
+            let data: ITask[] = await this._tasksModel.getTasks(this.filter);
+
+            let actionLabel: string = this._currentItem === -1 ? "Add" : "Update";
+
+            state = Ajs.Utils.DeepMerge.merge(state, {
+                tasks: data,
+                actionLabel: actionLabel
+            });
+
+            await this.setState(state);
+
+            if (focus && this._inputField !== null) {
+                this._inputField.focus();
+            }
         }
 
     }
