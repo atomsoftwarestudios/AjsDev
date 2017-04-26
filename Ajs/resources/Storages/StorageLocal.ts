@@ -21,37 +21,37 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace Ajs.Resources {
+namespace Ajs.Resources.Storages {
 
     "use strict";
 
     /**
-     * Represents the browser session storage (persistent until window is closed)
+     * Represents the browser local storage (persistent until explicitly cleared)
      */
-    export class StorageSession extends AjsStorage {
+    export class StorageLocal extends AjsStorage {
 
         /** Returns type of the storage */
-        public get type(): STORAGE_TYPE { return STORAGE_TYPE.SESSION; }
+        public get type(): StorageType { return StorageType.Local; }
 
-        /** Constructs the StorageSession object */
-        protected _initialize(): void {
+        /** Constructs the StorageLocal object */
+        public async initialize(): Promise<void> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
-            this._supported = window.sessionStorage !== undefined;
+            this._supported = window.localStorage !== undefined;
 
             if (this._supported) {
-
-                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Session storage is supported.");
-
-                this._storageProvider = window.sessionStorage;
+                this._storageProvider = new StorageProviders.LocalStorageProvider();
+                await this._storageProvider.initialize();
                 this._usedSpace = 0;
-                this._resources = this._getResourcesInfo();
+                this._resources = await this._getResourcesInfo();
             } else {
-                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Session storage is not supported!");
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, LOG_AJSRESSTOR, this, LOG_LOCAL_STORAGE_NOT_SUPPORTED);
+                throw new LocalStorageNotSupportedException();
             }
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
+
         }
 
     }

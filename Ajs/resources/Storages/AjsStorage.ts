@@ -21,18 +21,9 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace Ajs.Resources {
+namespace Ajs.Resources.Storages {
 
     "use strict";
-
-    /** Storage cachedResourcesInfo key */
-    export const STORAGE_INFO_KEY: string = "AJSRESOURCEINFO";
-
-    /** Storage resource data item key prefix */
-    export const STORAGE_RESOURCE_KEY_PREFIX: string = "AJSRESOURCE.";
-
-    /** Storage key for testing if the resource fits the remaining free space */
-    export const STORAGE_ADDTEST_KEY: string = "AJSADDTEST";
 
     /**
      * Represents the browser storage (memory/session/local, based on the configuration and storage provider of the extending class)
@@ -66,7 +57,7 @@ namespace Ajs.Resources {
      * <p>
      * Currently extended by StorageBrowser (then by StorageMemory, StorageSession, StorageLocal)
      */
-    export abstract class AjsStorage {
+    export abstract class AjsStorage implements IAjsStorage {
 
         /** Indicates if the storage type (local, session) is supported by the browser */
         protected _supported: boolean;
@@ -74,9 +65,9 @@ namespace Ajs.Resources {
         public get supported(): boolean { return this._supported; }
 
         /** Holds maximum size of the cache available to AjsStorage */
-        protected _cacheSize: number;
+        protected _maxCacheSize: number;
         /** Returns maximum size of the cache usable by the AjsStorage */
-        public get cacheSize(): number { return this._cacheSize; };
+        public get cacheSize(): number { return this._maxCacheSize; };
 
         /** Stores approximate total size of all resources stored in the storage in bytes */
         protected _usedSpace: number;
@@ -89,12 +80,12 @@ namespace Ajs.Resources {
         public get resources(): ICachedResource[] { return this._resources; }
 
         /** Stores instance of the storage provider used by the Storage to manipulate storage data */
-        protected _storageProvider: IStorageProvider;
+        protected _storageProvider: StorageProviders.IStorageProvider;
         /** Returns instance of the storage provider used by the Storage to manipulate storage data */
-        public get storageProvider(): IStorageProvider { return this._storageProvider; }
+        public get storageProvider(): StorageProviders.IStorageProvider { return this._storageProvider; }
 
         /** Returns type of the storage */
-        public abstract get type(): STORAGE_TYPE;
+        public abstract get type(): StorageType;
 
         /**
          * Constructs and initializes the AjsStorage
@@ -102,41 +93,36 @@ namespace Ajs.Resources {
          */
         public constructor(cacheSize: number) {
 
-            Ajs.Dbg.log(Dbg.LogType.Constructor, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Constructor, 0, LOG_AJSRESSTOR, this);
 
-            this._cacheSize = cacheSize;
-            this._initialize();
+            this._maxCacheSize = cacheSize;
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
-
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
         }
 
         /**
          * Internally initializes the instance of the Storage class
          * Must be overriden and check if the required storage type is supprted and get / instantiate storage provider
          */
-        protected abstract _initialize(): void;
+        public abstract initialize(): Promise<void>;
 
         /**
          * Completely cleans all resources from the storage
          */
-        public clear(): void {
+        public async clear(): Promise<void> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
-            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Clearing the storage");
-
-            // remove all data items
-            for (let i: number = 0; i < this._resources.length; i++) {
-                this._storageProvider.removeItem(STORAGE_RESOURCE_KEY_PREFIX + this._resources[i].url);
-            }
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRESSTOR, this, LOG_CLEARING_STORAGE);
+            
+            await this._storageProvider.clear();
 
             // remove stored resources information
             this._usedSpace = 0;
             this._resources = [];
             this._storageProvider.setItem(STORAGE_INFO_KEY, JSON.stringify(this._resources));
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
         }
 
         /**
@@ -144,16 +130,16 @@ namespace Ajs.Resources {
          * @param resource Resource to be stored
          * @throws NotEnoughSpaceInStorageException Thrown when there is not enough space in the storage to store the resource
          */
-        public addResource(resource: ICachedResource): void {
+        public async addResource(resource: ICachedResource): Promise<void> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
-            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                "Adding cached resource to the storage " + resource.url, resource);
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRESSTOR, this, LOG_ADDING_RESOSURCE + resource.url, resource);
 
             // if the resource exists, update it
-            if (this.getResource(resource.url) !== null) {
-                this.updateResource(resource);
+            if (await this.getResource(resource.url) !== null) {
+                await this.updateResource(resource);
+                Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
                 return;
             }
 
@@ -172,23 +158,29 @@ namespace Ajs.Resources {
                 data = JSON.stringify(resource.data);
             }
 
-            let oldInfoSize: number = this._storageProvider.getItem(STORAGE_INFO_KEY).length;
+            let oldInfoSize: number = (await this._storageProvider.getItem(STORAGE_INFO_KEY)).length;
             dataSize = data.length;
 
             // try to add the resource data to the storage
             try {
-                this._storageProvider.setItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url, data);
+
+                await this._storageProvider.setItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url, data);
+
             } catch (e) {
+
                 // if there is no space, clean the cache and try it once more - don't catch the exception, let it pass further
-                this._cleanCache(dataSize);
+                await this.__cleanCache(dataSize);
+
                 // another try to add the resource
                 try {
-                    this._storageProvider.setItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url, data);
+
+                    await this._storageProvider.setItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url, data);
+
                 } catch (e) {
-                    Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this,
-                        "Not enough space in the storage", e);
-                    throw new NotEnoughSpaceInStorageException();
+                    Ajs.Dbg.log(Dbg.LogType.Error, 0, LOG_AJSRESSTOR, this, LOG_NOT_ENOUGH_SPACE, e);
+                    throw new NotEnoughSpaceInStorageException(e);
                 }
+
             }
 
             // prepare the resource info to be added to this._resources
@@ -209,42 +201,44 @@ namespace Ajs.Resources {
 
             // try to update info in the store
             try {
-                this._storageProvider.setItem(STORAGE_INFO_KEY, resourcesInfoStr);
+
+                await this._storageProvider.setItem(STORAGE_INFO_KEY, resourcesInfoStr);
+
             } catch (e) {
-                this._storageProvider.removeItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url);
-
-                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this,
-                    "Not enough space in the storage for the metadata", e);
-
-                throw new NotEnoughSpaceInStorageException();
+                await this._storageProvider.removeItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url);
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, LOG_AJSRESSTOR, this, LOG_NOT_ENOUGH_SPACE_META, e);
+                throw new NotEnoughSpaceInStorageException(e);
             }
 
             // compute new size of the occupied space
             this._usedSpace += (newInfoSize - oldInfoSize) + dataSize;
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
+
         }
 
         /**
          * Returns the resource according the URL passed
          * @param url URL of the resource to be returned
          */
-        public getResource(url: string): ICachedResource {
+        public async getResource(url: string): Promise<ICachedResource> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
-            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                "Getting cached resource from the storage: " + url);
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRESSTOR, this, LOG_GETTING_RESOURCE + url);
 
             for (let i: number = 0; i < this._resources.length; i++) {
+
                 if (this._resources[i].url === url) {
+
                     // update last used timestamp
                     this._resources[i].lastUsedTimestamp = new Date();
                     let info: string = JSON.stringify(this._resources);
-                    this._storageProvider.setItem(STORAGE_INFO_KEY, info);
+
+                    await this._storageProvider.setItem(STORAGE_INFO_KEY, info);
 
                     // prepare data
-                    let dataStr: string = JSON.parse(this._storageProvider.getItem(STORAGE_RESOURCE_KEY_PREFIX + url));
+                    let dataStr: string = JSON.parse(await this._storageProvider.getItem(STORAGE_RESOURCE_KEY_PREFIX + url));
                     let data: any = dataStr;
 
                     // compose the ICachedResource
@@ -257,38 +251,37 @@ namespace Ajs.Resources {
                         size: dataStr.length
                     };
 
-                    Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                        "Cached resource found in the storage: " + url);
-
-                    Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
+                    Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
 
                     return resource;
                 }
+
             }
 
-            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                "Cached resource not found in the storage: " + url);
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRESSTOR, this, LOG_RES_NOT_FOUND + url);
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
 
             return null;
+
         }
 
         /**
          * Updates a cached resource
          * @param resource Resource to be updated
          */
-        public updateResource(resource: ICachedResource): void {
+        public async updateResource(resource: ICachedResource): Promise<void> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
-            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                "Updating cached resource: " + resource.url, resource);
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRESSTOR, this, LOG_UPDATE_RESOURCE + resource.url, resource);
 
-            // if the resource not exist, create it
-            if (this.getResource(resource.url) === null) {
-                this.addResource(resource);
-                return;
+            // if the resource not exists, create it
+            if (await this.getResource(resource.url) === null) {
+
+                Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
+                return this.addResource(resource);
+
             }
 
             // prepare necessary variables
@@ -309,30 +302,41 @@ namespace Ajs.Resources {
 
             dataSize = data.length;
 
-            let oldInfoSize: number = this._storageProvider.getItem(STORAGE_INFO_KEY).length;
+            let oldInfoSize: number = (await this._storageProvider.getItem(STORAGE_INFO_KEY)).length;
             let resourceKey: string = STORAGE_RESOURCE_KEY_PREFIX + resource.url;
-            let oldDataSize: number = this._storageProvider.getItem(resourceKey).length;
+            let oldItem: string = await this._storageProvider.getItem(resourceKey);
+
+            let oldDataSize: number;
+            if (oldItem !== null) {
+                oldDataSize = oldItem.length;
+            } else {
+                oldDataSize = 0;
+            }
 
             // try to update the resource data in the storage
             try {
-                this._storageProvider.setItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url, data);
+
+                await this._storageProvider.setItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url, data);
+
             } catch (e) {
+
                 // if there is no space, clean the cache and try it once more
                 // don't catch the exception, let it pass further
-                this._cleanCache(Math.abs(dataSize - oldDataSize));
+                await this.__cleanCache(Math.abs(dataSize - oldDataSize));
+
                 // another try to update the resource
                 try {
-                    this._storageProvider.setItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url, data);
+
+                    await this._storageProvider.setItem(STORAGE_RESOURCE_KEY_PREFIX + resource.url, data);
+
                 } catch (e) {
-
-                    Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this,
-                        "Not enough space in the storage", e);
-
+                    Ajs.Dbg.log(Dbg.LogType.Error, 0, LOG_AJSRESSTOR, this, LOG_NOT_ENOUGH_SPACE, e);
                     throw new NotEnoughSpaceInStorageException();
                 }
             }
 
             // prepare the resource info to be added to this._resources
+
             let resourceInfo: ICachedResource = {
                 url: resource.url,
                 data: null,
@@ -342,7 +346,7 @@ namespace Ajs.Resources {
             };
 
             // update info about the resource to the list of stored resources
-            this._resources[this._getResourceIndex(resource.url)] = resourceInfo;
+            this._resources[this.__getResourceIndex(resource.url)] = resourceInfo;
 
             // stringify the resources info
             let resourcesInfoStr: string = JSON.stringify(this._resources);
@@ -350,85 +354,85 @@ namespace Ajs.Resources {
 
             // try to update info in the store
             try {
-                this._storageProvider.setItem(STORAGE_INFO_KEY, resourcesInfoStr);
+
+                await this._storageProvider.setItem(STORAGE_INFO_KEY, resourcesInfoStr);
+
             } catch (e) {
-
-                Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this,
-                    "Not enough space in the storage for the metadata", e);
-
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, LOG_AJSRESSTOR, this, LOG_NOT_ENOUGH_SPACE_META, e);
                 throw new NotEnoughSpaceInStorageException();
             }
 
             // compute new size of the occupied space
             this._usedSpace += (newInfoSize - oldInfoSize) + (dataSize - oldDataSize);
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
         }
 
         /**
          * Removes the resource from the storage
          * @param url Url of the resource to be removed
          */
-        public removeResource(url: string): void {
+        public async removeResource(url: string): Promise<void> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
-            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                "Removing cached resource: " + url);
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRESSTOR, this, LOG_REMOVING_RESOURCE + url);
 
             // get reource from store and return if not exists
-            let resource: ICachedResource = this.getResource(url);
+            let resource: ICachedResource = await this.getResource(url);
             if (resource === null) {
                 return;
             }
 
             // remove data
-            this._storageProvider.removeItem(STORAGE_RESOURCE_KEY_PREFIX + url);
+            await this._storageProvider.removeItem(STORAGE_RESOURCE_KEY_PREFIX + url);
             this._usedSpace -= resource.size;
 
             // remove info
-            let oldInfoSize: number = this._storageProvider.getItem(STORAGE_INFO_KEY).length;
+            let oldInfoSize: number = (await this._storageProvider.getItem(STORAGE_INFO_KEY)).length;
             this._resources.splice(this._resources.indexOf(resource), 1);
             let info: string = JSON.stringify(this._resources);
             let newInfoSize: number = info.length;
-            this._storageProvider.setItem(STORAGE_INFO_KEY, info);
+            await this._storageProvider.setItem(STORAGE_INFO_KEY, info);
 
             // update used space
             this._usedSpace -= oldInfoSize - newInfoSize;
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
         }
 
         /**
          * Loads information about resources in the storage
          */
-        protected _getResourcesInfo(): ICachedResource[] {
+        protected async _getResourcesInfo(): Promise<ICachedResource[]> {
 
-            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
+
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRESSTOR, this, LOG_GETTING_INFO);
 
             let resources: ICachedResource[] = [];
-            let cachedResourcesInfoStr: string = this._storageProvider.getItem(STORAGE_INFO_KEY);
+            let cachedResourcesInfoStr: string = await this._storageProvider.getItem(STORAGE_INFO_KEY);
 
             if (cachedResourcesInfoStr !== null) {
                 // get space occupied by the resources info
                 this._usedSpace = cachedResourcesInfoStr.length;
                 // set array of all ICachedResource in given storage
-                resources = JSON.parse(cachedResourcesInfoStr, this._resourceInfoJSONReviver);
+                resources = JSON.parse(cachedResourcesInfoStr, this.__resourceInfoJSONReviver);
 
                 // compute storage used space from the data of all resources
                 for (let i: number = 0; i < resources.length; i++) {
                     let resourceKey: string = STORAGE_RESOURCE_KEY_PREFIX + resources[i].url;
-                    let item: string = this._storageProvider.getItem(resourceKey);
+                    let item: string = await this._storageProvider.getItem(resourceKey);
                     if (item !== null) {
                         this._usedSpace += item.length;
                     }
                 }
 
             } else {
-                this._storageProvider.setItem(STORAGE_INFO_KEY, JSON.stringify([]));
+                await this._storageProvider.setItem(STORAGE_INFO_KEY, JSON.stringify([]));
             }
 
-            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
 
             return resources;
         }
@@ -438,12 +442,12 @@ namespace Ajs.Resources {
          * @param requiredSpace If defined the method tries to remove old resources until there is enough space
          *                      in the storage, otherwise it removes all LRU resources
          */
-        protected _cleanCache(requiredSpace?: number): void {
+        private async __cleanCache(requiredSpace?: number): Promise<void> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
-            Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this,
-                "Cleaning resource cache. Required space: " + (requiredSpace === undefined ? "Complete clean" : requiredSpace) );
+            Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRESSTOR, this,
+                LOG_CACHE_CLEAN + (requiredSpace === undefined ? LOG_CLEAN_ALL : requiredSpace));
 
             // delete lru resource until there is enough space required
             if (requiredSpace !== undefined) {
@@ -469,17 +473,17 @@ namespace Ajs.Resources {
                 // try to remove LRU resources from the storage until there is enough
                 // space in the storage
                 while (i < orderedResources.length && !enoughSpace) {
-                    if (orderedResources[i].cachePolicy === CACHE_POLICY.LASTRECENTLYUSED) {
-                        this.removeResource(orderedResources[i].url);
+                    if (orderedResources[i].cachePolicy === CachePolicy.LastRecentlyUsed) {
+                        await this.removeResource(orderedResources[i].url);
                         // using a naive method check if there is enough space in the storage
                         try {
                             enoughSpace = true;
-                            this._storageProvider.setItem(STORAGE_ADDTEST_KEY, testString);
+                            await this._storageProvider.setItem(STORAGE_ADDTEST_KEY, testString);
                         } catch (e) {
                             enoughSpace = false;
                         }
                         if (enoughSpace) {
-                            this._storageProvider.removeItem(STORAGE_ADDTEST_KEY);
+                            await this._storageProvider.removeItem(STORAGE_ADDTEST_KEY);
                         }
                     } else {
                         i++;
@@ -488,8 +492,7 @@ namespace Ajs.Resources {
 
                 // trow exception if there is not enough space for resource in the storage
                 if (!enoughSpace) {
-                    Ajs.Dbg.log(Dbg.LogType.Error, 0, "ajs.resources", this,
-                        "Not enough space in the storage");
+                    Ajs.Dbg.log(Dbg.LogType.Error, 0, LOG_AJSRESSTOR, this, LOG_NOT_ENOUGH_SPACE);
                     throw new NotEnoughSpaceInStorageException();
                 }
 
@@ -498,25 +501,25 @@ namespace Ajs.Resources {
                 let i: number = 0;
                 // remove all LRU resources
                 while (i < this._resources.length) {
-                    if (this._resources[i].cachePolicy === CACHE_POLICY.LASTRECENTLYUSED) {
-                        this.removeResource(this._resources[i].url);
+                    if (this._resources[i].cachePolicy === CachePolicy.LastRecentlyUsed) {
+                        await this.removeResource(this._resources[i].url);
                     } else {
                         i++;
                     }
                 }
             }
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
-
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
         }
 
         /**
          * Converts JSON string to Date
          * Used for resource info data loaded from storage and parsed from JSON to object
-         * @param key
-         * @param value
+         * @param key key of the item to be revivered
+         * @param value actual item value
          */
-        protected _resourceInfoJSONReviver(key: string, value: any): any {
+        private __resourceInfoJSONReviver(key: string, value: any): any {
+
             if (key === "lastModified" || key === "lastUsedTimestamp") {
                 return new Date(value);
             }
@@ -527,22 +530,15 @@ namespace Ajs.Resources {
         /**
          * Returns resource index from the URL
          * If the resource is not found it returns -1
-         * @param url
+         * @param url item url identifier
          */
-        protected _getResourceIndex(url: string): number {
-
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+        private __getResourceIndex(url: string): number {
 
             for (let i: number = 0; i < this._resources.length; i++) {
                 if (this._resources[i].url === url) {
-
-                    Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
-
                     return i;
                 }
             }
-
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
 
             return -1;
         }

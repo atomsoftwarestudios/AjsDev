@@ -21,37 +21,43 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace Ajs.Resources {
+namespace Ajs.Resources.Storages {
 
     "use strict";
 
     /**
      * Represents the browser local storage (persistent until explicitly cleared)
      */
-    export class StorageLocal extends AjsStorage {
+    export class StorageIndexedDb extends AjsStorage {
 
         /** Returns type of the storage */
-        public get type(): STORAGE_TYPE { return STORAGE_TYPE.LOCAL; }
+        public get type(): StorageType { return StorageType.IndexedDb; }
 
         /** Constructs the StorageLocal object */
-        protected _initialize(): void {
+        public async initialize(): Promise<void> {
 
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
-            this._supported = window.localStorage !== undefined;
-
+            this._supported = window.indexedDB !== undefined;
+            
             if (this._supported) {
 
-                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.resources", this, "Local storage is supported.");
+                // todo: resolve dependency somewhere above
+                let db: AjsIndexedDb.IAjsIndexedDb = container.resolve<AjsIndexedDb.IAjsIndexedDb>(AjsIndexedDb.IIAjsIndexedDB);
 
-                this._storageProvider = window.localStorage;
+                this._storageProvider = new StorageProviders.IndexedDbStorageProvider(db);
+                await this._storageProvider.initialize();
+
                 this._usedSpace = 0;
-                this._resources = this._getResourcesInfo();
+                this._resources = await this._getResourcesInfo();
+
             } else {
-                Ajs.Dbg.log(Dbg.LogType.Warning, 0, "ajs.resources", this, "Local storage is not supported!");
+                Ajs.Dbg.log(Dbg.LogType.Error, 0, LOG_AJSRESSTOR, this, LOG_INDEXEDDB_STORAGE_NOT_SUPPORTED);
+                throw new IndexedDbStorageNotSupportedException();
             }
 
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
+            Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRESSTOR, this);
+
         }
 
     }

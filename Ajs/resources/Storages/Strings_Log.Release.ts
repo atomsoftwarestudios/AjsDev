@@ -1,4 +1,4 @@
-/* *************************************************************************
+﻿/* *************************************************************************
 The MIT License (MIT)
 Copyright (c)2016-2017 Atom Software Studios. All rights reserved.
 
@@ -21,24 +21,24 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace Ajs.Resources {
+namespace Ajs.Resources.Storages {
 
     "use strict";
 
-    /** Represents the resource stored in one of storages */
-    export interface ICachedResource {
-        /** Unique resource locator */
-        url: string;
-        /** Resource data */
-        data: any;
-        /** Caching policy */
-        cachePolicy: CACHE_POLICY;
-        /** timestamp of the creation of the resource in the cache */
-        lastModified: Date;
-        /** last timestamp of access of the resource in the cahce */
-        lastUsedTimestamp?: Date;
-        /** size of the resource ocuppying the cache */
-        size?: number;
-    }
+    export const LOG_AJSRESSTOR: string = "";
+    export const LOG_LOCAL_STORAGE_NOT_SUPPORTED = "";
+    export const LOG_SESSION_STORAGE_NOT_SUPPORTED = "";
+    export const LOG_INDEXEDDB_STORAGE_NOT_SUPPORTED = "";
+    export const LOG_CLEARING_STORAGE: string = "";
+    export const LOG_ADDING_RESOSURCE: string = "";
+    export const LOG_NOT_ENOUGH_SPACE: string = "";
+    export const LOG_NOT_ENOUGH_SPACE_META: string = "";
+    export const LOG_GETTING_RESOURCE: string = "";
+    export const LOG_REMOVING_RESOURCE: string = "";
+    export const LOG_GETTING_INFO: string = "";
+    export const LOG_RES_NOT_FOUND: string = "";
+    export const LOG_UPDATE_RESOURCE: string = "";
+    export const LOG_CACHE_CLEAN: string = "";
+    export const LOG_CLEAN_ALL: string = "";
 
 }

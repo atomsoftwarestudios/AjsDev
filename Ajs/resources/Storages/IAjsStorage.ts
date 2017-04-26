@@ -21,32 +21,24 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace Ajs.Resources {
+namespace Ajs.Resources.Storages {
 
     "use strict";
 
-    /**
-     * Represents the memory storage (persistent until reload / close)
-     */
-    export class StorageMemory extends AjsStorage {
+    export interface IAjsStorage {
 
-        /** Returns type of the storage */
-        public get type(): STORAGE_TYPE { return STORAGE_TYPE.MEMORY; }
+        readonly supported: boolean;
+        readonly cacheSize: number;
+        readonly usedSpace: number;
+        readonly resources: ICachedResource[];
+        readonly storageProvider: StorageProviders.IStorageProvider;
+        readonly type: StorageType;
 
-        /** Constructs the StorageLocal object */
-        protected _initialize(): void {
-
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.resources", this);
-
-            this._supported = true;
-
-            if (this._supported) {
-                this._storageProvider = new MemoryStorageProvider();
-                this._usedSpace = 0;
-                this._resources = this._getResourcesInfo();
-            }
-
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.resources", this);
-        }
+        initialize(): Promise<void>;
+        clear(): Promise<void>;
+        addResource(resource: ICachedResource): Promise<void>;
+        getResource(url: string): Promise<ICachedResource>;
+        updateResource(resource: ICachedResource): Promise<void>;
+        removeResource(url: string): Promise<void>;
     }
 }
