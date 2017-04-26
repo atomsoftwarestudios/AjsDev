@@ -97,7 +97,7 @@ namespace Ajs.Routing {
                         Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Routing to a different than previous component");
 
                         this.__lastViewComponentName = viewComponentName;
-                        this.__viewComponentManager.setRootViewComponentName(viewComponentName);
+                        this.__viewComponentManager.setRootViewComponent(viewComponentName);
 
                     } else {
                         Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.routing", this, "Notifying component the navigation occured");
