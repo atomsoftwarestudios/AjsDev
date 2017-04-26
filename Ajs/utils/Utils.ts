@@ -103,7 +103,12 @@ namespace Ajs.Utils {
      * If object constructor name is Function it returns directly name of the object if possible
      * @param obj Object to be checked
      */
-    export function getClassName(obj: Object): string {
+    export function getClassName(obj: any): string {
+
+        if (obj && obj.name) {
+            return obj.name;
+        }
+
         if (obj && obj.constructor && obj.constructor.toString) {
             let arr: RegExpMatchArray = obj.constructor.toString().match(/function\s*(\w+)/);
             if (arr && arr.length === 2) {
@@ -130,6 +135,10 @@ namespace Ajs.Utils {
      */
     export function getFunctionParameterNames(f: Function): string[] {
 
+        if (f.toString().substr(0, 5) === "class") {
+            return getES6ClassConstructorParams(f);
+        }
+
         let paramNames: string[] = [];
 
         let fn: string = f.toString();
@@ -146,6 +155,37 @@ namespace Ajs.Utils {
         }
 
         return paramNames;
+    }
+
+    export function getES6ClassConstructorParams(f: Function): string[] {
+
+        if (f.toString().trim().substr(0, 5) !== "class") {
+            return getFunctionParameterNames(f);
+        }
+
+        if (f.toString().indexOf("constructor") === -1) {
+            return [];
+        }
+
+        let paramNames: string[] = [];
+
+        let fn: string = f.toString();
+        let p: string = fn.substr(fn.indexOf("constructor"));
+        p = p.substr(p.indexOf("(") + 1).trim();
+
+        if (p[0] === ")") {
+            return paramNames;
+        }
+
+        p = p.substr(0, p.indexOf(")"));
+        paramNames = p.split(",");
+
+        for (let i: number = 0; i < paramNames.length; i++) {
+            paramNames[i] = paramNames[i].trim();
+        }
+
+        return paramNames;
+
     }
 
     /**
@@ -192,6 +232,16 @@ namespace Ajs.Utils {
      */
     export function replaceAll(str: string, searchValue: string, replaceValue: string): string {
         return str.replace(new RegExp(escapeRegExp(searchValue), "g"), replaceValue);
+    }
+
+    export function nextTickAsync(howLong?: number): Promise<void> {
+        return new Promise<void>(
+            (resolve: () => void) => {
+                setTimeout(() => {
+                    resolve();
+                }, howLong ? howLong : 0);
+            }
+        );
     }
 
 }
