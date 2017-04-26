@@ -403,14 +403,17 @@ namespace Ajs.DI {
             instanceList: IServiceInstance[],
             serviceInterfaceIdentifier: any): any {
 
+            function construct(ctor: any, args: Array<any>): any {
+                return new (Function.prototype.bind.apply(ctor, [null].concat(args)));
+            }
+
             let s: IServiceDescriptor = this.__getService(serviceList, serviceInterfaceIdentifier);
             if (s === null) {
                 return null;
             }
 
             let params: any = this.__resolveParameters(s);
-            let o: any = Object.create(s.serviceConstructor.prototype);
-            s.serviceConstructor.apply(o, params);
+            let o: any = construct(s.serviceConstructor, params);
 
             if (instanceList !== null) {
                 instanceList.push({
