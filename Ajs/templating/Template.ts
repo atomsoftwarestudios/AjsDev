@@ -50,11 +50,14 @@ namespace Ajs.Templating {
         protected _name: string;
         public get name(): string { return this._name; }
 
-        protected _storageType: Resources.STORAGE_TYPE;
-        public get storageType(): Resources.STORAGE_TYPE { return this._storageType; }
+        protected _storageType: Resources.StorageType;
+        public get storageType(): Resources.StorageType { return this._storageType; }
 
-        protected _cachePolicy: Resources.CACHE_POLICY;
-        public get cachePolicy(): Resources.CACHE_POLICY { return this._cachePolicy; }
+        protected _cachePolicy: Resources.CachePolicy;
+        public get cachePolicy(): Resources.CachePolicy { return this._cachePolicy; }
+
+        protected _loadingPreference: Resources.LoadingPreference;
+        public get loadingPreference(): Resources.LoadingPreference { return this._loadingPreference; }
 
         protected _styleSheetsUrls: string[];
         public get styleSheetsUrls(): string[] { return this._styleSheetsUrls; }
@@ -80,14 +83,16 @@ namespace Ajs.Templating {
             resourceManager: Resources.IResourceManager,
             templateManager: ITemplateManager,
             templateResource: Resources.IResource,
-            storageType: Resources.STORAGE_TYPE,
-            cachePolicy: Resources.CACHE_POLICY
+            storageType: Resources.StorageType,
+            cachePolicy: Resources.CachePolicy,
+            loadingPreference: Resources.LoadingPreference
         ) {
             this._resourceManager = resourceManager;
             this._templateManager = templateManager;
             this._name = "";
             this._storageType = storageType;
             this._cachePolicy = cachePolicy;
+            this._loadingPreference = loadingPreference;
             this._template = document.implementation.createHTMLDocument("ajstemplate");
 
             // safari hack
@@ -125,7 +130,7 @@ namespace Ajs.Templating {
                             this._styleSheetsUrls[i],
                             this._storageType,
                             this._cachePolicy,
-                            Resources.LOADING_PREFERENCE.CACHE
+                            Resources.LoadingPreference.Cache
                         )
                     );
                 }

@@ -30,9 +30,9 @@ namespace Ajs.Templating {
     export interface ITemplateManager {
         loadTemplates(
             paths: string[],
-            storageType: Resources.STORAGE_TYPE,
-            cachePolicy: Resources.CACHE_POLICY,
-            loadingPreference?: Resources.LOADING_PREFERENCE
+            storageType: Resources.StorageType,
+            cachePolicy: Resources.CachePolicy,
+            loadingPreference?: Resources.LoadingPreference
         ): Promise<Template[]>;
 
         getTemplate(name: string): Template;

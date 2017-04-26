@@ -31,11 +31,11 @@ namespace Ajs.Templating {
 
     export class TemplateManager implements TemplateManager {
 
-        private __resourceManager: Resources.ResourceManager;
+        private __resourceManager: Resources.IResourceManager;
         private __templates: ITemplatesCollection;
         private __visualComponents: IVisualComponentCollection;
 
-        public constructor(resourceManager: Resources.ResourceManager) {
+        public constructor(resourceManager: Resources.IResourceManager) {
             this.__resourceManager = resourceManager;
             this.__templates = {};
             this.__visualComponents = {};
@@ -43,9 +43,9 @@ namespace Ajs.Templating {
 
         public loadTemplates(
             paths: string[],
-            storageType: Resources.STORAGE_TYPE,
-            cachePolicy: Resources.CACHE_POLICY,
-            loadingPreference?: Resources.LOADING_PREFERENCE
+            storageType: Resources.StorageType,
+            cachePolicy: Resources.CachePolicy,
+            loadingPreference?: Resources.LoadingPreference
         ): Promise<Template[]> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.templating", this);
@@ -81,7 +81,8 @@ namespace Ajs.Templating {
                                 this,
                                 resources[i],
                                 storageType,
-                                cachePolicy
+                                cachePolicy,
+                                loadingPreference
                             );
                             templates.push(template);
                             styleSheetLoaders.push(template.loadStyleSheets());
