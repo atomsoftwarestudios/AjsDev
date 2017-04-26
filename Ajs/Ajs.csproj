@@ -24,12 +24,36 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Ajs.ts" />
+    <TypeScriptCompile Include="AjsIndexedDB\Exceptions.ts" />
+    <TypeScriptCompile Include="AjsIndexedDB\IAjsIndexedDb.ts" />
+    <TypeScriptCompile Include="AjsIndexedDB\AjsIndexedDb.ts" />
+    <TypeScriptCompile Include="AjsIndexedDB\Strings_Log.Debug.ts" />
+    <TypeScriptCompile Include="AjsIndexedDB\Strings_Log.Release.ts" />
+    <TypeScriptCompile Include="App\IApplicationConfig.ts" />
     <TypeScriptCompile Include="lib\typesript-helpers.d.ts" />
     <TypeScriptCompile Include="MVVM\Model\Exceptions.ts" />
     <TypeScriptCompile Include="MVVM\Model\IModel.ts" />
     <TypeScriptCompile Include="MVVM\ViewModel\IViewComponentDependancies.ts" />
     <TypeScriptCompile Include="MVVM\ViewModel\IViewComponentStateMethods.ts" />
     <TypeScriptCompile Include="MVVM\ViewModel\viewcomponent.Decorator.ts" />
+    <TypeScriptCompile Include="Resources\Enums.ts" />
+    <TypeScriptCompile Include="Resources\Constants.ts" />
+    <TypeScriptCompile Include="Resources\IResourceRequest.ts" />
+    <TypeScriptCompile Include="Resources\StorageProviders\Constants.ts" />
+    <TypeScriptCompile Include="Resources\StorageProviders\IndexedDbStorageProvider.ts" />
+    <TypeScriptCompile Include="Resources\StorageProviders\Strings_Log.Debug.ts" />
+    <TypeScriptCompile Include="Resources\StorageProviders\Strings_Log.Release.ts" />
+    <TypeScriptCompile Include="Resources\StorageProviders\SessionStorageProvider.ts" />
+    <TypeScriptCompile Include="Resources\StorageProviders\LocalStorageProvider.ts" />
+    <TypeScriptCompile Include="Resources\Storages\Constants.ts" />
+    <TypeScriptCompile Include="Resources\Storages\Exceptions.ts" />
+    <TypeScriptCompile Include="Resources\Storages\IAjsStorage.ts" />
+    <TypeScriptCompile Include="Resources\Storages\StorageIndexedDb.ts" />
+    <TypeScriptCompile Include="Resources\Storages\Strings_Log.Release.ts" />
+    <TypeScriptCompile Include="Resources\Storages\Strings_Log.Debug.ts" />
+    <TypeScriptCompile Include="Resources\Strings_Log.Debug.ts" />
+    <TypeScriptCompile Include="Resources\Strings_Log.Release.ts" />
+    <TypeScriptCompile Include="State\Constants.ts" />
     <TypeScriptCompile Include="Types.ts" />
     <TypeScriptCompile Include="IAjsBootConfig.ts" />
     <TypeScriptCompile Include="IAjsConfig.ts" />
@@ -107,25 +131,23 @@
     <TypeScriptCompile Include="MVVM\ViewModel\ViewComponentManager.ts" />
     <TypeScriptCompile Include="Navigation\INavigator.ts" />
     <TypeScriptCompile Include="Navigation\Navigator.ts" />
-    <TypeScriptCompile Include="Resources\AjsStorage.ts" />
+    <TypeScriptCompile Include="Resources\Storages\AjsStorage.ts" />
     <TypeScriptCompile Include="Resources\Exceptions.ts" />
-    <TypeScriptCompile Include="Resources\ICachedResource.ts" />
+    <TypeScriptCompile Include="Resources\Storages\ICachedResource.ts" />
     <TypeScriptCompile Include="Resources\IManagedResource.ts" />
     <TypeScriptCompile Include="Resources\IResource.ts" />
-    <TypeScriptCompile Include="Resources\IResourceLoadEndHandler.ts" />
     <TypeScriptCompile Include="Resources\IResourceManagerConfig.ts" />
-    <TypeScriptCompile Include="Resources\IResourceRequest.ts" />
     <TypeScriptCompile Include="Resources\IResourceRequestData.ts" />
     <TypeScriptCompile Include="Resources\IResourceResponseData.ts" />
     <TypeScriptCompile Include="Resources\IResourceTypes.ts" />
-    <TypeScriptCompile Include="Resources\IStorageProvider.ts" />
+    <TypeScriptCompile Include="Resources\StorageProviders\IStorageProvider.ts" />
     <TypeScriptCompile Include="Resources\ResourceLoader.ts" />
     <TypeScriptCompile Include="Resources\IResourceManager.ts" />
     <TypeScriptCompile Include="Resources\ResourceManager.ts" />
-    <TypeScriptCompile Include="Resources\StorageLocal.ts" />
-    <TypeScriptCompile Include="Resources\MemoryStorageProvider.ts" />
-    <TypeScriptCompile Include="Resources\StorageMemory.ts" />
-    <TypeScriptCompile Include="Resources\StorageSession.ts" />
+    <TypeScriptCompile Include="Resources\Storages\StorageLocal.ts" />
+    <TypeScriptCompile Include="Resources\StorageProviders\MemoryStorageProvider.ts" />
+    <TypeScriptCompile Include="Resources\Storages\StorageMemory.ts" />
+    <TypeScriptCompile Include="Resources\Storages\StorageSession.ts" />
     <TypeScriptCompile Include="Navigation\IRedirection.ts" />
     <TypeScriptCompile Include="Routing\IRoute.ts" />
     <TypeScriptCompile Include="Routing\IRouteInfo.ts" />
@@ -178,6 +200,7 @@
       <Name>Ajs.Lib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
   </PropertyGroup>
