@@ -116,7 +116,7 @@ namespace Ajs.State {
      * State manager currently supports only string values so if it is required to store
      * arbitrary object it is necessary to JSONize it first.
      */
-    export class StateManager {
+    export class StateManager implements IStateManager {
 
         /** Resource manager to be used to access the local and session storages */
         private __resourceManager: Ajs.Resources.ResourceManager;
@@ -139,18 +139,18 @@ namespace Ajs.State {
          * @param key Key to be used for the application state value
          * @param value The value to be stored in the local storage under specified key
          */
-        public setAppState(key: string, value: string): void {
+        public async setAppState(key: string, value: string): Promise<void> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Setting the application state: " + key + " : " + value);
 
-            this.__resourceManager.setCachedResource(
+            await this.__resourceManager.setCachedResource(
                 APP_STATE_PREFIX + key,
                 value,
-                Ajs.Resources.STORAGE_TYPE.LOCAL,
-                Ajs.Resources.CACHE_POLICY.PERMANENT);
+                Ajs.Resources.StorageType.Local,
+                Ajs.Resources.CachePolicy.Permanent);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
@@ -159,16 +159,16 @@ namespace Ajs.State {
          * Retrieves the application state value idetified by the given key
          * @param key Key for which the application state value should be returned.
          */
-        public getAppState(key: string): string {
+        public async getAppState(key: string): Promise<string> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Retrieving the application state " + key);
 
-            let resource: Ajs.Resources.ICachedResource = this.__resourceManager.getCachedResource(
+            let resource: Ajs.Resources.Storages.ICachedResource = await this.__resourceManager.getCachedResource(
                 APP_STATE_PREFIX + key,
-                Ajs.Resources.STORAGE_TYPE.LOCAL
+                Ajs.Resources.StorageType.Local
             );
             if (resource !== null) {
                 Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
@@ -183,14 +183,14 @@ namespace Ajs.State {
          * Removes the application state key / value pair from the local storage
          * @param key Key to be removed
          */
-        public removeAppState(key: string): void {
+        public async removeAppState(key: string): Promise<void> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Removing the application state " + key);
 
-            this.__resourceManager.removeCachedResource(key, Ajs.Resources.STORAGE_TYPE.LOCAL);
+            await this.__resourceManager.removeCachedResource(key, Ajs.Resources.StorageType.Local);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
@@ -200,18 +200,18 @@ namespace Ajs.State {
          * @param key Key to be used for the session state value
          * @param value The value to be stored in the session storage under specified key
          */
-        public setSessionState(key: string, value: string): void {
+        public async setSessionState(key: string, value: string): Promise<void> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Setting the session state " + key + " : " + value);
 
-            this.__resourceManager.setCachedResource(
+            await this.__resourceManager.setCachedResource(
                 SESS_STATE_PREFIX + key,
                 value,
-                Ajs.Resources.STORAGE_TYPE.SESSION,
-                Ajs.Resources.CACHE_POLICY.PERMANENT);
+                Ajs.Resources.StorageType.Session,
+                Ajs.Resources.CachePolicy.Permanent);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }
@@ -220,16 +220,16 @@ namespace Ajs.State {
          * Retrieves the session state value idetified by the given key
          * @param key Key for which the session state value should be returned.
          */
-        public getSessionState(key: string): string {
+        public async getSessionState(key: string): Promise<string> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Retireving the session state " + key);
 
-            let resource: Ajs.Resources.ICachedResource = this.__resourceManager.getCachedResource(
+            let resource: Ajs.Resources.Storages.ICachedResource = await this.__resourceManager.getCachedResource(
                 SESS_STATE_PREFIX + key,
-                Ajs.Resources.STORAGE_TYPE.SESSION
+                Ajs.Resources.StorageType.Session
             );
 
             if (resource !== null) {
@@ -245,13 +245,13 @@ namespace Ajs.State {
          * Removes the session state key / value pair from the session storage
          * @param key Key to be removed
          */
-        public removeSessionState(key: string): void {
+        public async removeSessionState(key: string): Promise<void> {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.state", this);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.state", this,
                 "Removing the session state " + key);
 
-            this.__resourceManager.removeCachedResource(key, Ajs.Resources.STORAGE_TYPE.SESSION);
+            await this.__resourceManager.removeCachedResource(key, Ajs.Resources.StorageType.Session);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.state", this);
         }

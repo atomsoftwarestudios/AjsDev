@@ -21,19 +21,20 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
+///<reference path="../Resources/Constants.ts" />
+
 namespace Ajs.State {
 
     "use strict";
 
-    export const IIStateManager: IStateManager = DI.II;
+    /**
+     * Prefix for the key used to store the Application state value
+     */
+    const APP_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "APPSTATE.";
 
-    export interface IStateManager {
-        setAppState(key: string, value: string): Promise<void>;
-        getAppState(key: string): Promise<string>;
-        removeAppState(key: string): Promise<void>;
-        setSessionState(key: string, value: string): Promise<void>;
-        getSessionState(key: string): Promise<string>;
-        removeSessionState(key: string): Promise<void>;
-    }
+    /**
+     * Prefix for the key used to store the Session state value
+     */
+    const SESS_STATE_PREFIX: string = Resources.LOCAL_ONLY_PREFIX + "SESSTATE.";
 
 }
