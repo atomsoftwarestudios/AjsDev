@@ -72,7 +72,7 @@ namespace Ajs.Boot {
         return {
             showErrors: true,
             offlineSupport: false,
-            offlineFallbackTimeout: 500,
+            offlineFallbackTimeout: 1000,
             errorHandler: _bootErrorHandler
         };
     }

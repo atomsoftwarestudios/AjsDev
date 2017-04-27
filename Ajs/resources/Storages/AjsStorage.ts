@@ -114,7 +114,7 @@ namespace Ajs.Resources.Storages {
             Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
             Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRESSTOR, this, LOG_CLEARING_STORAGE);
-            
+
             await this._storageProvider.clear();
 
             // remove stored resources information

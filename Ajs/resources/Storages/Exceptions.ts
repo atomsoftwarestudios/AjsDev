@@ -42,5 +42,7 @@ namespace Ajs.Resources {
     /** Storage type requested is not valid */
     export class InvalidStorageTypeException extends Exception { }
 
+    /** Thrown when initialize on the StorageIndexedDb is called without previously setting the db property*/
+    export class AjsIndexedDbNotSetException extends Exception { }
 
 }

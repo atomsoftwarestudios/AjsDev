@@ -90,7 +90,7 @@ namespace Ajs.AjsIndexedDb {
                 return Promise.resolve();
             }
 
-            let initPromise = new Promise<void>(
+            let initPromise: Promise<void> = new Promise<void>(
                 (resolve: () => void, reject: (rason: any) => void) => {
                     this.__onInitializedPromiseResolvers.push(resolve);
                     this.__onInitializedPromiseRejectors.push(reject);
@@ -129,6 +129,8 @@ namespace Ajs.AjsIndexedDb {
                     Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_INIT_FAILED, reason);
                 });
 
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, LOG_IDB, this);
+
             return initPromise;
         }
 
@@ -163,17 +165,22 @@ namespace Ajs.AjsIndexedDb {
                     }
 
                     try {
+                        // this is because of old chromiums and ff'es
+                        if (typeof (<any>this.__db).setVersion === "function") {
+                            mode = <any>(mode === "readwrite" ? 0 : 1);
+                        }
+
                         let tx: IDBTransaction = this.__db.transaction(name, mode);
-                        let dbr = requestCb(tx.objectStore(name));
+                        let dbr: IDBRequest = requestCb(tx.objectStore(name));
 
                         dbr.onsuccess = (e: Event) => {
                             resolve(dbr.result);
-                        }
+                        };
 
                         dbr.onerror = (e: Event) => {
                             Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_FAILED_TO_PERFORM_STORE_REQ, e);
                             reject(new IndexedDbStoreRequestFailedException());
-                        }
+                        };
 
                     } catch (e) {
                         Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_FAILED_TO_PERFORM_STORE_REQ, e);
@@ -196,12 +203,14 @@ namespace Ajs.AjsIndexedDb {
          * @param configureStore Callback to be called to configure the store
          */
         public async createStore(
-            name,
-            params,
+            name: string,
+            params: IDBObjectStoreParameters,
             configureStore: (store: IDBObjectStore) => void,
         ): Promise<void> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, LOG_IDB, this);
+
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, LOG_IDB, this, LOG_CREATING_STORE + name);
 
             // don't create store if it exists
             if (this.__db.objectStoreNames.contains(name)) {
@@ -209,15 +218,18 @@ namespace Ajs.AjsIndexedDb {
             }
 
             // it is definitely neccessary to change DB version and reopen it to get the upgradeneeded event
-            let version = this.__db.version;
+            let version: number = this.__db.version;
+            if (<any>version === "") {
+                version = 1;
+            }
             version++;
 
             // close the db
             this.__db.close();
             this.__db = null;
 
-            // wait for next js eloop tick (give a chance to the DB to get closed)
-            await Utils.nextTickAsync();
+            // wait for next js event loop tick (give a chance to the DB to get closed)
+            await Utils.nextTickAsync(50);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, LOG_IDB, this, LOG_NEW_DB_VER + version);
 
@@ -281,7 +293,54 @@ namespace Ajs.AjsIndexedDb {
 
                         dbOpen.onsuccess = async (e: Event) => {
                             this.__db = (<IDBOpenDBRequest>e.target).result;
-                            await Utils.nextTickAsync();
+
+                            // this is because of old chromium webviews on android
+                            if (typeof (<any>this.__db).setVersion === "function") {
+                                Ajs.Dbg.log(Ajs.Dbg.LogType.Warning, 0, LOG_IDB, this, "Old IndexedDB implementation detected");
+
+                                if (version) {
+
+                                    let oldVersion: number = this.__db.version;
+                                    if (<any>oldVersion === "") {
+                                        oldVersion = 1;
+                                    }
+
+                                    if (version > oldVersion && upgrade !== undefined) {
+
+                                        Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, LOG_IDB, this, "Setting new version " + version);
+                                        let vch: { onsuccess: Function, onerror: Function } = (<any>this.__db).setVersion(version);
+
+                                        vch.onsuccess = async (e: Event) => {
+                                            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, LOG_IDB, this, "Version set successfuly");
+
+                                            ignoreError = true;
+
+                                            await upgrade();
+                                            await Utils.nextTickAsync(50);
+
+                                            Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, LOG_IDB, this);
+                                            resolve();
+                                        }
+
+                                        vch.onerror = (e: Event) => {
+                                            Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, "Failed to upgrade DB");
+                                            reject(new IndexedDbOldFailedToSetVersionException());
+                                        }
+
+                                        return;
+
+                                    }
+
+
+                                }
+
+                                Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, LOG_IDB, this);
+                                resolve();
+                                return;
+                            }
+
+                            // this is standard db behaviour
+                            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, LOG_IDB, this, LOG_DB_OPENED + this.__db.version);
                             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, LOG_IDB, this);
                             resolve();
                         };
@@ -289,16 +348,17 @@ namespace Ajs.AjsIndexedDb {
                         dbOpen.onupgradeneeded = async (e: Event) => {
                             this.__db = (<IDBOpenDBRequest>e.target).result;
 
+                            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, LOG_IDB, this, LOG_UPGRADING_DB + this.__db.version);
+
                             if (upgrade) {
                                 ignoreError = true;
                                 await upgrade();
+                                await Utils.nextTickAsync(50);
                             }
-
-                            await Utils.nextTickAsync(50);
 
                             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, LOG_IDB, this);
                             resolve();
-                        }
+                        };
 
                     } catch (e) {
                         Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_FAILED_OPEN_DB, e);

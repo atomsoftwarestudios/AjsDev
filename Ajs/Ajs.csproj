@@ -47,6 +47,7 @@
     <TypeScriptCompile Include="Resources\StorageProviders\LocalStorageProvider.ts" />
     <TypeScriptCompile Include="Resources\Storages\Constants.ts" />
     <TypeScriptCompile Include="Resources\Storages\Exceptions.ts" />
+    <TypeScriptCompile Include="Resources\Storages\IAjsStorageIndexedDb.ts" />
     <TypeScriptCompile Include="Resources\Storages\IAjsStorage.ts" />
     <TypeScriptCompile Include="Resources\Storages\StorageIndexedDb.ts" />
     <TypeScriptCompile Include="Resources\Storages\Strings_Log.Release.ts" />

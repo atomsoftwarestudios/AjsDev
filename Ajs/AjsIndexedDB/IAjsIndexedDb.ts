@@ -31,8 +31,8 @@ namespace Ajs.AjsIndexedDb {
         initialize(): Promise<void>;
 
         createStore(
-            name,
-            params,
+            name: string,
+            params: IDBObjectStoreParameters,
             configureStore: (store: IDBObjectStore) => void,
         ): Promise<void>;
 

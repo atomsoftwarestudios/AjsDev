@@ -30,6 +30,9 @@ namespace Ajs.Resources.Storages {
      */
     export class StorageIndexedDb extends AjsStorage {
 
+        protected __db: AjsIndexedDb.IAjsIndexedDb;
+        public set db(db: AjsIndexedDb.IAjsIndexedDb) { this.__db = db; }
+
         /** Returns type of the storage */
         public get type(): StorageType { return StorageType.IndexedDb; }
 
@@ -38,14 +41,16 @@ namespace Ajs.Resources.Storages {
 
             Dbg.log(Dbg.LogType.Enter, 0, LOG_AJSRESSTOR, this);
 
+            if (this.__db === undefined) {
+                Dbg.log(Dbg.LogType.Error, 0, LOG_AJSRESSTOR, this, LOG_AJSINDEXEDDBNOTSET);
+                throw new AjsIndexedDbNotSetException();
+            }
+
             this._supported = window.indexedDB !== undefined;
-            
+
             if (this._supported) {
 
-                // todo: resolve dependency somewhere above
-                let db: AjsIndexedDb.IAjsIndexedDb = container.resolve<AjsIndexedDb.IAjsIndexedDb>(AjsIndexedDb.IIAjsIndexedDB);
-
-                this._storageProvider = new StorageProviders.IndexedDbStorageProvider(db);
+                this._storageProvider = new StorageProviders.IndexedDbStorageProvider(this.__db);
                 await this._storageProvider.initialize();
 
                 this._usedSpace = 0;

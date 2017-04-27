@@ -25,6 +25,7 @@ namespace Ajs.AjsIndexedDb {
 
     "use strict";
 
+    /** Thrown when something goes wrong with initialization of AjsIndexedDb. See parent exception for details. */
     export class InitializationFailedException extends Exception { }
 
     /** Thrown when IndexedDB storage is asked to be created but is not supported */
@@ -33,12 +34,18 @@ namespace Ajs.AjsIndexedDb {
     /** Thrown when IndexedDB storage fails to be openned */
     export class IndexedDBFailedToOpenException extends Exception { }
 
+    /** Request to perform operation on IndexedDB was called but AjsIndexedDb was not initialized */
     export class IndexedDbNotInitializedException extends Exception { }
 
+    /** Thrown when creation of the DB oject store fails. */
     export class FailedToCreateIndexedDbObjectStoreException extends Exception { }
 
+    /** Thrown when operation above named object store was requested but the store does not exist */
     export class StoreNotExitsException extends Exception { }
 
+    /** Thrown when the request to some DB or store operation fails */
     export class IndexedDbStoreRequestFailedException extends Exception { }
 
+    /** Thrown when setVersion fails for old chromiums / FF'es */
+    export class IndexedDbOldFailedToSetVersionException extends Exception { }
 }

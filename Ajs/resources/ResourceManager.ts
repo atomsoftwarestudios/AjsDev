@@ -110,6 +110,7 @@ namespace Ajs.Resources {
             this.__storageSession = new Storages.StorageSession(this.__config.sessionCacheSize);
             this.__storageMemory = new Storages.StorageMemory(this.__config.memoryCacheSize);
             this.__storageIndexedDb = new Storages.StorageIndexedDb(this.__config.indexedBbCacheSize);
+            (<Storages.IAjsStorageIndexedDb>this.__storageIndexedDb).db = this.__ajsIndexedDb;
 
             await Promise.all([
                 this.__storageMemory.initialize(),

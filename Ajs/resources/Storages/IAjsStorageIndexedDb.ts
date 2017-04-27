@@ -1,4 +1,4 @@
-﻿/* *************************************************************************
+/* *************************************************************************
 The MIT License (MIT)
 Copyright (c)2016-2017 Atom Software Studios. All rights reserved.
 
@@ -21,26 +21,13 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace Ajs.AjsIndexedDb {
+namespace Ajs.Resources.Storages {
 
     "use strict";
 
-    export const LOG_IDB: string = "Ajs.AjsIndexedDb";
+    export interface IAjsStorageIndexedDb extends IAjsStorage {
 
-    export const LOG_NOT_SUPPORTED: string = "IndexeDB is not supported";
-    export const LOG_INIT_FAILED: string = "Failed to initialize AjsIndexedDb";
-    export const LOG_DB_OPENED: string = "DB Opened. Version: ";
-    export const LOG_CREATING_STORE: string = "Creating store ";
-    export const LOG_UPGRADING_DB: string = "Upgrading DB. Current version: ";
-    export const LOG_GETTING_STORE: string = "Getting store ";
-    export const LOG_NOT_INITIALIZED: string = "AjsIndexedDb or IndexedDB not initialized";
-    export const LOG_STORE_NOT_EXIST: string = "Store not exist ";
-    export const LOG_FAILED_TO_PERFORM_STORE_REQ: string = "Failed to perform DB Store request";
-    export const LOG_NEW_DB_VER: string = "New db version: ";
-    export const LOG_CONF_STORE: string = "Configuring store";
-    export const LOG_CONF_STORE_DONE: string = "Configuring store done";
-    export const LOG_FAILED_OPEN_DB: string = "Failed to open indexed DB";
+        db: AjsIndexedDb.IAjsIndexedDb;
 
-
-
+    }
 }

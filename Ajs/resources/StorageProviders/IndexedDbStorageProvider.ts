@@ -55,13 +55,14 @@ namespace Ajs.Resources.StorageProviders {
 
             this.__initialized = true;
 
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 3, LOG_AJSRESSTORP, this, LOG_INITIALIZING_INDEXEDDB_STORAGE);
+
             await this.__db.initialize();
 
             await this.__db.createStore(
                 INDEXDB_STORAGE_PROVIDER_STORAGE_NAME,
-                {},
+                { keyPath: "key", autoIncrement: false },
                 (store: IDBObjectStore): void => {
-                    store.createIndex("key", "key", { unique: true });
                 }
             );
 
@@ -70,6 +71,8 @@ namespace Ajs.Resources.StorageProviders {
 
         /** Clears the storage */
         public clear(): Promise<void> {
+
+            Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, LOG_AJSRESSTORP, this);
 
             this.__length = 0;
 
@@ -99,7 +102,7 @@ namespace Ajs.Resources.StorageProviders {
                 (store: IDBObjectStore): IDBRequest => {
                     Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 3, LOG_AJSRESSTORP, this,
                         LOG_SETTING_INDEXEDDB_STORAGE_ITEM + " " + key + ": " + value, value);
-                    return store.put(value, key);
+                    return store.put({ key: key, value: value });
                 }
             );
 
@@ -113,20 +116,21 @@ namespace Ajs.Resources.StorageProviders {
          */
         public async getItem(key: string): Promise<string> {
 
-            let value: string = await this.__db.doStoreRequest(
+            let obj: { key: string, value: string } = await this.__db.doStoreRequest(
                 INDEXDB_STORAGE_PROVIDER_STORAGE_NAME,
                 "readonly",
                 (store: IDBObjectStore): IDBRequest => {
                     Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 3, LOG_AJSRESSTORP, this, LOG_GETTING_INDEXEDDB_STORAGE_ITEM + " " + key);
-                    return store.get(key);
+                    let dbr: IDBRequest = store.get(key);
+                    return dbr;
                 }
             );
 
-            if (value === undefined) {
-                value = null;
+            if (obj === undefined) {
+                return null;
             }
 
-            return value;
+            return obj.value;
 
         }
 
@@ -156,7 +160,12 @@ namespace Ajs.Resources.StorageProviders {
                 "readonly",
                 (store: IDBObjectStore): IDBRequest => {
                     Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 3, LOG_AJSRESSTORP, this, LOG_COUNTING_INDEXEDDB_ITEMS);
-                    return store.count();
+                    if (store.count) {
+                        return store.count();
+                    } else {
+                        let index: IDBIndex = store.index("key");
+                        return index.count();
+                    }
                 }
             );
 

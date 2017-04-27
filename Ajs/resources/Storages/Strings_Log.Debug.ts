@@ -26,9 +26,9 @@ namespace Ajs.Resources.Storages {
     "use strict";
 
     export const LOG_AJSRESSTOR: string = "Ajs.Resources.Storages";
-    export const LOG_LOCAL_STORAGE_NOT_SUPPORTED = "Local storage is not supported!"
-    export const LOG_SESSION_STORAGE_NOT_SUPPORTED = "Session storage is not supported!"
-    export const LOG_INDEXEDDB_STORAGE_NOT_SUPPORTED = "IndexedDb storage is not supported!"
+    export const LOG_LOCAL_STORAGE_NOT_SUPPORTED: string = "Local storage is not supported!";
+    export const LOG_SESSION_STORAGE_NOT_SUPPORTED: string = "Session storage is not supported!";
+    export const LOG_INDEXEDDB_STORAGE_NOT_SUPPORTED: string = "IndexedDb storage is not supported!";
     export const LOG_CLEARING_STORAGE: string = "Clearing storage";
     export const LOG_ADDING_RESOSURCE: string = "Adding cached resource to the storage ";
     export const LOG_NOT_ENOUGH_SPACE: string = "Not enough space in the storage";
@@ -40,5 +40,6 @@ namespace Ajs.Resources.Storages {
     export const LOG_UPDATE_RESOURCE: string = "Updating cached resource: ";
     export const LOG_CACHE_CLEAN: string = "Cleaning resource cache. Required space: ";
     export const LOG_CLEAN_ALL: string = "Complete clean";
+    export const LOG_AJSINDEXEDDBNOTSET: string = "Ajs Idexed DB must be set before initializing IndexedDB provider!";
 
 }
