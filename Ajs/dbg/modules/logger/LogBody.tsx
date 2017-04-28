@@ -133,8 +133,8 @@ namespace Ajs.Dbg.Modules.Logger {
                                 <th>Type</th>
                                 <th>Lvl</th>
                                 <th>Module</th>
-                                <th>Object</th>
-                                <th>Function</th>
+                                <th>Object class</th>
+                                <th>Function / Method</th>
                                 <th>Caller</th>
                                 <th>Message</th>
                                 <th>Data</th>

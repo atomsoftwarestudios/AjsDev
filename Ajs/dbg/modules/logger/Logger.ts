@@ -138,59 +138,34 @@ namespace Ajs.Dbg.Modules.Logger {
             }
         }
 
-        protected _getFunctionInfo(): IFunctionInfo {
-            try {
-
-                throw new Error("Error");
-
-            } catch (e) {
-                if (e.stack) {
-
-                    let functions: RegExpMatchArray = (e.stack as string).match(/(at ).*(\()/g);
-
-                    if (functions === null) {
-
-                        functions = (e.stack as string).match(/.*@/g);
-                        if (functions !== null) {
-                            for (let i: number = 0; i < functions.length; i++) {
-                                functions[i] = functions[i].substr(0, functions[i].length - 1);
-                            }
-
-                            if (functions.length > 3) {
-                                functions.shift();
-                                functions.shift();
-                                functions.shift();
-                                if (functions.length > 1) {
-                                    return { name: functions[0], caller: functions[1] };
-                                } else {
-                                    return { name: functions[0], caller: "Unknown" };
-                                }
-                            }
-                        }
-                    }
-
-                    if (functions && functions.length > 3) {
-                        functions.shift();
-                        functions.shift();
-                        functions.shift();
-                        if (functions.length > 1) {
-                            return {
-                                name: functions[0].substring(3, functions[0].length - 2),
-                                caller: functions[1].substring(3, functions[1].length - 2)
-                            };
-                        } else {
-                            return {
-                                name: functions[0].substring(3, functions[0].length - 2),
-                                caller: "Unknown"
-                            };
-                        }
-                    }
+        protected _checkBreakPoint(typeId: string, occurence: number): boolean {
+            for (let i: number = 0; i < this._breakpoints.length; i++) {
+                if (this._breakpoints[i].recordTypeId === typeId && this._breakpoints[i].occurence === occurence) {
+                    return true;
                 }
-
             }
+            return false;
+        }
 
-            return { name: "Unknown", caller: "Unknown" };
+        public getButtonLabel(): string {
+            return "Log";
+        }
 
+        public renderStyleSheet(): any {
+            return this._styleSheet.render();
+        }
+
+        public renderToolbar(): any {
+            return this._toolBar.render();
+        }
+
+        public renderBody(): any {
+            this._bodyElement = this._body.render();
+            return this._body.render();
+        }
+
+        public bodyRendered(): void {
+            this._body.rendered(this._bodyElement.ownerDocument);
         }
 
         public log(type: LogType, level: number, sourceModule: string, object: any, message?: string, ...data: any[]): void {
@@ -203,7 +178,7 @@ namespace Ajs.Dbg.Modules.Logger {
                 return;
             }
 
-            let fnInfo: IFunctionInfo = this._getFunctionInfo();
+            let fnInfo: IFunctionInfo = this.__getFunctionInfo();
 
             let logRecord: ILogRecord = {
                 sameTypeId: "",
@@ -264,34 +239,130 @@ namespace Ajs.Dbg.Modules.Logger {
             }
         }
 
-        protected _checkBreakPoint(typeId: string, occurence: number): boolean {
-            for (let i: number = 0; i < this._breakpoints.length; i++) {
-                if (this._breakpoints[i].recordTypeId === typeId && this._breakpoints[i].occurence === occurence) {
-                    return true;
+        private __getFunctionInfo(): IFunctionInfo {
+
+            try {
+
+                throw new Error("Error");
+
+            } catch (e) {
+
+                if (e.stack) {
+
+                    let functions: RegExpMatchArray = (e.stack as string).match(/(at ).*(\()/g);
+
+                    if (functions === null) {
+
+                        functions = (e.stack as string).match(/.*@/g);
+
+                        if (functions && functions !== null) {
+
+                            for (let i: number = 0; i < functions.length; i++) {
+                                functions[i] = functions[i].substr(0, functions[i].length - 1);
+                            }
+
+                            return this.__getNameAndCaller(functions);
+
+                        }
+                    }
+
+                    return this.__getNameAndCaller(functions);
                 }
+
             }
-            return false;
+
+            return { name: "Unknown", caller: "Unknown" };
+
         }
 
-        public getButtonLabel(): string {
-            return "Log";
+
+        private __getNameAndCaller(functions: RegExpMatchArray): IFunctionInfo {
+
+            if (functions === undefined || functions === null) {
+                return { name: "Unknown", caller: "Unknown" };
+            }
+
+            this.__skipLogger(functions);
+            this.__skipAsync(functions);
+
+            if (functions.length === 0) {
+                return {
+                    name: "Unknown",
+                    caller: "Unknown"
+                };
+            }
+
+            let fi: IFunctionInfo = <any>{};
+
+            if (functions[0].indexOf("at ") !== -1) {
+                fi.name = functions[0].substring(3, functions[0].length - 2);
+            } else {
+                fi.name = functions[0].replace(/\//g, "").replace(/\</g, "");
+            }
+
+            functions.shift();
+            this.__skipAsync(functions);
+
+            if (functions.length > 0) {
+
+                if (functions[0].indexOf("at ") !== -1) {
+                    fi.caller = functions[0].substring(3, functions[0].length - 2);
+                } else {
+                    fi.caller = functions[0].replace(/\//g, "").replace(/\</g, "");
+                }
+
+            } else {
+                fi.caller = "unknown";
+            }
+
+            return fi;
         }
 
-        public renderStyleSheet(): any {
-            return this._styleSheet.render();
+        private __skipLogger(functions: RegExpMatchArray): void {
+            if (functions.length > 3) {
+                functions.shift();
+                functions.shift();
+                functions.shift();
+            }
         }
 
-        public renderToolbar(): any {
-            return this._toolBar.render();
+        private __skipAsync(functions: RegExpMatchArray): void {
+
+            let tmp: string;
+            if (functions.length > 0) {
+                tmp = functions[0];
+            }
+
+            while (functions.length > 0 &&
+                (functions[0].toLowerCase().indexOf("anonymous") !== -1 || this.__checkAsync(functions[0]))) {
+
+                if (functions.length > 1 && functions[0].toLowerCase().indexOf("anonymous") !== -1 && this.__checkAsync(functions[1])) {
+                    functions.shift();
+                } else {
+                    if (functions.length > 0 && functions[0].toLowerCase().indexOf("anonymous") !== -1) {
+                        break;
+                    }
+                }
+
+                while (functions.length > 0 && this.__checkAsync(functions[0])) {
+                    functions.shift();
+                }
+
+            }
+
+            if (functions.length === 0 && tmp) {
+                functions.push(tmp);
+            }
+
         }
 
-        public renderBody(): any {
-            this._bodyElement = this._body.render();
-            return this._body.render();
-        }
-
-        public bodyRendered(): void {
-            this._body.rendered(this._bodyElement.ownerDocument);
+        private __checkAsync(stackRecord: string): boolean {
+            return stackRecord.indexOf("Generator.next") !== -1 ||
+                stackRecord.indexOf("__awaiter") !== -1 ||
+                stackRecord.indexOf("Promise") !== -1 ||
+                stackRecord.indexOf("fulfilled") !== -1 ||
+                stackRecord.indexOf("rejected") !== -1 ||
+                stackRecord.indexOf("step") !== -1;
         }
 
     }
