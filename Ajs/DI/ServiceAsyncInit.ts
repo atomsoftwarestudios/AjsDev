@@ -25,7 +25,7 @@ namespace Ajs.DI {
 
     "use strict";
 
-    export class ServiceAsyncInit {
+    export abstract class ServiceAsyncInit {
 
         /**
          * Stores promise resolvers to be executed when the service is initialized
@@ -86,7 +86,10 @@ namespace Ajs.DI {
             }
 
             // prepare initialization promise to be resolved
-            let initPromise: Promise<void> = new Promise<void>(this.__registerResolverRejector);
+            let initPromise: Promise<void> = new Promise<void>(
+                (resolve: () => void, reject: (reason: any) => void) => {
+                    this.__registerResolverRejector(resolve, reject);
+            });
 
             // if initialization has started in different call just return prepared promise
             if (this.__initializing) {
@@ -98,8 +101,12 @@ namespace Ajs.DI {
 
             // initialize service and perform appropriate action with init result
             this._onInitializeAsync()
-                .then(this.__initDone)
-                .catch(this.__initFail);
+                .then(() => {
+                    this.__initDone();
+                })
+                .catch((reason: any) => {
+                    this.__initFail(reason);
+                });
 
             return initPromise;
 
@@ -108,9 +115,7 @@ namespace Ajs.DI {
         /**
          * Performs the asynchronous service initialization
          */
-        protected async _onInitializeAsync(): Promise<void> {
-            return;
-        }
+        protected abstract async _onInitializeAsync(): Promise<void>;
 
         /**
          * Registers resolver and rejector to be called when service intialization is done or if it fails

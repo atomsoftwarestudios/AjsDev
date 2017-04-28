@@ -406,17 +406,17 @@ namespace Ajs.DI {
             instanceList: IServiceInstance[],
             serviceInterfaceIdentifier: any): any {
 
-            function construct(ctor: any, args: Array<any>): any {
-                return new (Function.prototype.bind.apply(ctor, [null].concat(args)));
+            function containerConstructService(ctor: any, args: Array<any>): any {
+                return new (ctor.bind.apply(ctor, [null].concat(args)));
             }
 
             let s: IServiceDescriptor = this.__getService(serviceList, serviceInterfaceIdentifier);
+
             if (s === null) {
                 return null;
             }
 
-            let params: any = this.__resolveParameters(s);
-            let o: any = construct(s.serviceConstructor, params);
+            let o: any = containerConstructService(s.serviceConstructor, s.serviceConfiguration);
 
             if (instanceList !== null) {
                 instanceList.push({
@@ -427,71 +427,6 @@ namespace Ajs.DI {
             }
 
             return o;
-        }
-
-        /**
-         * Resolves service depenancies and maps them to constructor arguments
-         * @param service Service which dependencies should be resolved and mapped to constructor arguments
-         * @returns Constructor argument list with resolved dependencies
-         */
-        private __resolveParameters(service: IServiceDescriptor): any[] {
-
-            let ctorParams: any[] = [];
-
-            let ctorParamNames: string[] = this.__collectConstructorParameters(service);
-            if (ctorParamNames.length === 0) {
-                return ctorParams;
-            }
-
-            if (service.serviceConfiguration.length === 0) {
-                return ctorParams;
-            }
-
-            if (service.serviceConfiguration.length !== ctorParamNames.length) {
-                throw new ServiceConfigurationNotMatchCServiceConstructorException(
-                    "Service: '" + Utils.getClassName(service.serviceConstructor)
-                );
-            }
-
-            let i: number = 0;
-            for (let p of service.serviceConfiguration) {
-
-                let s: any = this.resolve(p, false);
-                if (s !== null) {
-                    ctorParams.push(s);
-                } else {
-                    if (p && typeof p === "object" && p !== null && "__diService__" in p) {
-                        throw new UnableToResolveDependencyException(
-                            "Service: '" + Utils.getClassName(service.serviceConstructor) + "', parameter index: '" + i + "'");
-                    }
-                    ctorParams.push(p);
-                }
-                i++;
-            }
-
-            return ctorParams;
-        }
-
-        /**
-         * Collects the parameters of the constructor by parsing its function declaration
-         * If the constructor has no any parameters the protoype tree is walked through and the
-         * first constructor with arguments available is used. This is not ideal but is required
-         * in order to be possible to construct services without constructor implementation
-         * but deriving other base classess
-         * @param service Service which constructor should be parsed
-         * @returns List of constructor argument names in correct order
-         */
-        private __collectConstructorParameters(service: IServiceDescriptor): any[] {
-
-            let ctor: any = service.serviceConstructor;
-            let paramNames: string[] = [];
-
-            while (ctor instanceof Function && paramNames.length === 0) {
-                paramNames = Utils.getFunctionParameterNames(ctor);
-                ctor = Object.getPrototypeOf(ctor);
-            }
-
-            return paramNames;
         }
 
     }
