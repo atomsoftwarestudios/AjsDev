@@ -35,7 +35,10 @@ namespace Ajs.DI {
      * automatic service instantiation and dependency resolving once the services are requested to be
      * instantiated. The #see [resolve]{Ajs.DI.Container.resolve} method is supposed to be used internally
      * by the Ajs Fraemework only. For more information about Ajs Framework DI integration and usage reffer
-     * to Ajs DI guide articles and examples.
+     * to Ajs DI guide articles and examples. The resolve method supports both, synchronous and asynchronous
+     * the services initalization. If the service implementation has the initialize method published it is
+     * called and if the promise is returned the resolver waits until its done before it continues with
+     * resolving another dependencies.
      * </p>
      * <h4>Singleton services</h4>
      * <p>
@@ -129,7 +132,8 @@ namespace Ajs.DI {
         public addTransient<S>(
             serviceInterfaceIdentifier: S,
             serviceConstructor: CtorTyped<S>,
-            ...serviceConfiguration: any[]): Container {
+            ...serviceConfiguration: any[]
+        ): Container {
 
             this.__addService(this.__transientServices, {
                 serviceInterfaceIdentifier: serviceInterfaceIdentifier,
@@ -149,7 +153,8 @@ namespace Ajs.DI {
         public addScoped<S>(
             serviceInterfaceIdentifier: S,
             serviceConstructor: CtorTyped<S>,
-            ...serviceConfiguration: any[]): Container {
+            ...serviceConfiguration: any[]
+        ): Container {
 
             this.__addService(this.__scopedServices, {
                 serviceInterfaceIdentifier: serviceInterfaceIdentifier,
@@ -169,7 +174,8 @@ namespace Ajs.DI {
         public addSingleton<S>(
             serviceInterfaceIdentifier: S,
             classToConstruct: CtorTyped<S>,
-            ...serviceConfiguration: any[]): Container {
+            ...serviceConfiguration: any[]
+        ): Container {
 
             this.__addService(this.__singletonServices, {
                 serviceInterfaceIdentifier: serviceInterfaceIdentifier,
@@ -193,11 +199,12 @@ namespace Ajs.DI {
          * @param throwUnresolvedException Specifies if the container should throw unresolved exception or return null instead
          * @returns Instance of the service or null if dependencies could not be resolved
          */
-        public resolve<S>(
+        public async resolve<S>(
             serviceInterfaceIdentifier: S,
-            throwUnresolvedException: boolean = true): S {
+            throwUnresolvedException: boolean = true
+        ): Promise<S> {
 
-            let resolved: S = <S>this.__resolve(serviceInterfaceIdentifier);
+            let resolved: S = await this.__resolve<S>(serviceInterfaceIdentifier);
             if (resolved !== null) {
                 return resolved;
             } else {
@@ -247,9 +254,9 @@ namespace Ajs.DI {
          * @returns The service descriptor if the service is found, otherwise null
          */
         private __getService(serviceList: IServiceDescriptor[], serviceInterfaceIdentifier: any): IServiceDescriptor {
-            for (let s of serviceList) {
-                if (s.serviceInterfaceIdentifier === serviceInterfaceIdentifier) {
-                    return s;
+            for (let serviceDescriptor of serviceList) {
+                if (serviceDescriptor.serviceInterfaceIdentifier === serviceInterfaceIdentifier) {
+                    return serviceDescriptor;
                 }
             }
             return null;
@@ -262,9 +269,9 @@ namespace Ajs.DI {
          * @returns The service descriptor if the service instance was found, otherwise null
          */
         private __getServiceInstance(instanceList: IServiceInstance[], serviceInstance: any): IServiceInstance {
-            for (let i of instanceList) {
-                if (i.serviceInstance === serviceInstance) {
-                    return i;
+            for (let instance of instanceList) {
+                if (instance.serviceInstance === serviceInstance) {
+                    return instance;
                 }
             }
             return null;
@@ -277,9 +284,9 @@ namespace Ajs.DI {
          * @returns The service descriptor if the service instance was found, otherwise null
          */
         private __findServiceInstance(instanceList: IServiceInstance[], serviceInterfaceIdentifier: any): IServiceInstance {
-            for (let i of instanceList) {
-                if (i.serviceInterfaceIdentifier === serviceInterfaceIdentifier) {
-                    return i;
+            for (let instance of instanceList) {
+                if (instance.serviceInterfaceIdentifier === serviceInterfaceIdentifier) {
+                    return instance;
                 }
             }
             return null;
@@ -295,21 +302,21 @@ namespace Ajs.DI {
          * @param serviceInstance Instance of the service to be released
          */
         private __releaseInstanceReference(instanceList: IServiceInstance[], serviceInstance: any): boolean {
-            let i: IServiceInstance = this.__getServiceInstance(instanceList, serviceInstance);
-            if (i !== null) {
+            let instance: IServiceInstance = this.__getServiceInstance(instanceList, serviceInstance);
+            if (instance !== null) {
 
                 if (instanceList === this.__singletonInstances) {
-                    i.referenceCount--;
+                    instance.referenceCount--;
                 }
 
-                if (i.referenceCount === 0) {
-                    let index: number = instanceList.indexOf(i);
+                if (instance.referenceCount === 0) {
+                    let index: number = instanceList.indexOf(instance);
                     if (index !== -1) {
                         instanceList.splice(index, 1);
                     }
                 }
 
-                return i.referenceCount === 0;
+                return instance.referenceCount === 0;
             }
             return false;
         }
@@ -319,21 +326,21 @@ namespace Ajs.DI {
          * @param serviceInterfaceIdentifier Identifier of the service interface
          * @returns Instaniated service or null if the service was not registered
          */
-        private __resolve(serviceInterfaceIdentifier: any): any {
-            let i: IServiceInstance;
+        private async __resolve<S>(serviceInterfaceIdentifier: any): Promise<S> {
+            let instance: S;
 
-            i = this.__resolveScoped(serviceInterfaceIdentifier);
-            if (i !== null) {
-                return i;
+            instance = await this.__resolveScoped<S>(serviceInterfaceIdentifier);
+            if (instance !== null) {
+                return instance;
             }
 
-            i = this.__resolveSingleton(serviceInterfaceIdentifier);
-            if (i !== null) {
-                return i;
+            instance = await this.__resolveSingleton<S>(serviceInterfaceIdentifier);
+            if (instance !== null) {
+                return instance;
             }
 
-            i = this.__resolveTransient(serviceInterfaceIdentifier);
-            return i;
+            instance = await this.__resolveTransient<S>(serviceInterfaceIdentifier);
+            return instance;
         }
 
         /**
@@ -342,8 +349,8 @@ namespace Ajs.DI {
          * @param serviceInterfaceIdentifier Identifier of the service interface
          * @returns Instaniated service or null if the service was not registered
          */
-        private __resolveTransient(serviceInterfaceIdentifier: any): any {
-            return this.__constructService(this.__transientServices, null, serviceInterfaceIdentifier);
+        private async __resolveTransient<S>(serviceInterfaceIdentifier: any): Promise<S> {
+            return await this.__constructService<S>(this.__transientServices, null, serviceInterfaceIdentifier);
         }
 
         /**
@@ -352,15 +359,15 @@ namespace Ajs.DI {
          * @param serviceInterfaceIdentifier Identifier of the service interface
          * @returns Instaniated service or null if the service was not registered
          */
-        private __resolveScoped(serviceInterfaceIdentifier: any): any {
+        private async __resolveScoped<S>(serviceInterfaceIdentifier: any): Promise<S> {
 
-            let i: IServiceInstance = this.__findServiceInstance(this.__scopedInstances, serviceInterfaceIdentifier);
-            if (i !== null) {
-                i.referenceCount++;
-                return i.serviceInstance;
+            let instance: IServiceInstance = this.__findServiceInstance(this.__scopedInstances, serviceInterfaceIdentifier);
+            if (instance !== null) {
+                instance.referenceCount++;
+                return <S>instance.serviceInstance;
             }
 
-            return this.__constructService(
+            return await this.__constructService<S>(
                 this.__scopedServices,
                 this.__scopedInstances,
                 serviceInterfaceIdentifier
@@ -374,13 +381,13 @@ namespace Ajs.DI {
          * @param serviceInterfaceIdentifier Identifier of the service interface
          * @returns Instaniated service or null if the service was not registered
          */
-        private __resolveSingleton(serviceInterfaceIdentifier: any): any {
+        private async __resolveSingleton<S>(serviceInterfaceIdentifier: any): Promise<S> {
             let i: IServiceInstance = this.__findServiceInstance(this.__singletonInstances, serviceInterfaceIdentifier);
             if (i !== null) {
-                return i.serviceInstance;
+                return <S>i.serviceInstance;
             }
 
-            let serviceInstance: any = this.__constructService(
+            let serviceInstance: S = await this.__constructService<S>(
                 this.__singletonServices,
                 this.__singletonInstances,
                 serviceInterfaceIdentifier
@@ -396,37 +403,45 @@ namespace Ajs.DI {
         }
 
         /**
-         * Resolves service dependencies and maps them to constuctor arguments. Finally, constructs and returns the instance of the service
+         * Resolves service dependencies and maps them to constuctor arguments. Finally, it constructs and initialzes the service
          * @param serviceList List of registered services to be looked for the service descriptor
          * @param serviceInterfaceIdentifier Identifier of the service interface
          * @returns Instaniated service or null if the service was not registered
          */
-        private __constructService(
+        private async __constructService<S>(
             serviceList: IServiceDescriptor[],
             instanceList: IServiceInstance[],
-            serviceInterfaceIdentifier: any): any {
+            serviceInterfaceIdentifier: any): Promise<S> {
 
             function containerConstructService(ctor: any, args: Array<any>): any {
                 return new (ctor.bind.apply(ctor, [null].concat(args)));
             }
 
-            let s: IServiceDescriptor = this.__getService(serviceList, serviceInterfaceIdentifier);
-            if (s === null) {
+            let serviceDescriptor: IServiceDescriptor = this.__getService(serviceList, serviceInterfaceIdentifier);
+            if (serviceDescriptor === null) {
                 return null;
             }
 
-            let params: any = this.__resolveParameters(s);
-            let o: any = containerConstructService(s.serviceConstructor, params);
+            let params: any = await this.__resolveParameters(serviceDescriptor);
+            let instance: S = containerConstructService(serviceDescriptor.serviceConstructor, params);
 
             if (instanceList !== null) {
                 instanceList.push({
                     serviceInterfaceIdentifier: serviceInterfaceIdentifier,
-                    serviceInstance: o,
+                    serviceInstance: instance,
                     referenceCount: 1
                 });
             }
 
-            return o;
+            if (typeof (<any>instance).initialize === "function") {
+                let initResult: undefined | Promise<any> = (<any>instance).initialize();
+
+                if (initResult instanceof Promise) {
+                    await initResult;
+                }
+            }
+
+            return <S>instance;
         }
 
         /**
@@ -434,7 +449,7 @@ namespace Ajs.DI {
          * @param service Service which dependencies should be resolved and mapped to constructor arguments
          * @returns Constructor argument list with resolved dependencies
          */
-        private __resolveParameters(service: IServiceDescriptor): any[] {
+        private async __resolveParameters(service: IServiceDescriptor): Promise<any[]> {
 
             let ctorParams: any[] = [];
 
@@ -443,17 +458,17 @@ namespace Ajs.DI {
             }
 
             let i: number = 0;
-            for (let p of service.serviceConfiguration) {
+            for (let parameter of service.serviceConfiguration) {
 
-                let s: any = this.resolve(p, false);
-                if (s !== null) {
-                    ctorParams.push(s);
+                let instance: any = await this.resolve(parameter, false);
+                if (instance !== null) {
+                    ctorParams.push(instance);
                 } else {
-                    if (p && typeof p === "object" && p !== null && "__diService__" in p) {
+                    if (parameter && typeof parameter === "object" && parameter !== null && "__diService__" in parameter) {
                         throw new UnableToResolveDependencyException(
                             "Service: '" + Utils.getClassName(service.serviceConstructor) + "', parameter index: '" + i + "'");
                     }
-                    ctorParams.push(p);
+                    ctorParams.push(parameter);
                 }
                 i++;
             }

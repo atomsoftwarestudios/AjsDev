@@ -49,7 +49,7 @@ namespace Ajs.DI {
 
         resolve<S>(
             serviceInterfaceIdentifier: S,
-            throwUnresolvedException?: boolean): S;
+            throwUnresolvedException?: boolean): Promise<S>;
 
         releaseSingletonInstanceReference(serviceInstance: any): void;
 
