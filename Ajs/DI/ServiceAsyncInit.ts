@@ -129,6 +129,7 @@ namespace Ajs.DI {
          * Called when the service was successfully initialized to resolve all initialization promises 
          */
         private __initDone(): void {
+            this.__initialized = true;
             for (let resolver of this.__onInitializedPromiseResolvers) {
                 resolver();
             }
