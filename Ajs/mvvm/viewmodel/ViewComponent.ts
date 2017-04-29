@@ -148,24 +148,22 @@ namespace Ajs.MVVM.ViewModel {
 
                 // setup tag attribute processors for the_processAttributes method
                 attributeProcessors: {
-                    __default: this.__attrDefault as IAttributeProcessor,
-                    component: this.__attrComponent as IAttributeProcessor,
-                    if: this.__attrIf as IAttributeProcessor,
-                    onclick: this.__attrEventHandler as IAttributeProcessor,
-                    onmousedown: this.__attrEventHandler as IAttributeProcessor,
-                    onmouseup: this.__attrEventHandler as IAttributeProcessor,
-                    onkeydown: this.__attrEventHandler as IAttributeProcessor,
-                    onkeyup: this.__attrEventHandler as IAttributeProcessor,
-                    onkeypress: this.__attrEventHandler as IAttributeProcessor,
-                    onchange: this.__attrEventHandler as IAttributeProcessor,
-                    oninput: this.__attrEventHandler as IAttributeProcessor,
-                    ontouchmove_ajs: this.__attrEventHandler as IAttributeProcessor,
+                    __default: <IAttributeProcessor>this.__attrDefault,
+                    component: <IAttributeProcessor>this.__attrComponent,
+                    if: <IAttributeProcessor>this.__attrIf,
+                    onclick: <IAttributeProcessor>this.__attrEventHandler,
+                    onmousedown: <IAttributeProcessor>this.__attrEventHandler,
+                    onmouseup: <IAttributeProcessor>this.__attrEventHandler,
+                    onkeydown: <IAttributeProcessor>this.__attrEventHandler,
+                    onkeyup: <IAttributeProcessor>this.__attrEventHandler,
+                    onkeypress: <IAttributeProcessor>this.__attrEventHandler,
+                    onchange: <IAttributeProcessor>this.__attrEventHandler,
+                    oninput: <IAttributeProcessor>this.__attrEventHandler,
 
                     // non-standard tag events
-                    onanimationend: this.__attrEventHandler as IAttributeProcessor,
-
-                    // ajs specific events
-                    onstatetransitionbegin: this.__attrTransitionBeginHanler as IAttributeProcessor
+                    ontouchmove_ajs: <IAttributeProcessor>this.__attrEventHandler,
+                    onanimationend: <IAttributeProcessor>this.__attrEventHandler,
+                    onstatetransitionbegin: <IAttributeProcessor>this.__attrTransitionBeginHanler
                 }
 
             };
@@ -263,6 +261,10 @@ namespace Ajs.MVVM.ViewModel {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
         }
 
+        public set preventStateChange(value: boolean) {
+            this._setPreventStateChange(value);
+        }
+
         protected _onDefaultState(): State {
             return <any>{};
         }
@@ -322,9 +324,9 @@ namespace Ajs.MVVM.ViewModel {
             );
 
             this.ajs.stateChangePrevented = value;
-            let children: ViewComponent<any, any>[] = <ViewComponent<any, any>[]>this.ajs.viewComponentManager.getChildrenComponentInstances(this);
+            let children: IViewComponent[] = <IViewComponent[]>this.ajs.viewComponentManager.getChildrenComponentInstances(this);
             for (let i: number = 0; i < children.length; i++) {
-                children[i]._setPreventStateChange(value);
+                children[i].preventStateChange = value;
             }
 
             if (!value) {
@@ -432,7 +434,7 @@ namespace Ajs.MVVM.ViewModel {
 
             // apply style sheets from the view component template to the target document
             await
-                this.ajs.documentManager.applyStyleSheetsFromTemplate(this.ajs.visualComponent.template)
+                this.ajs.documentManager.applyStyleSheetsFromTemplate(this.ajs.visualComponent.template);
             this.ajs.stylesheetsApplied = true;
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
@@ -457,6 +459,9 @@ namespace Ajs.MVVM.ViewModel {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
         }
 
+        /**
+         * 
+         */
         private async __processStateQueue(): Promise<void> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
@@ -512,7 +517,7 @@ namespace Ajs.MVVM.ViewModel {
                 if (this.ajs.hasVisualStateTransition) {
 
                     let node: Doc.INode = this.ajs.documentManager.getTargetNodeByUniqueId(this.componentViewId);
-                    this.ajs.transitionOldElement = node.cloneNode(true) as HTMLElement;
+                    this.ajs.transitionOldElement = <HTMLElement>node.cloneNode(true);
                 }
 
                 this.ajs.viewManager.stateChangeBegin(this);
@@ -540,12 +545,12 @@ namespace Ajs.MVVM.ViewModel {
 
             while (this.ajs.stateKeys.length > 0) {
                 if (this[this.ajs.stateKeys[0]] instanceof ViewComponent) {
-                    (this[this.ajs.stateKeys[0]] as ViewComponent<any, any>).destroy();
+                    (<IViewComponent>this[this.ajs.stateKeys[0]]).destroy();
                 }
                 if (this[this.ajs.stateKeys[0]] instanceof Array) {
                     for (let i: number = 0; i < this[this.ajs.stateKeys[0]].length; i++) {
                         if (this[this.ajs.stateKeys[0]][i] instanceof ViewComponent) {
-                            (this[this.ajs.stateKeys[0]][i] as ViewComponent<any, any>).destroy();
+                            (<IViewComponent>this[this.ajs.stateKeys[0]][i]).destroy();
                         }
                     }
                 }
@@ -562,203 +567,353 @@ namespace Ajs.MVVM.ViewModel {
 
         }
 
+        /**
+         * Applies a state to the view component
+         * <p>
+         * State can contain a base type (string, number, boolean), children view component state object or Array of children view component
+         * states.
+         * Other object types, such as Date must be coverted as they can't be later applied directly to HTML and can't be converted by
+         * the state manager itself.
+         * </p>
+         * <p>
+         * If the state key matches the Id of the children Visual Component defined by the template and if the current view state
+         * does not contain the appropriate property the ViewComponenManager is asked to find the related ViewComponent implementation.
+         * If it is found it is instanced and state specified by the state key is applied to it. If it is not found the base ViewComponent
+         * class is instanced and the state is applied to it. If the VC was created previously it is just asked to update its state.
+         * </p>
+         * <p>
+         * For arrays it is neccessary to have a 'key' property defined in order to be possible to effectively update the state and later
+         * the DOM structure.:
+         * </p>
+         * <p>
+         * The correct mapping of the list of users state to userList to children user component:
+         * <pre>{ users: [
+         *    { key: 1, username: "bill", email: "bg@ms.com" },
+         *    { key: 2, username: "steeve, email: "sj@ac.com" }
+         * ]}</pre>
+         * to the Visual components declared in the template:
+         * <pre>   &lt;component name="userList"&gt;
+         *      &lt;div component="user" id="users"&gt;&lt;span&gt;{username}&lt;/span&gt; &lt;span&gt;{email}&lt;/span&gt;&lt;/div&gt;
+         *   &lt;/component&gt;
+         * </pre>
+         * Arrays are automatically recognized and converted to list of view components defined in the template identified by the
+         * key name of the state which defines the array.
+         * </p>
+         * <p>
+         * As children view components could be created automatically during the state application and dependecies of them are resolved
+         * asynchronously (because i.e. models could load some data from server during the initialization pass) the whole state
+         * application procedure is asynchronous.
+         * </p>
+         * @param state State object to be applied
+         * @returns promise to be resolved once the state is applied or rejected when application of the state fails.
+         */
         private async __applyState(state: State): Promise<void> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
-            // perform the state filtering
+            console.log("Applying state %s", Utils.getClassName(this), state);
+
+            if (state === undefined || state === null) {
+                return;
+            }
+
+            // perform component level the state filtering 
             state = <any>this._filterState(state);
 
-            // apply the state
-            if (state && state !== null) {
-                for (let keyOfState in state) {
-
-                    if (state.hasOwnProperty(keyOfState)) {
-                        let key: string = keyOfState;
-
-                        // perform the state key/value filtering
-                        let filteredState: IFilteredState = this._filterStateKey(key, state[key]);
-                        if (filteredState.filterApplied) {
-                            delete state[key];
-                            key = filteredState.key;
-                            state[key] = filteredState.state;
-                        }
-
-                        // if the state property exists in this ViewComponent, update it
-                        if (this.hasOwnProperty(key)) {
-                            // update children component state
-                            if (this[key] instanceof ViewComponent) {
-                                await (this[key] as ViewComponent<any, any>).setState(state[key]);
-                            } else {
-                                // set or update array of children components
-                                if (state[key] instanceof Array &&
-                                    this.ajs.visualComponent.children.hasOwnProperty(key) &&
-                                    this[key] instanceof Array) {
-
-                                    // delete all components which does not exist in the array anymore
-                                    let i: number = 0;
-                                    while (i < this[key].length) {
-                                        let del: boolean = true;
-
-                                        // check if component still should exist
-                                        for (let j: number = 0; j < state[key].length; j++) {
-                                            if (this[key][i].key === state[key][j].key) {
-                                                del = false;
-                                                break;
-                                            }
-                                        }
-
-                                        // delete component
-                                        if (del) {
-                                            (this[key][i] as ViewComponent<any, any>).destroy();
-                                            this.ajs.viewManager.notifyParentsChildrenStateChange((this[key][i] as ViewComponent<any, any>).ajs.parentComponent);
-                                            this[key].splice(i, 1);
-                                            if (this[key].length === 0) {
-                                                this.ajs.stateKeys.splice(this.ajs.stateKeys.indexOf(key), 1);
-                                            }
-                                        } else {
-                                            i++;
-                                        }
-                                    }
-
-                                    // update and insert new components
-                                    if (this.ajs.stateKeys.indexOf(key) === -1) {
-                                        this.ajs.stateKeys.push(key);
-                                    }
-
-                                    for (i = 0; i < state[key].length; i++) {
-                                        // update component state
-                                        if (this[key].length > i && this[key][i].key === state[key][i].key) {
-                                            await (this[key][i] as ViewComponent<any, any>).setState(state[key][i]);
-                                        } else {
-                                            // create new component
-                                            let newViewComponent: IViewComponent =
-                                                await this.__createViewComponent(key, this.ajs.visualComponent.children[key], state[key][i]);
-                                            this[key].splice(i, 0, newViewComponent);
-                                        }
-                                    }
-                                    // set or update current component property
-                                } else {
-                                    if (this.ajs.stateKeys.indexOf(key) === -1) {
-                                        this.ajs.stateKeys.push(key);
-                                    }
-                                    if (this[key] !== state[key]) {
-                                        this[key] = state[key];
-                                        this.ajs.stateChanged = true;
-                                        this.ajs.viewManager.notifyParentsChildrenStateChange(this.ajs.parentComponent);
-                                    }
-                                }
-                            }
-
-                        // if the property does not exist, create it
-                        } else {
-
-                            // if the state is setting state of children component
-                            if (this.ajs.visualComponent.children.hasOwnProperty(key)) {
-
-                                // create array of components
-                                if (state[key] instanceof Array) {
-
-                                    this[key] = [];
-                                    this.ajs.stateKeys.push(key);
-
-                                    for (let i: number = 0; i < state[key].length; i++) {
-
-                                        let filteredState: IFilteredState = this._filterStateArrayItem(key, i, state[key].length, state[key][i]);
-
-                                        if (filteredState.filterApplied && filteredState.state instanceof Array) {
-
-                                            let j: number = 0;
-                                            while (j < filteredState.state.length) {
-                                                let newViewComponent: IViewComponent;
-                                                newViewComponent = await this.__createViewComponent(key, this.ajs.visualComponent.children[key], filteredState.state[j]);
-                                                if (j === 0) {
-                                                    this[key][i] = newViewComponent;
-                                                } else {
-                                                    if (i < state[key].length - 1) {
-                                                        this[key].splice(i + 1, 0, newViewComponent);
-                                                    } else {
-                                                        this[key].push(newViewComponent);
-                                                    }
-                                                    i++;
-                                                }
-                                                j++;
-                                            }
-
-                                        } else {
-                                            let newViewComponent: IViewComponent;
-                                            newViewComponent = await this.__createViewComponent(
-                                                key,
-                                                this.ajs.visualComponent.children[key],
-                                                filteredState.filterApplied && filteredState.key === key ? filteredState.state : state[key][i]);
-                                            this[key][i] = newViewComponent;
-                                        }
-
-                                    }
-
-                                // create a component and apply a state to it
-                                } else {
-                                    this[key] = await this.__createViewComponent(key, this.ajs.visualComponent.children[key], state[key]);
-                                    this.ajs.stateKeys.push(key);
-
-                                }
-
-                            } else {
-
-                                // if the state is array, try to filter the array and check if the state is applicable after array filtering
-                                let filteredStates: IFilteredState[] = [];
-                                if (state[key] instanceof Array) {
-                                    for (let i: number = 0; i < state[key].length; i++) {
-                                        let filteredState: IFilteredState = this._filterStateArrayItem(key, i, state[key].length, state[key][i]);
-                                        if (filteredState.filterApplied) {
-                                            if (filteredState.key !== key) {
-                                                filteredStates.push(filteredState);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                // build a new filtered state
-                                if (filteredStates.length > 0) {
-
-                                    let filteredState: IViewComponentState = {};
-                                    for (let i: number = 0; i < filteredStates.length; i++) {
-                                        if (filteredState[filteredStates[i].key] === undefined) {
-                                            filteredState[filteredStates[i].key] = [];
-                                        }
-                                        if (filteredStates[i].state instanceof Array) {
-                                            for (let j: number = 0; j < (filteredStates[i].state as IViewComponentState[]).length; j++) {
-                                                filteredState[filteredStates[i].key].push(filteredStates[i].state[j]);
-                                            }
-                                        } else {
-                                           filteredState[filteredStates[i].key].push(filteredStates[i].state);
-                                        }
-                                    }
-
-                                    // try to reapply the filtered state
-                                    await this.__applyState(<any>filteredState);
-
-                                } else {
-
-                                    this[key] = state[key];
-                                    this.ajs.stateKeys.push(key);
-                                    this.ajs.stateChanged = true;
-                                    this.ajs.viewManager.notifyParentsChildrenStateChange(this.ajs.parentComponent);
-
-                                }
-
-                            }
-                        }
-
-                    }
-                }
+            // state can be fully rejected by returning null or undefined from the filter so check it here
+            if (state === undefined || state === null) {
+                return;
             }
+
+            // apply the filtered state (all properties)
+            for (let key in state) {
+
+                // this is just safety check. it should never happen the state is inherited and
+                // the property is defined somewhere in the prototype chain
+                if (!state.hasOwnProperty(key)) {
+                    continue;
+                }
+
+                // this is required as filter can change both, key and value of the current state property
+                let filteredKey: string = key;
+
+                // perform the state key/value filtering
+                let filteredState: IFilteredState = this._filterStateKey(filteredKey, state[filteredKey]);
+
+                // check if filter was applied
+                if (filteredState.filterApplied) {
+
+                    // check if the key was modified by the filter
+                    if (filteredState.key !== key) {
+                        // set new key name and delete old key state 
+                        filteredKey = filteredState.key;
+                        // delete previous state
+                        delete state[key];
+                    }
+
+                    // apply new value to the old or new state identified by the key
+                    state[filteredKey] = filteredState.state;
+                }
+
+                // if the state property exists in this ViewComponent, update it
+                if (this.hasOwnProperty(filteredKey)) {
+
+                    await this.__updateExistingStateKey(filteredKey, state);
+
+                // if the property does not exist, create it
+                } else {
+
+                    await this.__createNewStateKey(filteredKey, state);
+
+                }
+
+            }
+
+            console.warn("Applying state done %s", Utils.getClassName(this), state);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
 
         }
 
+        /**
+         * 
+         * @param key
+         * @param state
+         */
+        private async __createNewStateKey(key: string, state: State): Promise<void> {
+
+            // if the state is setting state of children component
+            if (this.ajs.visualComponent.children.hasOwnProperty(key)) {
+
+                // create array of components
+                if (state[key] instanceof Array) {
+
+                    await this.__createComponentsArray(key, state);
+
+                    // create a component and apply a state to it
+                } else {
+                    this[key] = await this.__createViewComponent(key, this.ajs.visualComponent.children[key], state[key]);
+                    this.ajs.stateKeys.push(key);
+
+                }
+
+            } else {
+
+                // if the state is array, try to filter the array and check if the state is applicable after array filtering
+                let filteredStates: IFilteredState[] = [];
+                if (state[key] instanceof Array) {
+                    for (let i: number = 0; i < state[key].length; i++) {
+                        let filteredState: IFilteredState = this._filterStateArrayItem(key, i, state[key].length, state[key][i]);
+                        if (filteredState.filterApplied) {
+                            if (filteredState.key !== key) {
+                                filteredStates.push(filteredState);
+                            }
+                        }
+                    }
+                }
+
+                // build a new filtered state
+                if (filteredStates.length > 0) {
+
+                    let filteredState: IViewComponentState = {};
+                    for (let i: number = 0; i < filteredStates.length; i++) {
+                        if (filteredState[filteredStates[i].key] === undefined) {
+                            filteredState[filteredStates[i].key] = [];
+                        }
+                        if (filteredStates[i].state instanceof Array) {
+                            for (let j: number = 0; j < (<IViewComponentState[]>filteredStates[i].state).length; j++) {
+                                filteredState[filteredStates[i].key].push(filteredStates[i].state[j]);
+                            }
+                        } else {
+                            filteredState[filteredStates[i].key].push(filteredStates[i].state);
+                        }
+                    }
+
+                    // try to reapply the filtered state
+                    await this.__applyState(<any>filteredState);
+
+                } else {
+
+                    this[key] = state[key];
+                    this.ajs.stateKeys.push(key);
+                    this.ajs.stateChanged = true;
+                    this.ajs.viewManager.notifyParentsChildrenStateChange(this.ajs.parentComponent);
+
+                }
+
+            }
+        }
+
+        /**
+         * 
+         * @param key
+         * @param state
+         */
+        private async __createComponentsArray(key: string, state: State): Promise<void> {
+
+            this.ajs.stateKeys.push(key);
+
+            this[key] = [];
+
+            for (let i: number = 0; i < state[key].length; i++) {
+
+                //  filter array state
+
+                let filteredState: IFilteredState = this._filterStateArrayItem(key, i, state[key].length, state[key][i]);
+
+                // if the state was not filtered or filtering result is not another array just process the current array item
+
+                if (!filteredState.filterApplied || !(filteredState.state instanceof Array)) {
+                    let newViewComponent: IViewComponent;
+                    newViewComponent = await this.__createViewComponent(
+                        key,
+                        this.ajs.visualComponent.children[key],
+                        filteredState.filterApplied && filteredState.key === key ? filteredState.state : state[key][i]);
+                    this[key][i] = newViewComponent;
+
+                    continue;
+                }
+
+                // if the state was filtered and the result was another array it is neccessary to process the newly created array
+
+                let j: number = 0;
+                while (j < filteredState.state.length) {
+
+                    let newViewComponent: IViewComponent;
+
+                    newViewComponent = await this.__createViewComponent(key, this.ajs.visualComponent.children[key], filteredState.state[j]);
+                    if (j === 0) {
+                        this[key][i] = newViewComponent;
+                        continue;
+                    }
+
+                    if (i < state[key].length - 1) {
+                        this[key].splice(i + 1, 0, newViewComponent);
+                    } else {
+                        this[key].push(newViewComponent);
+                    }
+
+                    i++;
+                    j++;
+
+                }
+
+            }
+        }
+
+        /**
+         * 
+         * @param key
+         * @param state
+         */
+        private async __updateExistingStateKey(key: string, state: State): Promise<void> {
+
+            // update children component state
+            if (this[key] instanceof ViewComponent) {
+                await (<IViewComponent>this[key]).setState(state[key]);
+                return;
+            }
+
+            // set or update array of children components
+            if (state[key] instanceof Array &&
+                this.ajs.visualComponent.children.hasOwnProperty(key) &&
+                this[key] instanceof Array) {
+
+                await this.__updateArrayState(key, state);
+                return;
+            }
+
+            // update list of state keys
+            if (this.ajs.stateKeys.indexOf(key) === -1) {
+                this.ajs.stateKeys.push(key);
+            }
+
+            // update the existing state value
+            if (this[key] !== state[key]) {
+                this[key] = state[key];
+                this.ajs.stateChanged = true;
+                this.ajs.viewManager.notifyParentsChildrenStateChange(this.ajs.parentComponent);
+            }
+
+        }
+
+        /**
+         * 
+         * @param key
+         * @param state
+         */
+        private async __updateArrayState(key: string, state: State): Promise<void> {
+
+            // delete all components which does not exist in the array anymore
+
+            let i: number = 0;
+
+            while (i < this[key].length) {
+                let del: boolean = true;
+
+                // check if component still should exist
+                for (let j: number = 0; j < state[key].length; j++) {
+                    if (this[key][i].key === state[key][j].key) {
+                        del = false;
+                        break;
+                    }
+                }
+
+                // if it still should exist continue with next component
+
+                if (!del) {
+                    i++;
+                    continue;
+                }
+
+                // destory the component
+                (<IViewComponent>this[key][i]).destroy();
+
+                this.ajs.viewManager.notifyParentsChildrenStateChange((<IViewComponent>this[key][i]).ajs.parentComponent);
+
+                this[key].splice(i, 1);
+
+                if (this[key].length === 0) {
+                    this.ajs.stateKeys.splice(this.ajs.stateKeys.indexOf(key), 1);
+                }
+            }
+
+            // update the array and insert new components
+
+            if (this.ajs.stateKeys.indexOf(key) === -1) {
+                this.ajs.stateKeys.push(key);
+            }
+
+            for (i = 0; i < state[key].length; i++) {
+
+                // update component state
+                if (this[key].length > i && this[key][i].key === state[key][i].key) {
+                    await (<IViewComponent>this[key][i]).setState(state[key][i]);
+                    continue;
+                }
+
+                // create new component
+                let newViewComponent: IViewComponent = await this.__createViewComponent(
+                    key,
+                    this.ajs.visualComponent.children[key],
+                    state[key][i]
+                );
+
+                // replace old compnent with the new one (it was destoryed previously but reference still remains in the array)
+                this[key].splice(i, 0, newViewComponent);
+            }
+
+        }
+
+        /**
+         * 
+         * @param id
+         * @param viewComponentInfo
+         * @param state
+         */
         private __createViewComponent(id: string, viewComponentInfo: Ajs.Templating.IVisualComponentChildInfo, state: IViewComponentState): Promise<IViewComponent> {
+
+            console.log("Creating view component %s", id, state);
 
             let name: string = viewComponentInfo.tagName;
             if (name === "COMPONENT" && viewComponentInfo.nameAttribute) {
@@ -798,8 +953,8 @@ namespace Ajs.MVVM.ViewModel {
                 return null;
             }
 
-            let componentNode: Doc.INode = (node as Node) as Doc.INode;
-            componentNode.ajsData = componentNode.ajsData || {} as any;
+            let componentNode: Doc.INode = <Doc.INode>(<Node>node);
+            componentNode.ajsData = componentNode.ajsData || <any>{};
             componentNode.ajsData.component = this;
             componentNode.ajsData.ownerComponent = this;
 
@@ -808,11 +963,18 @@ namespace Ajs.MVVM.ViewModel {
             return node;
         }
 
+        /**
+         * 
+         * @param sourceNode
+         * @param targetNode
+         * @param clearStateChangeOnly
+         * @param attributes
+         */
         private __renderTree(sourceNode: Node, targetNode: Node, clearStateChangeOnly: boolean, attributes?: NamedNodeMap): Node {
 
             let id: string = null;
             if (sourceNode.nodeType === Node.ELEMENT_NODE) {
-                id = (sourceNode as HTMLElement).getAttribute("id");
+                id = (<HTMLElement>sourceNode).getAttribute("id");
             }
 
             // if the tag has attribute id, check if it is component or array of components
@@ -820,14 +982,14 @@ namespace Ajs.MVVM.ViewModel {
 
                 // if it is a view component, render it
                 if (this[id] instanceof ViewComponent) {
-                    (this[id] as ViewComponent<any, any>).render(targetNode as HTMLElement, clearStateChangeOnly, sourceNode.attributes);
+                    (<IViewComponent>this[id]).render(<HTMLElement>targetNode, clearStateChangeOnly, sourceNode.attributes);
                 } else {
                     // if it is an array
                     if (this[id] instanceof Array) {
                         // go through it and render all view components existing in the array
                         for (let i: number = 0; i < this[id].length; i++) {
                             if (this[id][i] instanceof ViewComponent) {
-                                (this[id][i] as ViewComponent<any, any>).render(targetNode as HTMLElement, clearStateChangeOnly, sourceNode.attributes);
+                                (<IViewComponent>this[id][i]).render(<HTMLElement>targetNode, clearStateChangeOnly, sourceNode.attributes);
                             }
                         }
                     }
@@ -850,8 +1012,8 @@ namespace Ajs.MVVM.ViewModel {
                 let skip: boolean = sourceNode === this.ajs.visualComponent.component && !this.ajs.stateChanged;
 
                 if (addedNode !== null && skip) {
-                    (addedNode as Doc.INode).ajsData = (addedNode as Doc.INode).ajsData || {} as any;
-                    (addedNode as Doc.INode).ajsData.skipUpdate = true;
+                    (<Doc.INode>addedNode).ajsData = (<Doc.INode>addedNode).ajsData || <any>{};
+                    (<Doc.INode>addedNode).ajsData.skipUpdate = true;
                 }
 
                 // if the node was added, go through all its children
@@ -888,8 +1050,8 @@ namespace Ajs.MVVM.ViewModel {
             let processedNode: Node = this.__processNode(adoptedNode);
             if (processedNode && processedNode !== null) {
                 if (processedNode instanceof HTMLElement) {
-                    ((processedNode as Node) as Doc.INode).ajsData = ((processedNode as Node) as Doc.INode).ajsData || {} as any;
-                    ((processedNode as Node) as Doc.INode).ajsData.ownerComponent = this;
+                    (<Doc.INode>(<Node>processedNode)).ajsData = (<Doc.INode>(<Node>processedNode)).ajsData || <any>{};
+                    (<Doc.INode>(<Node>processedNode)).ajsData.ownerComponent = this;
                 }
                 targetNode.appendChild(processedNode);
             }
@@ -936,7 +1098,7 @@ namespace Ajs.MVVM.ViewModel {
         private __processNode(node: Node): Node {
             switch (node.nodeType) {
                 case Node.ELEMENT_NODE:
-                    return this.__processElement(node as HTMLElement);
+                    return this.__processElement(<HTMLElement>node);
                 case Node.TEXT_NODE:
                     return this.__processText(node);
                 default:
@@ -1007,13 +1169,13 @@ namespace Ajs.MVVM.ViewModel {
                     if (href.substr(0, 4) !== "http") {
 
                         let domEventListenerInfo: Doc.INodeEventListenerInfo = {
-                            source: (this.ajs.templateElement as Node) as Doc.INode,
+                            source: <Doc.INode>(<Node>this.ajs.templateElement),
                             eventType: "mousedown",
                             eventListener: (e: MouseEvent): void => { this.__linkMouseDown(e); }
                         };
 
-                        let node: Doc.INode = (element as Node) as Doc.INode;
-                        node.ajsData = node.ajsData || {} as any;
+                        let node: Doc.INode = <Doc.INode>(<Node>element);
+                        node.ajsData = node.ajsData || <any>{};
 
                         if (!(node.ajsData.eventListeners instanceof Array)) {
                             node.ajsData.eventListeners = [];
@@ -1022,7 +1184,7 @@ namespace Ajs.MVVM.ViewModel {
                         node.ajsData.eventListeners.push(domEventListenerInfo);
 
                         domEventListenerInfo = {
-                            source: (this.ajs.templateElement as Node) as Doc.INode,
+                            source: <Doc.INode>(<Node>this.ajs.templateElement),
                             eventType: "click",
                             eventListener: (e: MouseEvent): void => {
                                 e.returnValue = false;
@@ -1128,13 +1290,13 @@ namespace Ajs.MVVM.ViewModel {
                 };
 
                 let domEventListenerInfo: Doc.INodeEventListenerInfo = {
-                    source: (this.ajs.templateElement as Node) as Doc.INode,
+                    source: <Doc.INode>(<Node>this.ajs.templateElement),
                     eventType: eventType,
                     eventListener: listener
                 };
 
-                let node: Doc.INode = (attr.ownerElement as Node) as Doc.INode;
-                node.ajsData = node.ajsData || {} as any;
+                let node: Doc.INode = <Doc.INode>(<Node>attr.ownerElement);
+                node.ajsData = node.ajsData || <any>{};
 
                 if (!(node.ajsData.eventListeners instanceof Array)) {
 
@@ -1227,7 +1389,7 @@ namespace Ajs.MVVM.ViewModel {
 
                 for (let i: number = 0; i < ph.childElementCount; i++) {
                     if (ph.children.item(i).hasAttribute("id") && ph.children.item(i).getAttribute("id") === id) {
-                        vc = ph.children.item(i) as HTMLElement;
+                        vc = <HTMLElement>ph.children.item(i);
                         break;
                     }
                 }

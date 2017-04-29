@@ -278,15 +278,15 @@ namespace Ajs.MVVM.ViewModel {
                                 if (userKey) {
                                     if (this.__componentInstances[key].hasOwnProperty("key")) {
                                         if (this.__componentInstances[key].ajs.key === userKey) {
-                                            return this.__componentInstances[key] as T;
+                                            return <T>this.__componentInstances[key];
                                         }
                                     }
                                 } else {
-                                    return this.__componentInstances[key] as T;
+                                    return <T>this.__componentInstances[key];
                                 }
                             }
                         } else {
-                            return this.__componentInstances[key] as T;
+                            return <T>this.__componentInstances[key];
                         }
                     }
                 }
