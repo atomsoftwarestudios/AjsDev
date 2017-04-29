@@ -21,9 +21,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-///<reference path="../utils/Utils.ts" />
-///<reference path="../dbg/Console.ts" />
-///<reference path="../dbg/log.ts" />
+///<reference path="../Utils/Utils.ts" />
+///<reference path="../Dbg/Dbg.ts" />
 
 namespace Ajs.Boot {
 
@@ -91,7 +90,7 @@ namespace Ajs.Boot {
                 },
                 modules: {
                     logger: {
-                        enabled: false,
+                        enabled: true,
                         logDataToConsole: false,
                         logTypes: [
                             Ajs.Dbg.LogType.Enter,
@@ -314,7 +313,7 @@ namespace Ajs.Boot {
      * Main entry point (executed on application cache events cahced/noupdate/error or window.onload event)
      * Initializes the framework and initiate loading of configured resources)
      */
-    function _boot(): void {
+    async function _boot(): Promise<void> {
 
         if (preventBoot) {
             return;
@@ -330,33 +329,33 @@ namespace Ajs.Boot {
 
         _configureAjs();
 
-        // do some logging
+        // initialize debugging console and modules
+        await Dbg.initialize(container);
+
         Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", null, productName + " " + version + ", " + copyright);
 
-        // instanitate app
-        let application: App.IApplication = container.resolve<App.IApplication>(App.IIApplication);
+        // instanitate & initialize the app
+        let application: App.IApplication = await container.resolve<App.IApplication>(App.IIApplication);
 
         // app started its own error handler so its possible to unregister the boot one
         window.removeEventListener("error", (<EventListener>Ajs.bootConfig.bootConfig.errorHandler));
 
-        // configure and run the application
-        application.configure(container);
-        application.initialize()
-            .then(() => {
-                application.run();
-            })
-            .catch((reason: any) => {
-                Utils.nextTickAsync()
-                    .then(() => {
-                        throw new ApplicationException(reason);
-                    });
-            });
+        try {
+            await application.run();
+        } catch (e) {
+            // rethrow the error out of promise to be catchable by the global error handler
+            setTimeout(() => {
+                throw e;
+            }, 0);
+        }
+
+        Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.boot", this, "Application started...");
 
         Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.boot", this);
     }
 
     /**
-     * Called when browser recognizes the application cache manifest has been modified and it is necessary to reload them
+     * Called when browser recognizes the application cache manifest has been modified and it is necessary to reload the app
      * <p>
      * If such event is detected the page gets automatically reloaded to ensure that latest versions of app cached resources
      * are in use

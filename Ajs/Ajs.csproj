@@ -80,7 +80,7 @@
     <TypeScriptCompile Include="Dbg\Modules\Logger\ILogger.ts" />
     <TypeScriptCompile Include="Dbg\View\Body.tsx" />
     <TypeScriptCompile Include="Dbg\View\StyleSheet.tsx" />
-    <TypeScriptCompile Include="Dbg\log.ts" />
+    <TypeScriptCompile Include="Dbg\Dbg.ts" />
     <TypeScriptCompile Include="Dbg\Modules\Logger\LoggerStyleSheet.tsx" />
     <TypeScriptCompile Include="Dbg\Modules\Logger\Logger.ts" />
     <TypeScriptCompile Include="Dbg\Modules\Logger\LoggerToolbar.tsx" />
