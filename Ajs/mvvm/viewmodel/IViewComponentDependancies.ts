@@ -31,7 +31,7 @@ namespace Ajs.MVVM.ViewModel {
 
     export interface IViewComponentDependencies {
         viewComponentCtor: CtorTyped<IViewComponent>;
-        dependencies: IViewComponentConfigureParams;
+        dependencies: any[];
     }
 
 }

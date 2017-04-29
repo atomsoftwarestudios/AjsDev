@@ -95,7 +95,7 @@ namespace Ajs.MVVM.ViewModel {
 
         public addComponentDependencies<ConfigParams>(
             component: CtorTyped<Ajs.MVVM.ViewModel.IViewComponent>,
-            dependencies: ConfigParams): IViewComponentManager {
+            ...dependencies: any[]): IViewComponentManager {
 
             this.__addComponentDependencies(component, dependencies);
             return this;
@@ -138,8 +138,8 @@ namespace Ajs.MVVM.ViewModel {
             }
 
             // resolve construction dependencies
-            let navigator: Navigation.INavigator = this.__container.resolve<Navigation.INavigator>(Navigation.IINavigator);
-            let router: Routing.IRouter = this.__container.resolve<Routing.IRouter>(Routing.IIRouter);
+            let navigator: Navigation.INavigator = await this.__container.resolve<Navigation.INavigator>(Navigation.IINavigator);
+            let router: Routing.IRouter = await this.__container.resolve<Routing.IRouter>(Routing.IIRouter);
 
             // get new unique id for the new component
             let componentViewId: number = this.__viewManager.getNewComponentId();
@@ -168,7 +168,7 @@ namespace Ajs.MVVM.ViewModel {
             this.__componentInstances[componentViewId] = viewComponent;
 
             // resolve configuration dependencies (like modules)
-            let dependencies: any[] = this.__resolveComponentDependencies(viewComponent);
+            let dependencies: any[] = await this.__resolveComponentDependencies(viewComponent);
 
             // configure component with resolved dependencies
             await viewComponent.configure.apply(viewComponent, dependencies);
@@ -365,14 +365,14 @@ namespace Ajs.MVVM.ViewModel {
 
         private __addComponentDependencies<ConfigParams>(
             componentCtor: CtorTyped<IViewComponent>,
-            dependencies: ConfigParams): void {
+            ...dependencies: any[]): void {
 
             let deps: IViewComponentDependencies = this.__getComponentDependencies(componentCtor);
 
             if (deps === null) {
                 this.__componentDependencies.push({
                     viewComponentCtor: componentCtor,
-                    dependencies: dependencies
+                    dependencies: dependencies[0]
                 });
             } else {
                 throw new ComponentDependenciesConfiguredAlreadyException();
@@ -389,7 +389,7 @@ namespace Ajs.MVVM.ViewModel {
             return null;
         }
 
-        private __resolveComponentDependencies(viewComponent: IViewComponent): any[] {
+        private async __resolveComponentDependencies(viewComponent: IViewComponent): Promise<any[]> {
 
             let proto: any = Object.getPrototypeOf(viewComponent);
             if (proto === null) {
@@ -416,30 +416,26 @@ namespace Ajs.MVVM.ViewModel {
                 return [];
             }
 
-            let cfgParamNames: string[] = Utils.getFunctionParameterNames((<any>viewComponent)._onConfigure);
-
-            if (cfgParamNames.length === 0) {
-                return [];
-            }
-
             let params: any[] = [];
 
-            for (let arg of cfgParamNames) {
+            if (deps.dependencies.length === 0) {
+                return params;
+            }
 
-                if (arg in deps.dependencies) {
+            let i: number = 0;
+            for (let parameter of deps.dependencies) {
 
-                    let dep: any = this.__container.resolve<any>(deps.dependencies[arg], false);
-                    if (dep === null) {
-                        dep = deps.dependencies[arg];
-                    }
-
-                    params.push(dep);
-
+                let instance: any = await this.__container.resolve(parameter, false);
+                if (instance !== null) {
+                    params.push(instance);
                 } else {
-                    throw new InvalidViewComponentConfigurationArgumentException(
-                        "Component: '" + Utils.getClassName(viewComponent) + "', argument: '" + arg + "'");
+                    if (parameter && typeof parameter === "object" && parameter !== null && "__diService__" in parameter) {
+                        throw new InvalidViewComponentConfigurationArgumentException(
+                            "Component: '" + Utils.getClassName(viewComponent) + "', parameter index: '" + i+ "'");
+                    }
+                    params.push(parameter);
                 }
-
+                i++;
             }
 
             return params;

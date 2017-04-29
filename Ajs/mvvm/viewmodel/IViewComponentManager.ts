@@ -34,7 +34,7 @@ namespace Ajs.MVVM.ViewModel {
 
         addComponentDependencies<ConfigParams>(
             component: CtorTyped<IViewComponent>,
-            dependencies: ConfigParams): IViewComponentManager;
+            ...dependencies: any[]): IViewComponentManager;
 
         navigationNotifier: Ajs.Events.Notifier<IViewComponentManager>;
 
