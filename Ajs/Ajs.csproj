@@ -27,9 +27,9 @@
     <TypeScriptCompile Include="AjsIndexedDB\Exceptions.ts" />
     <TypeScriptCompile Include="AjsIndexedDB\IAjsIndexedDb.ts" />
     <TypeScriptCompile Include="AjsIndexedDB\AjsIndexedDb.ts" />
-    <TypeScriptCompile Include="AjsIndexedDB\Strings_Log.Debug.ts" />
-    <TypeScriptCompile Include="AjsIndexedDB\Strings_Log.Release.ts" />
+    <TypeScriptCompile Include="AjsIndexedDB\Strings_Log.ts" />
     <TypeScriptCompile Include="App\IApplicationConfig.ts" />
+    <TypeScriptCompile Include="DI\ServiceAsyncInit.ts" />
     <TypeScriptCompile Include="lib\typesript-helpers.d.ts" />
     <TypeScriptCompile Include="MVVM\Model\Exceptions.ts" />
     <TypeScriptCompile Include="MVVM\Model\IModel.ts" />
