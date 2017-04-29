@@ -144,28 +144,6 @@ namespace Ajs.App {
         }
 
         /**
-         * Called from boot to allow application developers to configure services and resources the application will use
-         * <p><strong>DON'T OVERRIDE! Should be Considered as a final method.</strong></p>
-         * <p>If application services/resources configuration is reqired the #see [_onConfigure]{Ajs.App.Application._onConfigure}
-         * method should to be overriden in inherited application class.</p>
-         * <p>
-         * Please note the Ajs Framework services are configured already at the time of Application.configure.
-         * Only application services should be configured in the #see [_configure]{Ajs.App.Application._onConfigure}
-         * method.
-         * </p>
-         * @param container Dependency injection container to be used to configure application services
-         */
-        public configure(container: DI.IContainer): void {
-            this._onConfigure(
-                container,
-                this.__resources,
-                this.__templates,
-                this.__navigator.redirections,
-                this.__router.routes,
-                this.__viewComponentManager);
-        }
-
-        /**
          * Called from boot to allow application developers to perform custom initialization of the application
          * <p><strong>DON'T OVERRIDE! Should be Considered as a final method.</strong></p>
          * <p>If custom application initialization is required by the #see [_onInitialize]{Ajs.App.Application._onInitialize}
@@ -173,7 +151,15 @@ namespace Ajs.App {
          * </p>
          */
         public async initialize(): Promise<any> {
-            await this.__resourceManager.initialize();
+
+            this._onConfigure(
+                this.__container,
+                this.__resources,
+                this.__templates,
+                this.__navigator.redirections,
+                this.__router.routes,
+                this.__viewComponentManager);
+
             return this._onInitialize();
         }
 
@@ -189,20 +175,16 @@ namespace Ajs.App {
          * @throws NotInitializedException Thrown when _run is called but the application was not
          *                                 initialized by calling the _initDone method
          */
-        public run(): void {
-            Promise.all(
-                [this.__loadResources(),
+        public async run(): Promise<void> {
+
+            await Promise.all([
+                this.__loadResources(),
                 this.__loadTemplates()
-                ])
-                .then(() => {
-                    this.__navigator.canNavigate = true;
-                    this.__navigator.navigated();
-                })
-                .catch((reason: any) => {
-                    setTimeout(() => {
-                        throw reason;
-                    }, 0);
-                });
+            ]);
+
+            this.__navigator.canNavigate = true;
+            this.__navigator.navigated();
+
         }
 
 

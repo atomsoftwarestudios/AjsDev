@@ -42,26 +42,18 @@ namespace Ajs.App {
     export interface IApplication {
 
         /**
-         * Called during the boot proces and allows the application to configure framework and application services it will use
+         * Called automatically when application instance is resolved in DI
          * <p>
-         * The boot manager passes the #see [DI container]{Ajs.DI.IContainer} object to the application in order to be possible
-         * to configure the Ajs framework and additional services application will use.
+         * If the Ajs.App.Application is inherited it automatically calls the #see [onConfigure]{Ajs.App.Application._onConfigure}
+         * method which can be overriden to configure application dependency graph and perform other configration tasks, such
+         * as loading of initial application resources. If the application is supposed to be accesible offline all offline related
+         * resources should be loaded and here (templates, images, stylesheets) and offline data as soon as possible by the
+         * model.
          * </p>
          * <p>
-         * If the #see [Application]{Ajs.App.Application} class is inherited it automatically calls the #see [onConfigure]{Ajs.App.Application._onConfigure}
-         * method which can be overriden in order to configure application
-         * as required. This method is provided with additional parameters such as application configuration object or
-         * configurable lists for resources and templates to be loaded before application will be started.
+         * Once the application is configured the asynchronous overridable initialization method
+         * #see [onInitialize]{Ajs.App.Application._onInitialize} is called to perform additional application initialization tasks.
          * </p>
-         */
-        configure(container: Ajs.DI.IContainer): void;
-
-        /**
-         * Called during the boot process to initialize the application.
-         * <p>
-         * If the Ajs.App.Application is inherited it automatically calls the #see [onConfigure]{Ajs.App.Application._onInitialize}
-         * method which can be overriden. There is no any internal code to initialize the application implemented.
-         * <p>
          */
         initialize(): Promise<any>;
 
