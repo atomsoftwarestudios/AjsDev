@@ -109,23 +109,57 @@ namespace Ajs.Utils {
             return obj.name;
         }
 
-        if (obj && obj.constructor && obj.constructor.toString) {
-            let arr: RegExpMatchArray = obj.constructor.toString().match(/function\s*(\w+)/);
-            if (arr && arr.length === 2) {
-                if (arr[1] === "Function") {
-                    if (obj.toString) {
-                        arr = obj.toString().match(/function\s*(\w+)/);
-                        if (arr && arr.length === 2) {
-                            return arr[1];
-                        }
+        if (obj === undefined || obj.constructor === undefined || obj.constructor.toString === undefined) {
+            return undefined;
+        }
+
+        if (obj.constructor.toString().trim().substr(0, 5) === "class") {
+            return getES6ClassName(obj);
+        }
+
+        let arr: RegExpMatchArray = obj.constructor.toString().match(/function\s*(\w+)/);
+
+        if (arr && arr.length === 2) {
+            if (arr[1] === "Function") {
+                if (obj.toString) {
+                    arr = obj.toString().match(/function\s*(\w+)/);
+                    if (arr && arr.length === 2) {
+                        return arr[1];
                     }
-                } else {
-                    return arr[1];
                 }
+            } else {
+                return arr[1];
             }
         }
 
         return undefined;
+
+    }
+
+    export function getES6ClassName(obj: any): string {
+
+        if (obj && obj.name) {
+            return obj.name;
+        }
+
+        if (obj === undefined || obj.constructor === undefined || obj.constructor.toString === undefined) {
+            return undefined;
+        }
+
+        let objstr: string = obj.constructor.toString();
+
+        if (objstr.trim().substr(0, 5) !== "class") {
+            return getES6ClassName(obj);
+        }
+
+        let indexOfBracket: number = objstr.indexOf("{");
+        let indexOfExtends: number = objstr.indexOf("extends");
+
+        if (indexOfExtends !== -1 && indexOfExtends < indexOfBracket) {
+            return objstr.substring(5, indexOfExtends - 1).trim();
+        }
+
+        return objstr.substring(5, indexOfBracket - 1).trim();
     }
 
     /**
@@ -242,6 +276,20 @@ namespace Ajs.Utils {
                 }, howLong ? howLong : 0);
             }
         );
+    }
+
+    export function extend(d: any, b: any): void {
+
+        for (let p in b) {
+            if (b.hasOwnProperty(p)) d[p] = b[p];
+        }
+        
+        function extended(): void {
+            this.constructor = d;
+        };
+
+        extended.prototype = b.prototype;
+        d.prototype = new extended();
     }
 
 }
