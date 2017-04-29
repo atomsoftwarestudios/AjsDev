@@ -75,9 +75,6 @@ namespace AjsDoc.Components {
             this.__progModel = programModel;
             this.__contentModel = contentModel;
 
-            await this.__progModel.initialize();
-            await this.__contentModel.initialize();
-
             this.__updateView();
         }
 
@@ -150,9 +147,6 @@ namespace AjsDoc.Components {
             let navBarState: any = {
                 items: navBarItems
             };
-
-            // menu state must be set separately as otherwise the visual transition does not work
-            //this.ajsDocLayout.ajsDocMenu.setState(menuState);
 
             this.ajsDocLayout.ajsDocArticle.clearState(false);
 

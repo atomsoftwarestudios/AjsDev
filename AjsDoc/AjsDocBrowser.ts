@@ -94,27 +94,27 @@ namespace AjsDoc {
             viewComponentManager
 
                 .addComponentDependencies<Components.ICPAjsDocComponent>(
-                Components.AjsDocComponent, {
-                    programModel: Models.ProgramModel.IIProgramModel,
-                    contentModel: Models.ContentModel.IIContentModel
-                })
+                    Components.AjsDocComponent,
+                    Models.ProgramModel.IIProgramModel,
+                    Models.ContentModel.IIContentModel
+                )
 
                 .addComponentDependencies<Components.ICPAjsDocMenuComponent>(
-                Components.AjsDocMenuComponent, {
-                    programModel: Models.ProgramModel.IIProgramModel,
-                    contentModel: Models.ContentModel.IIContentModel
-                })
+                    Components.AjsDocMenuComponent,
+                    Models.ProgramModel.IIProgramModel,
+                    Models.ContentModel.IIContentModel
+                )
 
                 .addComponentDependencies<Components.ICPAjsDocContextSwitcherComponent>(
-                Components.AjsDocContextSwitcherComponent, {
-                    stateManager: Ajs.State.IIStateManager
-                })
+                    Components.AjsDocContextSwitcherComponent,
+                    Ajs.State.IIStateManager
+                )
 
                 .addComponentDependencies<Components.ICPAjsDocHeaderComponent>(
-                Components.AjsDocHeaderComponent, {
-                    headerLabel: this._config.headerLabel,
-                    headerDescription: this._config.headerDescription
-                });
+                    Components.AjsDocHeaderComponent,
+                    this._config.headerLabel,
+                    this._config.headerDescription
+                );
 
         }
 
