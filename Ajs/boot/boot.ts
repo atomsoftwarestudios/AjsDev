@@ -319,6 +319,8 @@ namespace Ajs.Boot {
             return;
         }
 
+        //indexedDB.deleteDatabase("Ajs");
+
         // configure boot
         _configureBoot();
 
