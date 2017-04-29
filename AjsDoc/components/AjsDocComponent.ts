@@ -70,12 +70,11 @@ namespace AjsDoc.Components {
 
         protected async _onConfigure(
             programModel: Models.ProgramModel.IProgramModel,
-            contentModel: Models.ContentModel.IContentModel): Promise<void> {
+            contentModel: Models.ContentModel.IContentModel
+        ): Promise<void> {
 
             this.__progModel = programModel;
             this.__contentModel = contentModel;
-
-            this.__updateView();
         }
 
         /**
@@ -90,6 +89,7 @@ namespace AjsDoc.Components {
             };
 
             this.ajs.viewComponentManager.navigationNotifier.subscribe(this.__navigatedListener);
+
         }
 
         /**
