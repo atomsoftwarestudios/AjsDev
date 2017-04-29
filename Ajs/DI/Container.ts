@@ -411,12 +411,12 @@ namespace Ajs.DI {
             }
 
             let s: IServiceDescriptor = this.__getService(serviceList, serviceInterfaceIdentifier);
-
             if (s === null) {
                 return null;
             }
 
-            let o: any = containerConstructService(s.serviceConstructor, s.serviceConfiguration);
+            let params: any = this.__resolveParameters(s);
+            let o: any = containerConstructService(s.serviceConstructor, params);
 
             if (instanceList !== null) {
                 instanceList.push({
@@ -427,6 +427,38 @@ namespace Ajs.DI {
             }
 
             return o;
+        }
+
+        /**
+         * Resolves service depenancies and maps them to constructor arguments
+         * @param service Service which dependencies should be resolved and mapped to constructor arguments
+         * @returns Constructor argument list with resolved dependencies
+         */
+        private __resolveParameters(service: IServiceDescriptor): any[] {
+
+            let ctorParams: any[] = [];
+
+            if (service.serviceConfiguration.length === 0) {
+                return ctorParams;
+            }
+
+            let i: number = 0;
+            for (let p of service.serviceConfiguration) {
+
+                let s: any = this.resolve(p, false);
+                if (s !== null) {
+                    ctorParams.push(s);
+                } else {
+                    if (p && typeof p === "object" && p !== null && "__diService__" in p) {
+                        throw new UnableToResolveDependencyException(
+                            "Service: '" + Utils.getClassName(service.serviceConstructor) + "', parameter index: '" + i + "'");
+                    }
+                    ctorParams.push(p);
+                }
+                i++;
+            }
+
+            return ctorParams;
         }
 
     }
