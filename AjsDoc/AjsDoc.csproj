@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="AjsDocBrowser.ts" />
+    <Content Include="wwwroot\resources\examples\ajsIndexedDbUsage.ts" />
     <TypeScriptCompile Include="Components\AjsDocComponent.ts" />
     <TypeScriptCompile Include="Components\AjsDocMemberComponent.ts" />
     <TypeScriptCompile Include="Components\AjsDocMemberTypeParametersComponent.ts" />

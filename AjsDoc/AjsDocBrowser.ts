@@ -41,8 +41,8 @@ namespace AjsDoc {
             this._resourcesLoadingPreference = this._config.dataStorageOptions.loadingPreference;
 
             // use the TypeScript helper to extend a class
-            __extends(resources, this._config.resources);
-            __extends(templates, this._config.templates);
+            Ajs.Utils.extend(resources, this._config.resources);
+            Ajs.Utils.extend(templates, this._config.templates);
 
             // configure application services
 
