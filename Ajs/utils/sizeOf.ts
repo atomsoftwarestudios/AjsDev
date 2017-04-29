@@ -56,7 +56,7 @@ namespace Ajs.Utils {
 
             // the object is a string
             case "string":
-                size += 2 * (object as string).length;
+                size += 2 * (<string>object).length;
                 break;
 
             case "object":

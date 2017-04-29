@@ -170,8 +170,8 @@ namespace Ajs.Templating {
             if (element instanceof HTMLElement) {
                 for (let i: number = 0; i < element.children.length; i++) {
                     if (element.children.item(i).nodeType === Node.ELEMENT_NODE) {
-                        let pc: IVisualComponent = elementProcessor(element.children.item(i) as HTMLElement, parentComponent);
-                        this._walkHTMLTree(element.children.item(i) as HTMLElement, pc, elementProcessor);
+                        let pc: IVisualComponent = elementProcessor(<HTMLElement>element.children.item(i), parentComponent);
+                        this._walkHTMLTree(<HTMLElement>element.children.item(i), pc, elementProcessor);
                     }
                 }
             }

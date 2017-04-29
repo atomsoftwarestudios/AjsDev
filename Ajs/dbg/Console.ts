@@ -117,7 +117,7 @@ namespace Ajs.Dbg {
                 this.__styleElements.push(styleElement);
             }
 
-            this.__infoElement = this.__config.bodyRenderTarget.ownerDocument.getElementById("ajsDebugInfo") as HTMLDivElement;
+            this.__infoElement = <HTMLDivElement>this.__config.bodyRenderTarget.ownerDocument.getElementById("ajsDebugInfo");
 
             this.__body.currentModule.bodyRendered();
         }
@@ -151,7 +151,7 @@ namespace Ajs.Dbg {
             this.__bodyElement.parentElement.removeChild(this.__bodyElement);
             this.__bodyElement = this.__body.render();
             this.__config.bodyRenderTarget.appendChild(this.__bodyElement);
-            this.__infoElement = this.__config.bodyRenderTarget.ownerDocument.getElementById("ajsDebugInfo") as HTMLDivElement;
+            this.__infoElement = <HTMLDivElement>this.__config.bodyRenderTarget.ownerDocument.getElementById("ajsDebugInfo");
             this.__body.currentModule.bodyRendered();
         }
 

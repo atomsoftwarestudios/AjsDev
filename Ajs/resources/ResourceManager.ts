@@ -893,7 +893,7 @@ namespace Ajs.Resources {
             // first check if the script was not added already
             let nodeList: NodeList = document.head.getElementsByTagName("script");
             for (let i: number = 0; i < nodeList.length; i++) {
-                if ((nodeList.item(i) as HTMLScriptElement).id === resource.url) {
+                if ((<HTMLScriptElement>nodeList.item(i)).id === resource.url) {
                     Ajs.Dbg.log(Dbg.LogType.Exit, 0, LOG_AJSRES, this);
                     return;
                 }

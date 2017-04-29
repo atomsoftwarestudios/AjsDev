@@ -71,7 +71,7 @@ namespace Ajs.Resources {
 
                     Ajs.Dbg.log(Dbg.LogType.Info, 0, LOG_AJSRES, this, LOG_XHR_INIT);
 
-                    let xhr: IResourceRequest = new XMLHttpRequest() as IResourceRequest;
+                    let xhr: IResourceRequest = <IResourceRequest>new XMLHttpRequest();
                     xhr.open("GET", encodeURI(requestData.url));
                     xhr.resourceRequestData = requestData;
 
@@ -115,7 +115,7 @@ namespace Ajs.Resources {
          */
         protected _xhrStatusChanged(e: Event, resolve: (data: IResourceResponseData) => void): void {
 
-            let xhr: IResourceRequest = e.target as IResourceRequest;
+            let xhr: IResourceRequest = <IResourceRequest>e.target;
             let requestData: IResourceRequestData = xhr.resourceRequestData;
 
             Ajs.Dbg.log(Dbg.LogType.Info, 3, LOG_AJSRES, this,

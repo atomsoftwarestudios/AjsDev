@@ -299,7 +299,7 @@ namespace Ajs.MVVM.View {
 
                         Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
 
-                        return targetUpdateRoot as Element;
+                        return <Element>targetUpdateRoot;
 
                     } else {
 

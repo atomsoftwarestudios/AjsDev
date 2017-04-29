@@ -249,11 +249,11 @@ namespace Ajs.Dbg.Modules.Logger {
 
                 if (e.stack) {
 
-                    let functions: RegExpMatchArray = (e.stack as string).match(/(at ).*(\()/g);
+                    let functions: RegExpMatchArray = (<string>e.stack).match(/(at ).*(\()/g);
 
                     if (functions === null) {
 
-                        functions = (e.stack as string).match(/.*@/g);
+                        functions = (<string>e.stack).match(/.*@/g);
 
                         if (functions && functions !== null) {
 

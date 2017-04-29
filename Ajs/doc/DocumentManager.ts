@@ -132,7 +132,7 @@ namespace Ajs.Doc {
 
                 // do the following procedure for all children
                 for (let i: number = 0; i < node.childNodes.length; i++) {
-                    removeTree(node.childNodes.item(i) as INode);
+                    removeTree(<INode>node.childNodes.item(i));
                 }
 
                 // if node has ajsData
@@ -152,7 +152,7 @@ namespace Ajs.Doc {
 
             // all elements in render target
             for (let i: number = 0; i < this.__renderTarget.childNodes.length; i++) {
-                removeTree(this.__renderTarget.childNodes.item(i) as INode);
+                removeTree(<INode>this.__renderTarget.childNodes.item(i));
             }
 
             renderTarget.innerHTML = "";
@@ -180,8 +180,8 @@ namespace Ajs.Doc {
             }
 
             // just retype the node to INode, extended information is checked in all cases
-            let src: INode = source as INode;
-            let tgt: INode = target as INode;
+            let src: INode = <INode>source;
+            let tgt: INode = <INode>target;
 
             // if the source has a metadata and the target has no any or has a different metadata than the source
             if (src.ajsData && (!tgt.ajsData || src.ajsData.component !== tgt.ajsData.component)) {
@@ -261,7 +261,7 @@ namespace Ajs.Doc {
 
                 // search children nodes until the node is found and removed
                 for (let i: number = 0; i < tgtNode.childNodes.length; i++) {
-                    let node: INode = searchNode(nodeId, tgtNode.childNodes.item(i) as INode);
+                    let node: INode = searchNode(nodeId, <INode>tgtNode.childNodes.item(i));
                     if (node !== null) {
                         return node;
                     }
@@ -270,7 +270,7 @@ namespace Ajs.Doc {
                 return null;
             }
 
-            return searchNode(id, (this.__targetDocument.body as Node) as INode);
+            return searchNode(id, <INode>(<Node>this.__targetDocument.body));
         }
 
         /**
@@ -309,7 +309,7 @@ namespace Ajs.Doc {
 
                 for (let i: number = 0; i < tgt.parentNode.childNodes.length; i++) {
 
-                    let targetNode: INode = tgt.parentNode.childNodes.item(i) as INode;
+                    let targetNode: INode = <INode>tgt.parentNode.childNodes.item(i);
 
                     if (targetNode.ajsData && targetNode.ajsData.component === src.ajsData.component) {
 
@@ -318,7 +318,7 @@ namespace Ajs.Doc {
 
                         Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.doc", this);
 
-                        return tgt.parentNode.childNodes.item(i) as INode;
+                        return <INode>tgt.parentNode.childNodes.item(i);
 
                     }
                 }
@@ -350,10 +350,10 @@ namespace Ajs.Doc {
                 if (i < tgt.childNodes.length) {
                     // if there are enough child nodes to be compared in the target document
                     // continue with these children
-                    child = tgt.childNodes.item(i) as INode;
+                    child = <INode>tgt.childNodes.item(i);
                 } else {
                     // otherwise append the node and continue with its tree
-                    child = this._appendNode(src.childNodes.item(i) as INode, tgt);
+                    child = this._appendNode(<INode>src.childNodes.item(i), tgt);
                 }
 
                 // update child node tree
@@ -378,7 +378,7 @@ namespace Ajs.Doc {
                 "Appending new node", src, tgt);
 
             let clonedNode: Node = src.cloneNode(false);
-            let adoptedNode: INode = tgt.ownerDocument.adoptNode(clonedNode) as INode;
+            let adoptedNode: INode = <INode>tgt.ownerDocument.adoptNode(clonedNode);
 
             this._setNodeMetadata(src, adoptedNode);
             this._adoptStrangeAttributes(adoptedNode);
@@ -406,7 +406,7 @@ namespace Ajs.Doc {
 
             // clone, adapt and insert node from shadow dom to target document
             let clonedNode: Node = src.cloneNode(false);
-            let adoptedNode: INode = tgt.ownerDocument.adoptNode(clonedNode) as INode;
+            let adoptedNode: INode = <INode>tgt.ownerDocument.adoptNode(clonedNode);
 
             this._setNodeMetadata(src, adoptedNode);
             this._adoptStrangeAttributes(adoptedNode);
@@ -450,7 +450,7 @@ namespace Ajs.Doc {
             }
 
             let clonedNode: Node = src.cloneNode(false);
-            let adoptedNode: INode = tgt.ownerDocument.adoptNode(clonedNode) as INode;
+            let adoptedNode: INode = <INode>tgt.ownerDocument.adoptNode(clonedNode);
 
             this._adoptStrangeAttributes(adoptedNode);
             this._setNodeMetadata(src, adoptedNode);
@@ -492,7 +492,7 @@ namespace Ajs.Doc {
                 this.removeNode(target.childNodes.item(i));
             }
 
-            let tgt: INode = target as INode;
+            let tgt: INode = <INode>target;
 
             // do necessary cleanup - this is maybe not necessary as the node will be discarded completely
             if (tgt.ajsData) {
@@ -538,7 +538,7 @@ namespace Ajs.Doc {
                 // remove non-existing atributes
                 let i: number = 0;
                 while (i < target.attributes.length) {
-                    if (!(source as HTMLElement).hasAttribute(target.attributes.item(i).nodeName)) {
+                    if (!(<HTMLElement>source).hasAttribute(target.attributes.item(i).nodeName)) {
 
                         Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.doc", this,
                             "Removing attribute ", target.attributes.item(i).nodeName);
@@ -568,7 +568,7 @@ namespace Ajs.Doc {
                         tattr.value = source.attributes.item(i).nodeValue;
                         target.attributes.setNamedItem(tattr);
 
-                        this._processStrangeAttributes((target as HTMLElement), tattr);
+                        this._processStrangeAttributes((<HTMLElement>target), tattr);
 
                     } else {
                         if (tattr.nodeValue !== source.attributes.item(i).nodeValue) {
@@ -578,7 +578,7 @@ namespace Ajs.Doc {
 
                             tattr.nodeValue = source.attributes.item(i).nodeValue;
 
-                            this._processStrangeAttributes((target as HTMLElement), tattr);
+                            this._processStrangeAttributes((<HTMLElement>target), tattr);
                         }
                     }
                 }

@@ -208,16 +208,16 @@ namespace Ajs.Navigation {
 
             if (!event.ctrlKey && !event.shiftKey && !event.altKey) {
                 try {
-                    let element: HTMLElement = event.target as HTMLElement;
+                    let element: HTMLElement = <HTMLElement>event.target;
                     while (element !== null && !(element instanceof HTMLAnchorElement)) {
                         element = element.parentElement;
                     }
                     if (element instanceof HTMLAnchorElement) {
 
                         Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.navigation", this,
-                            "Link clicked: " + (element as HTMLAnchorElement).href, element);
+                            "Link clicked: " + (<HTMLAnchorElement>element).href, element);
 
-                        this.navigate((element as HTMLAnchorElement).pathname);
+                        this.navigate((<HTMLAnchorElement>element).pathname);
 
                     }
 
