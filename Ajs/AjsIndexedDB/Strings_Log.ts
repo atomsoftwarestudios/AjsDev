@@ -40,7 +40,9 @@ namespace Ajs.AjsIndexedDb {
     export const LOG_CONF_STORE: string = "Configuring store";
     export const LOG_CONF_STORE_DONE: string = "Configuring store done";
     export const LOG_FAILED_OPEN_DB: string = "Failed to open indexed DB";
-
-
+    export const LOG_OLD_INDEXEDDB_IMPLEMENTATION: string = "Old IndexedDB implementation detected";
+    export const LOG_UPGRADING_VERSION: string = "Setting new version ";
+    export const LOG_VERSION_UPGRADED: string = "Version successfuly set";
+    export const LOG_UPGRADE_FAILED: string = "Failed to upgrade DB";
 
 }
