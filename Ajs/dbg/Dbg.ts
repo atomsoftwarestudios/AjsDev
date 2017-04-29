@@ -28,6 +28,8 @@ namespace Ajs.Dbg {
 
     "use strict";
 
+    let logger: Modules.Logger.ILogger = null;
+
     export enum LogType {
         Enter,
         Exit,
@@ -43,11 +45,11 @@ namespace Ajs.Dbg {
     }
 
     export function log(type: LogType, level: number, module: string, object: any, message?: string, ...data: any[]): void {
-        if (container === undefined) {
+
+        if (logger === null) {
             return;
         }
 
-        let logger: Modules.Logger.ILogger = container.resolve<Modules.Logger.ILogger>(Modules.Logger.IILogger, false);
         if (logger !== null) {
             if (message) {
                 if (data instanceof Array) {
@@ -59,6 +61,14 @@ namespace Ajs.Dbg {
                 logger.log(type, level, module, object);
             }
         }
+
     }
+
+    export async function initialize(container: Ajs.DI.IContainer): Promise<void> {
+
+        logger = await container.resolve<Modules.Logger.ILogger>(Modules.Logger.IILogger, false);
+
+    }
+
 
 }
