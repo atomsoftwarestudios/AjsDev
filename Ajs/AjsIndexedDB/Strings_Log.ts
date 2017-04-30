@@ -44,5 +44,6 @@ namespace Ajs.AjsIndexedDb {
     export const LOG_UPGRADING_VERSION: string = "Setting new version ";
     export const LOG_VERSION_UPGRADED: string = "Version successfuly set";
     export const LOG_UPGRADE_FAILED: string = "Failed to upgrade DB";
+    export const LOG_FAILED_TO_COUNT_ITEMS_USING_CURSOR: string = "Failed to count items using cursor!";
 
 }

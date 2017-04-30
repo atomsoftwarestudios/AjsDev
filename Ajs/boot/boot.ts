@@ -86,7 +86,7 @@ namespace Ajs.Boot {
                 console: {
                     bodyRenderTarget: document.body,
                     styleRenderTarget: document.body,
-                    showOnBootDelay: 2000
+                    showOnBootDelay: 5000
                 },
                 modules: {
                     logger: {
@@ -166,14 +166,14 @@ namespace Ajs.Boot {
             return;
         }
 
+        bootConfigured = true;
+
         bootConfig.bootConfig = _defaultBootConfig();
 
         // if configureBoot function is declared, call it
         if (configureBoot) {
             configureBoot(bootConfig.bootConfig);
         }
-
-        bootConfigured = true;
     }
 
     /**
@@ -315,7 +315,7 @@ namespace Ajs.Boot {
      */
     async function _boot(): Promise<void> {
 
-        if (preventBoot) {
+        if (preventBoot || bootStarted) {
             return;
         }
 
@@ -364,6 +364,9 @@ namespace Ajs.Boot {
      * </p>
      */
     function _update(): void {
+
+        preventBoot = true;
+
         _configureAjs();
 
         let resMan: Ajs.Resources.ResourceManager = new Ajs.Resources.ResourceManager(
@@ -373,14 +376,14 @@ namespace Ajs.Boot {
             .then(() => {
                 resMan.cleanCaches()
                     .then(() => {
-                        window.location.reload();
+                        setTimeout(window.location.reload, 200);
                     })
                     .catch((reason: any) => {
-                        window.location.reload();
+                        setTimeout(window.location.reload, 200);
                     });
             })
             .catch((reason: any) => {
-                window.location.reload();
+                setTimeout(window.location.reload, 200);
             });
 
     }
@@ -402,26 +405,17 @@ namespace Ajs.Boot {
 
             // process cached event (no change in cached files, boot directly)
             window.applicationCache.addEventListener("cached", () => {
-                if (!bootStarted) {
-                    bootStarted = true;
-                    _boot();
-                }
+                _boot();
             });
 
             // process noupdate - means that cached files (mainly the cache.manifest) were not updated
             window.applicationCache.addEventListener("noupdate", () => {
-                if (!bootStarted) {
-                    bootStarted = true;
-                    _boot();
-                }
+                _boot();
             });
 
             // the error occured during the accesing files on the server or another problem during its loading (i.e. offline)
             window.applicationCache.addEventListener("error", (e: Event) => {
-                if (!bootStarted) {
-                    bootStarted = true;
-                    _boot();
-                }
+                _boot();
             });
 
             // the update of cached files is ready. at this time it is not possile to configure what will happen next
@@ -429,9 +423,6 @@ namespace Ajs.Boot {
             // to ensure the latest boot/ajs versions are in use and also latest versions of the application code and application
             // resources will be used
             window.applicationCache.addEventListener("updateready", () => {
-                // applicationCache.swapCache();
-                preventBoot = true;
-                bootStarted = true;
                 _update();
             });
 

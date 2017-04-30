@@ -28,6 +28,9 @@ namespace Ajs.AjsIndexedDb {
     export let IIAjsIndexedDB: IAjsIndexedDb = DI.II;
 
     export interface IAjsIndexedDb {
+
+        readonly isOldIDbImplementation: boolean;
+
         initialize(): Promise<void>;
 
         createStore(
@@ -41,6 +44,8 @@ namespace Ajs.AjsIndexedDb {
             mode: "readonly" | "readwrite",
             requestCb: (store: IDBObjectStore) => IDBRequest
         ): Promise<any>;
+
+        countItemsUsingCursor(storeName: string): Promise<number>;
 
     }
 

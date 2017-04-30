@@ -153,21 +153,25 @@ namespace Ajs.Resources.StorageProviders {
 
         }
 
-        private __count(): Promise<number> {
+        private async __count(): Promise<number> {
 
-            return this.__db.doStoreRequest(
+            let c: number;
+
+            if (this.__db.isOldIDbImplementation) {
+                c = await this.__db.countItemsUsingCursor(INDEXDB_STORAGE_PROVIDER_STORAGE_NAME);
+                return c;
+            }
+
+            c = await this.__db.doStoreRequest(
                 INDEXDB_STORAGE_PROVIDER_STORAGE_NAME,
                 "readonly",
                 (store: IDBObjectStore): IDBRequest => {
                     Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 3, LOG_AJSRESSTORP, this, LOG_COUNTING_INDEXEDDB_ITEMS);
-                    if (store.count) {
                         return store.count();
-                    } else {
-                        let index: IDBIndex = store.index("key");
-                        return index.count();
-                    }
                 }
             );
+
+            return c;
 
         }
 

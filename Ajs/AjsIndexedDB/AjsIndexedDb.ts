@@ -56,6 +56,16 @@ namespace Ajs.AjsIndexedDb {
         /** Reference to the database object */
         private __db: IDBDatabase;
 
+        /** Return information if the IndexedDB implementation is pre-2.0 standard */
+        public get isOldIDbImplementation(): boolean {
+            if (this.__db && this.__db !== null) {
+                return typeof (<any>this.__db).setVersion === "function";
+            } else {
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_NOT_INITIALIZED);
+                throw new IndexedDbNotInitializedException();
+            }
+        }
+
         /**
          * Constructs Ajs Wrapper service for the IndexedDb stroage
          * @param dbName Name of the DB to be openned / created later during the init phase
@@ -147,7 +157,7 @@ namespace Ajs.AjsIndexedDb {
 
                 tx.onerror = (e: Event) => {
                     Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_FAILED_TO_PERFORM_STORE_REQ, e);
-                    reject(new IndexedDbStoreRequestFailedException(tx.error.toString()));
+                    reject(new IndexedDbStoreRequestFailedException());
                 }
 
                 let dbr: IDBRequest = requestCb(tx.objectStore(name));
@@ -158,11 +168,74 @@ namespace Ajs.AjsIndexedDb {
 
                 dbr.onerror = (e: Event) => {
                     Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_FAILED_TO_PERFORM_STORE_REQ, e);
-                    reject(new IndexedDbStoreRequestFailedException(dbr.error.toString()));
+                    reject(new IndexedDbStoreRequestFailedException());
                 };
 
             } catch (e) {
                 Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_FAILED_TO_PERFORM_STORE_REQ, e);
+                reject(new IndexedDbStoreRequestFailedException(e));
+            }
+        }
+
+        public async countItemsUsingCursor(storeName: string): Promise<number> {
+            return new Promise<number>(
+                (resolve: (value: number) => void, reject: (reason: any) => void) => {
+                    this.__countItemsUsingCursor(storeName, resolve, reject);
+                }
+            );
+        }
+
+
+        private __countItemsUsingCursor(
+            storeName: string,
+            resolve: (value: number) => void,
+            reject: (reason: any) => void
+        ): void {
+
+            if (!this.initialized || this.__db === null) {
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_NOT_INITIALIZED);
+                reject(new IndexedDbNotInitializedException());
+                return;
+            }
+
+            if (!this.__db.objectStoreNames.contains(storeName)) {
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_STORE_NOT_EXIST + storeName);
+                reject(new StoreNotExitsException());
+                return;
+            }
+
+            let count: number = 0;
+
+            try {
+
+                let tx: IDBTransaction = this.__db.transaction(storeName, "readonly");
+
+                tx.onerror = (e: Event) => {
+                    Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_FAILED_TO_COUNT_ITEMS_USING_CURSOR, e);
+                    reject(new IndexedDbStoreRequestFailedException(tx.error.toString()));
+                }
+
+                let dbr: IDBRequest = tx.objectStore(storeName).openCursor();
+
+                dbr.onsuccess = (e: Event) => {
+
+                    if (!(<any>e.target).result) {
+                        resolve(count);
+                        return;
+                    }
+
+                    count++;
+                    (<IDBCursor>(<any>e.target).result).continue();
+                };
+
+                dbr.onerror = (e: Event) => {
+                    console.error("Failed to open cursor! " + dbr.error);
+                    Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_FAILED_TO_COUNT_ITEMS_USING_CURSOR, e);
+                    reject(new IndexedDbStoreRequestFailedException(dbr.error.toString()));
+                };
+
+            } catch(e) {
+                Ajs.Dbg.log(Ajs.Dbg.LogType.Error, 0, LOG_IDB, this, LOG_FAILED_TO_COUNT_ITEMS_USING_CURSOR, e);
                 reject(new IndexedDbStoreRequestFailedException(e));
             }
         }
