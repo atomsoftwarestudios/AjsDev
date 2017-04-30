@@ -113,7 +113,9 @@ namespace Ajs.MVVM.ViewModel {
             name: string,
             id: string,
             parentComponent: IParentViewComponent,
-            state?: IViewComponentState): Promise<IViewComponent> {
+            state?: IViewComponentState,
+            parentComponentInitStateNotify?: IViewComponent
+        ): Promise<IViewComponent> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
@@ -162,7 +164,8 @@ namespace Ajs.MVVM.ViewModel {
                 componentViewId,
                 parentComponent,
                 visualComponent,
-                state
+                state,
+                parentComponentInitStateNotify
             );
 
             this.__componentInstances[componentViewId] = viewComponent;

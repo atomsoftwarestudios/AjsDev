@@ -21,23 +21,14 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-namespace Ajs.MVVM.View {
+namespace Ajs.MVVM.ViewModel {
 
     "use strict";
 
-    export let IIViewManager: IViewManager = DI.II;
-
-    export interface IViewManager {
-
-        //readonly navigationNotifier: Events.INotifier<IViewManager>;
-        readonly renderDoneNotifier: Events.INotifier<IViewManager>;
-        getNewComponentId(): number;
-        rootViewComponent: ViewModel.IViewComponent;
-        cleanTargetDocument(): void;
-        stateChangeBegin(stateChangeInfo: ViewModel.IStateChangeInfo): void;
-        stateChangeEnd(stateChangeInfo: ViewModel.IStateChangeInfo): void;
-        render(viewComponent: ViewModel.IViewComponent): Element;
-
+    export interface IStateChangeInfo {
+        component: IViewComponent;
+        parentComponent: IViewComponent;
+        state: IViewComponentState;
     }
 
 }

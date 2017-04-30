@@ -66,12 +66,6 @@ namespace Ajs.MVVM.View {
         private __rootViewComponent: Ajs.MVVM.ViewModel.IViewComponent;
         public set rootViewComponent(value: Ajs.MVVM.ViewModel.IViewComponent) { this.__rootViewComponent = value; }
 
-        /** Specifies the root component for the current state change. Component is then rendered (including its children) if neccessary. */
-        private __stateChangeRootComponent: Ajs.MVVM.ViewModel.IViewComponent;
-
-        /** Specifies all components which state has changed during the last root component state change */
-        private __stateChangedComponents: Ajs.MVVM.ViewModel.IViewComponent[];
-
         /** Used for rendering of view components after the state change and applying the changes to the render target */
         private __shadowDom: Document;
 
@@ -108,8 +102,6 @@ namespace Ajs.MVVM.View {
 
             // basic initialization of the view
             this.__rootViewComponent = null;
-            this.__stateChangeRootComponent = null;
-            this.__stateChangedComponents = [];
 
             // prepare shadow DOM as a ViewComponent render target
             this.__shadowDom = document.implementation.createHTMLDocument("shadowDom");
@@ -137,26 +129,15 @@ namespace Ajs.MVVM.View {
          * </p>
          * @param viewComponent
          */
-        public stateChangeBegin(viewComponent: Ajs.MVVM.ViewModel.ViewComponent<any, any>): void {
+        public stateChangeBegin(stateChangeInfo: ViewModel.IStateChangeInfo): void {
 
             Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
-                "State change begun (" + Ajs.Utils.getClassName(viewComponent) + "), " +
-                "id: " + viewComponent.ajs.id + ", viewId: " + viewComponent.componentViewId,
-                viewComponent);
+                "State change begun (" + Ajs.Utils.getClassName(stateChangeInfo.component) + "), " +
+                "id: " + stateChangeInfo.component.ajs.id + ", viewId: " + stateChangeInfo.component.componentViewId,
+                stateChangeInfo.component);
 
-            // if there is no root assigned to the change, the passed component is the root of the change
-            if (this.__stateChangeRootComponent === null) {
-
-                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
-                    "The " + Ajs.Utils.getClassName(viewComponent) + ":" + viewComponent.ajs.id + " is root of the state change");
-
-                this.__stateChangeRootComponent = viewComponent;
-
-            } else {
-                this.__stateChangedComponents.push(viewComponent);
-            }
 
             Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
         }
@@ -165,76 +146,50 @@ namespace Ajs.MVVM.View {
          * Called from the view component when it finishes the state change
          * @param viewComponent
          */
-        public stateChangeEnd(viewComponent: Ajs.MVVM.ViewModel.ViewComponent<any, any>): void {
+        public stateChangeEnd(stateChangeInfo: ViewModel.IStateChangeInfo): void {
 
             Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
 
             Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
-                "State change end (" + Ajs.Utils.getClassName(viewComponent) + "), " +
-                "id: " + viewComponent.ajs.id + ", viewId: " + viewComponent.componentViewId +
-                ", state changed: " + viewComponent.ajs.stateChanged,
-                viewComponent);
+                "State change end (" + Ajs.Utils.getClassName(stateChangeInfo.component) + "), " +
+                "id: " + stateChangeInfo.component.ajs.id + ", viewId: " + stateChangeInfo.component.componentViewId +
+                ", state changed: " + stateChangeInfo.component.ajs.stateChanged,
+                stateChangeInfo.component);
 
-            if (this.__stateChangeRootComponent === viewComponent) {
+            if (stateChangeInfo.parentComponent === null) {
 
                 // render only if the root view component was rendered already
                 // initial rendering of the root component is ensured from the _rootUpdated method
                 if (this.__rootViewComponent !== null) {
 
                     // render the root change view component
-                    let targetNewNode: Element = this.render(viewComponent);
+                    let targetNewNode: Element = this.render(stateChangeInfo.component);
 
                     // notify registered subscribers the rendering is over
                     this.__renderDoneNotifier.notify(this);
 
+                    if (stateChangeInfo.component.ajs.hasVisualStateTransition) {
+                        stateChangeInfo.component.ajsVisualStateTransitionBegin(
+                            <any>this.__documentManager.getTargetNodeByUniqueId(stateChangeInfo.component.componentViewId)
+                        );
+                    }
+
                     // begin the visual transition
-                    for (let c of this.__stateChangedComponents) {
+                    /*for (let c of this.__stateChangedComponents) {
                         if (c.ajs.hasVisualStateTransition) {
                             c.ajsVisualStateTransitionBegin(
                                 <any>this.__documentManager.getTargetNodeByUniqueId(c.componentViewId)
                             );
                         }
-                    }
+                    }*/
 
                 }
-
-                // finish the state change by clearing of the root component
-                this.__stateChangeRootComponent = null;
-                this.__stateChangedComponents = [];
 
             }
 
             Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
         }
 
-        /**
-         * Called from the view component to inform all parents in the tree (up to state change root) the state of it has changed
-         * <p>
-         * This is necessary to inform the state change root component it has to render the tree of components the changed component
-         * relates to. Basically, it will render all children but those trees roots which state was not changed will be marked with the
-         * skip flag (and children not rendered at all) to inform DOM updater is is not necessary to update these nodes
-         * </p>
-         * @param viewComponent
-         */
-        public notifyParentsChildrenStateChange(parentViewComponent: Ajs.MVVM.ViewModel.IParentViewComponent): void {
-
-            Ajs.Dbg.log(Dbg.LogType.Enter, 0, "ajs.mvvm.view", this);
-
-            let vc: Ajs.MVVM.ViewModel.ViewComponent<any, any> = <any>parentViewComponent;
-
-            if (vc !== null && this.__stateChangeRootComponent !== null) {
-
-                Ajs.Dbg.log(Dbg.LogType.Info, 0, "ajs.mvvm.view", this,
-                    "Notifying parents about the component change: " + vc.ajs.id + " " + vc.componentViewId);
-
-                while (vc !== this.__stateChangeRootComponent.ajs.parentComponent && vc !== null) {
-                    vc.ajs.stateChanged = true;
-                    vc = vc.ajs.parentComponent;
-                }
-            }
-
-            Ajs.Dbg.log(Dbg.LogType.Exit, 0, "ajs.mvvm.view", this);
-        }
 
         /**
          * Renders a viewComponent to the view

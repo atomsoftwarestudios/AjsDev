@@ -38,7 +38,13 @@ namespace Ajs.MVVM.ViewModel {
 
         navigationNotifier: Ajs.Events.Notifier<IViewComponentManager>;
 
-        createViewComponent(name: string, id: string, parentComponent: IViewComponent, state?: IViewComponentState): Promise<IViewComponent>;
+        createViewComponent(
+            name: string,
+            id: string,
+            parentComponent: IViewComponent,
+            state?: IViewComponentState,
+            parentComponentInitStateNotify?: IViewComponent
+        ): Promise<IViewComponent>;
 
         removeComponentInstance(component: IViewComponent): void;
 

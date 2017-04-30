@@ -33,7 +33,7 @@ namespace Ajs.MVVM.ViewModel {
         initialize(): Promise<void>;
         destroy(): Promise<void>;
         preventStateChange: boolean;
-        setState(state: any): void;
+        setState(state: any, parentComponent?: IViewComponent): void;
         clearState(render: boolean): void;
         render(parentElement: HTMLElement, clearStateChangeOnly: boolean, attributes?: NamedNodeMap): HTMLElement;
         insertChildComponent(

@@ -58,7 +58,7 @@ namespace Ajs.MVVM.ViewModel {
 
         stateChangePrevented: boolean;
         stateKeys: string[];
-        stateQueue: State[];
+        stateQueue: IStateChangeInfo[];
         processingStateQueue: boolean;
         stateChanged: boolean;
 
@@ -78,6 +78,7 @@ namespace Ajs.MVVM.ViewModel {
 
 
         stateToApply: any;
+        parentComponentInitStateNotify: IViewComponent;
     }
 
     export class ViewComponent<State extends IViewComponentState, ParentViewComponent extends IParentViewComponent>
@@ -101,7 +102,8 @@ namespace Ajs.MVVM.ViewModel {
             componentViewId: number,
             parentComponent: ParentViewComponent,
             visualComponent: Ajs.Templating.IVisualComponent,
-            state?: State) {
+            state?: State,
+            parentComponentInitStateNotify?: IViewComponent) {
 
             // throw exception if the visual component was not assigned
             if (visualComponent === null) {
@@ -132,6 +134,7 @@ namespace Ajs.MVVM.ViewModel {
                 templateElement: visualComponent.component,
 
                 stateToApply: state,
+                parentComponentInitStateNotify: parentComponentInitStateNotify,
 
                 key: null,
                 stateChanged: false,
@@ -185,11 +188,20 @@ namespace Ajs.MVVM.ViewModel {
             if (this.ajs.stateToApply && this.ajs.stateToApply !== null) {
                 let newState: IViewComponentState = Ajs.Utils.DeepMerge.merge(this._onDefaultState(), this.ajs.stateToApply);
                 Ajs.Utils.Obj.assign(this.ajs.stateToApply, newState);
-                await this.__applyState(this.ajs.stateToApply);
+                await this.__applyState({
+                    component: this,
+                    parentComponent: this.ajs.parentComponentInitStateNotify,
+                    state: this.ajs.stateToApply
+                });
             } else {
-                await this.__applyState(this._onDefaultState());
+                await this.__applyState({
+                    component: this,
+                    parentComponent: this.ajs.parentComponentInitStateNotify || null,
+                    state: this._onDefaultState()
+                });
             }
 
+            this.ajs.parentComponentInitStateNotify = undefined;
             this.ajs.stateToApply = undefined;
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
@@ -201,8 +213,8 @@ namespace Ajs.MVVM.ViewModel {
             return this.__destroy();
         };
 
-        public setState(state: State): Promise<void> {
-            return this.__setState(state);
+        public setState(state: State, parentComponent: IViewComponent = null): Promise<void> {
+            return this.__setState(state, parentComponent);
         }
 
         public clearState(render: boolean): void {
@@ -440,7 +452,7 @@ namespace Ajs.MVVM.ViewModel {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
         }
 
-        private async __setState(state: State): Promise<void> {
+        private async __setState(state: State, parentComponent: IViewComponent): Promise<void> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
@@ -453,10 +465,15 @@ namespace Ajs.MVVM.ViewModel {
                 this._ajsVisualStateTransitionCancel();
             }
 
-            this.ajs.stateQueue.push(state);
-            await this.__processStateQueue();
+            this.ajs.stateQueue.push({
+                component: this,
+                parentComponent: parentComponent,
+                state: state
+            });
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
+
+            return this.__processStateQueue();
         }
 
         /**
@@ -505,13 +522,13 @@ namespace Ajs.MVVM.ViewModel {
                     return;
                 }
 
-                let state: State = this.ajs.stateQueue.shift();
+                let stateInfo: IStateChangeInfo = this.ajs.stateQueue.shift();
 
                 Ajs.Dbg.log(Ajs.Dbg.LogType.Info, 0, "ajs.mvvm.viewmodel", this,
                     "Setting component state: " +
                     Ajs.Utils.getClassName(this) + ", id: " + this.ajs.id, ", viewId: " + this.componentViewId + ", " +
                     this.ajs.stateQueue.length + " state changes queued",
-                    state
+                    stateInfo.state
                 );
 
                 if (this.ajs.hasVisualStateTransition) {
@@ -520,9 +537,9 @@ namespace Ajs.MVVM.ViewModel {
                     this.ajs.transitionOldElement = <HTMLElement>node.cloneNode(true);
                 }
 
-                this.ajs.viewManager.stateChangeBegin(this);
-                await this.__applyState(state);
-                this.ajs.viewManager.stateChangeEnd(this);
+                this.ajs.viewManager.stateChangeBegin(stateInfo);
+                await this.__applyState(stateInfo);
+                this.ajs.viewManager.stateChangeEnd(stateInfo);
 
             }
 
@@ -539,8 +556,14 @@ namespace Ajs.MVVM.ViewModel {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
+            let schi: IStateChangeInfo = {
+                component: this,
+                parentComponent: null,
+                state: null
+            };
+
             if (render) {
-                this.ajs.viewManager.stateChangeBegin(this);
+                this.ajs.viewManager.stateChangeBegin(schi);
             }
 
             while (this.ajs.stateKeys.length > 0) {
@@ -560,7 +583,7 @@ namespace Ajs.MVVM.ViewModel {
 
             if (render) {
                 this.ajs.stateChanged = true;
-                this.ajs.viewManager.stateChangeEnd(this);
+                this.ajs.viewManager.stateChangeEnd(schi);
             }
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
@@ -607,11 +630,11 @@ namespace Ajs.MVVM.ViewModel {
          * @param state State object to be applied
          * @returns promise to be resolved once the state is applied or rejected when application of the state fails.
          */
-        private async __applyState(state: State): Promise<void> {
+        private async __applyState(stateChangeInfo: IStateChangeInfo): Promise<void> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
-            console.log("Applying state %s", Utils.getClassName(this), state);
+            let state: State = <State>stateChangeInfo.state;
 
             if (state === undefined || state === null) {
                 return;
@@ -658,18 +681,16 @@ namespace Ajs.MVVM.ViewModel {
                 // if the state property exists in this ViewComponent, update it
                 if (this.hasOwnProperty(filteredKey)) {
 
-                    await this.__updateExistingStateKey(filteredKey, state);
+                    await this.__updateExistingStateKey(filteredKey, stateChangeInfo);
 
                 // if the property does not exist, create it
                 } else {
 
-                    await this.__createNewStateKey(filteredKey, state);
+                    await this.__createNewStateKey(filteredKey, stateChangeInfo);
 
                 }
 
             }
-
-            console.warn("Applying state done %s", Utils.getClassName(this), state);
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
 
@@ -680,7 +701,9 @@ namespace Ajs.MVVM.ViewModel {
          * @param key
          * @param state
          */
-        private async __createNewStateKey(key: string, state: State): Promise<void> {
+        private async __createNewStateKey(key: string, stateChangeInfo: IStateChangeInfo): Promise<void> {
+
+            let state: State = <State>stateChangeInfo.state;
 
             // if the state is setting state of children component
             if (this.ajs.visualComponent.children.hasOwnProperty(key)) {
@@ -688,7 +711,7 @@ namespace Ajs.MVVM.ViewModel {
                 // create array of components
                 if (state[key] instanceof Array) {
 
-                    await this.__createComponentsArray(key, state);
+                    await this.__createComponentsArray(key, stateChangeInfo);
 
                     // create a component and apply a state to it
                 } else {
@@ -737,7 +760,10 @@ namespace Ajs.MVVM.ViewModel {
                     this[key] = state[key];
                     this.ajs.stateKeys.push(key);
                     this.ajs.stateChanged = true;
-                    this.ajs.viewManager.notifyParentsChildrenStateChange(this.ajs.parentComponent);
+
+                    if (stateChangeInfo.parentComponent !== null) {
+                        stateChangeInfo.parentComponent.ajs.stateChanged = true;
+                    }
 
                 }
 
@@ -749,7 +775,9 @@ namespace Ajs.MVVM.ViewModel {
          * @param key
          * @param state
          */
-        private async __createComponentsArray(key: string, state: State): Promise<void> {
+        private async __createComponentsArray(key: string, stateChangeInfo: IStateChangeInfo): Promise<void> {
+
+            let state: State = <State>stateChangeInfo.state;
 
             this.ajs.stateKeys.push(key);
 
@@ -781,7 +809,12 @@ namespace Ajs.MVVM.ViewModel {
 
                     let newViewComponent: IViewComponent;
 
-                    newViewComponent = await this.__createViewComponent(key, this.ajs.visualComponent.children[key], filteredState.state[j]);
+                    newViewComponent = await this.__createViewComponent(
+                        key,
+                        this.ajs.visualComponent.children[key],
+                        filteredState.state[j]
+                    );
+
                     if (j === 0) {
                         this[key][i] = newViewComponent;
                         continue;
@@ -806,11 +839,13 @@ namespace Ajs.MVVM.ViewModel {
          * @param key
          * @param state
          */
-        private async __updateExistingStateKey(key: string, state: State): Promise<void> {
+        private async __updateExistingStateKey(key: string, stateChangeInfo: IStateChangeInfo): Promise<void> {
+
+            let state: State = <State>stateChangeInfo.state;
 
             // update children component state
             if (this[key] instanceof ViewComponent) {
-                await (<IViewComponent>this[key]).setState(state[key]);
+                await (<IViewComponent>this[key]).setState(state[key], this);
                 return;
             }
 
@@ -819,7 +854,7 @@ namespace Ajs.MVVM.ViewModel {
                 this.ajs.visualComponent.children.hasOwnProperty(key) &&
                 this[key] instanceof Array) {
 
-                await this.__updateArrayState(key, state);
+                await this.__updateArrayState(key, stateChangeInfo);
                 return;
             }
 
@@ -832,7 +867,10 @@ namespace Ajs.MVVM.ViewModel {
             if (this[key] !== state[key]) {
                 this[key] = state[key];
                 this.ajs.stateChanged = true;
-                this.ajs.viewManager.notifyParentsChildrenStateChange(this.ajs.parentComponent);
+
+                if (stateChangeInfo.parentComponent !== null) {
+                    stateChangeInfo.parentComponent.ajs.stateChanged = true;
+                }
             }
 
         }
@@ -842,7 +880,9 @@ namespace Ajs.MVVM.ViewModel {
          * @param key
          * @param state
          */
-        private async __updateArrayState(key: string, state: State): Promise<void> {
+        private async __updateArrayState(key: string, stateChangeInfo: IStateChangeInfo): Promise<void> {
+
+            let state: State = <State>stateChangeInfo.state;
 
             // delete all components which does not exist in the array anymore
 
@@ -869,7 +909,9 @@ namespace Ajs.MVVM.ViewModel {
                 // destory the component
                 (<IViewComponent>this[key][i]).destroy();
 
-                this.ajs.viewManager.notifyParentsChildrenStateChange((<IViewComponent>this[key][i]).ajs.parentComponent);
+                if (stateChangeInfo.parentComponent !== null) {
+                    stateChangeInfo.parentComponent.ajs.stateChanged = true;
+                }
 
                 this[key].splice(i, 1);
 
@@ -888,7 +930,7 @@ namespace Ajs.MVVM.ViewModel {
 
                 // update component state
                 if (this[key].length > i && this[key][i].key === state[key][i].key) {
-                    await (<IViewComponent>this[key][i]).setState(state[key][i]);
+                    await (<IViewComponent>this[key][i]).setState(state[key][i], this);
                     continue;
                 }
 
@@ -911,16 +953,18 @@ namespace Ajs.MVVM.ViewModel {
          * @param viewComponentInfo
          * @param state
          */
-        private __createViewComponent(id: string, viewComponentInfo: Ajs.Templating.IVisualComponentChildInfo, state: IViewComponentState): Promise<IViewComponent> {
-
-            console.log("Creating view component %s", id, state);
+        private __createViewComponent(
+            id: string,
+            viewComponentInfo: Ajs.Templating.IVisualComponentChildInfo,
+            state: IViewComponentState
+        ): Promise<IViewComponent> {
 
             let name: string = viewComponentInfo.tagName;
             if (name === "COMPONENT" && viewComponentInfo.nameAttribute) {
                 name = viewComponentInfo.nameAttribute;
             }
 
-            return this.ajs.viewComponentManager.createViewComponent(name, id, this, state);
+            return this.ajs.viewComponentManager.createViewComponent(name, id, this, state, this);
         }
 
         /**
@@ -1340,7 +1384,7 @@ namespace Ajs.MVVM.ViewModel {
             let thisState: State = <any>{};
             thisState[id] = state;
 
-            this.setState(thisState);
+            this.setState(thisState, this);
         }
 
         private __removeChildComponent(placeholder: string, id: string): void {

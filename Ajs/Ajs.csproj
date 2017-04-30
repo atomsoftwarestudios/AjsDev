@@ -33,6 +33,7 @@
     <TypeScriptCompile Include="lib\typesript-helpers.d.ts" />
     <TypeScriptCompile Include="MVVM\Model\Exceptions.ts" />
     <TypeScriptCompile Include="MVVM\Model\IModel.ts" />
+    <TypeScriptCompile Include="MVVM\ViewModel\IStateChangeInfo.ts" />
     <TypeScriptCompile Include="MVVM\ViewModel\IViewComponentDependancies.ts" />
     <TypeScriptCompile Include="MVVM\ViewModel\IViewComponentStateMethods.ts" />
     <TypeScriptCompile Include="MVVM\ViewModel\viewcomponent.Decorator.ts" />

@@ -259,7 +259,7 @@ namespace AjsDoc.Models.ContentModel {
 
             for (let i: number = 0; i < article.children.length; i++) {
                 let item: Components.IAjsDocMenuItemComponentState = {
-                    key: article.navPath,
+                    key: article.children[i].navPath,
                     label: article.children[i].label,
                     path: article.children[i].navPath,
                     selected: (article.navPath === ("/" + navPath) && i === 0) || article.children[i].navPath === ("/" + navPath),

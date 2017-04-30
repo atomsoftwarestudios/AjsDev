@@ -99,10 +99,10 @@ namespace AjsDoc.Components {
             this.ajs.viewComponentManager.navigationNotifier.unsubscribe(this.__navigatedListener);
 
             this.__progModel.release();
-            this.__progModel === null;
+            this.__progModel = null;
 
             this.__contentModel.release();
-            this.__contentModel === null;
+            this.__contentModel = null;
         }
 
         /**
@@ -148,14 +148,19 @@ namespace AjsDoc.Components {
                 items: navBarItems
             };
 
-            this.ajsDocLayout.ajsDocArticle.clearState(false);
+            this.ajsDocLayout.ajsDocArticle.clearState(true);
+            await Ajs.Utils.nextTickAsync();
 
-            this.ajsDocLayout.setState({
-                ajsDocMenu: menuState,
-                ajsDocNavBar: navBarState,
-                ajsDocArticle: articleState
-            });
+            await this.ajsDocLayout.ajsDocMenu.setState(menuState);
+            await Ajs.Utils.nextTickAsync();
+
+            await this.ajsDocLayout.ajsDocNavBar.setState(navBarState);
+            await Ajs.Utils.nextTickAsync();
+
+            await this.ajsDocLayout.ajsDocArticle.setState(articleState);
+            await Ajs.Utils.nextTickAsync();
         }
+
 
     }
 
