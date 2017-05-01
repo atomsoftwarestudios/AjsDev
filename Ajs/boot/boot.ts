@@ -90,7 +90,7 @@ namespace Ajs.Boot {
                 },
                 modules: {
                     logger: {
-                        enabled: true,
+                        enabled: false,
                         logDataToConsole: false,
                         logTypes: [
                             Ajs.Dbg.LogType.Enter,
@@ -319,7 +319,7 @@ namespace Ajs.Boot {
             return;
         }
 
-        //indexedDB.deleteDatabase("Ajs");
+        // indexedDB.deleteDatabase("Ajs");
 
         // configure boot
         _configureBoot();
@@ -376,14 +376,14 @@ namespace Ajs.Boot {
             .then(() => {
                 resMan.cleanCaches()
                     .then(() => {
-                        setTimeout(window.location.reload, 200);
+                        setTimeout(() => { window.location.reload(true); }, 200);
                     })
                     .catch((reason: any) => {
-                        setTimeout(window.location.reload, 200);
+                        setTimeout(() => { window.location.reload(true); }, 200);
                     });
             })
             .catch((reason: any) => {
-                setTimeout(window.location.reload, 200);
+                setTimeout(() => { window.location.reload(true); }, 200);
             });
 
     }
