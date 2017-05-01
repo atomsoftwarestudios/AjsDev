@@ -4,6 +4,16 @@
 
     <head>
 
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#ffffff">
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+        <link rel="manifest" href="/manifest.json">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
         <script type="text/javascript">
             
             var errorsBeforeLoad = [];
@@ -52,7 +62,7 @@
 
                     if (Ajs.UI.RenderTarget) {
                         Ajs.UI.ProgressBar.setDOMElement("ajsProgressBar");
-                        Ajs.UI.ProgressBar.setTotal(59);
+                        Ajs.UI.ProgressBar.setTotal(50);
                         Ajs.UI.ProgressBar.setCurrent(0);
                         Ajs.UI.ProgressBar.setLabel("AjsDoc is loading...");
                     }
@@ -71,15 +81,6 @@
 
         </script>
 
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="theme-color" content="#ffffff">
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-        <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
-        <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
-        <link rel="manifest" href="/manifest.json">
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
         <script type="text/javascript" src="/js/ajs.js" onerror="errorsBeforeLoad.push(event)"></script>            
         <script type="text/javascript" src="/js/ajs.lib.js" onerror="errorsBeforeLoad.push(event)"></script>
         <script type="text/javascript" src="/js/ajsdocbrowser.js" onerror="errorsBeforeLoad.push(event)" defer></script>
@@ -137,8 +138,6 @@
         </div>
 
         <div id="ajsRenderTarget"></div>
-
-        <script type="text/javascript">console.log("LOADED!")</script>
 
     </body>
 
