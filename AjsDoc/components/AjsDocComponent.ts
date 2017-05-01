@@ -148,17 +148,15 @@ namespace AjsDoc.Components {
                 items: navBarItems
             };
 
-            this.ajsDocLayout.ajsDocArticle.clearState(true);
-            await Ajs.Utils.nextTickAsync();
-
             await this.ajsDocLayout.ajsDocMenu.setState(menuState);
-            await Ajs.Utils.nextTickAsync();
+            await Ajs.Utils.nextTickAsync(10);
 
             await this.ajsDocLayout.ajsDocNavBar.setState(navBarState);
-            await Ajs.Utils.nextTickAsync();
+            await Ajs.Utils.nextTickAsync(10);
 
+            this.ajsDocLayout.ajsDocArticle.clearState(false);
             await this.ajsDocLayout.ajsDocArticle.setState(articleState);
-            await Ajs.Utils.nextTickAsync();
+            await Ajs.Utils.nextTickAsync(10);
         }
 
 
