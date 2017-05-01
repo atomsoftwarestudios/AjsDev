@@ -156,7 +156,7 @@ namespace Ajs.MVVM.View {
                 ", state changed: " + stateChangeInfo.component.ajs.stateChanged,
                 stateChangeInfo.component);
 
-            if (stateChangeInfo.parentComponent === null) {
+            if (stateChangeInfo.stateChangeRoot === null) {
 
                 // render only if the root view component was rendered already
                 // initial rendering of the root component is ensured from the _rootUpdated method

@@ -25,7 +25,7 @@ namespace Ajs.MVVM.ViewModel {
 
     "use strict";
 
-    export interface IParentViewComponent {
+    export interface IParentViewComponent extends IViewComponent {
     }
 
 }

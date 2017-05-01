@@ -27,7 +27,7 @@ namespace Ajs.MVVM.ViewModel {
 
     export interface IStateChangeInfo {
         component: IViewComponent;
-        parentComponent: IViewComponent;
+        stateChangeRoot: IViewComponent;
         state: IViewComponentState;
     }
 

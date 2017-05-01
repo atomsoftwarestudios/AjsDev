@@ -190,13 +190,13 @@ namespace Ajs.MVVM.ViewModel {
                 Ajs.Utils.Obj.assign(this.ajs.stateToApply, newState);
                 await this.__applyState({
                     component: this,
-                    parentComponent: this.ajs.parentComponentInitStateNotify,
+                    stateChangeRoot: this.ajs.parentComponentInitStateNotify,
                     state: this.ajs.stateToApply
                 });
             } else {
                 await this.__applyState({
                     component: this,
-                    parentComponent: this.ajs.parentComponentInitStateNotify || null,
+                    stateChangeRoot: this.ajs.parentComponentInitStateNotify || null,
                     state: this._onDefaultState()
                 });
             }
@@ -213,8 +213,8 @@ namespace Ajs.MVVM.ViewModel {
             return this.__destroy();
         };
 
-        public setState(state: State, parentComponent: IViewComponent = null): Promise<void> {
-            return this.__setState(state, parentComponent);
+        public setState(state: State, stateChangeRootComponent: IViewComponent = null): Promise<void> {
+            return this.__setState(state, stateChangeRootComponent);
         }
 
         public clearState(render: boolean): void {
@@ -452,7 +452,7 @@ namespace Ajs.MVVM.ViewModel {
             Ajs.Dbg.log(Ajs.Dbg.LogType.Exit, 0, "ajs.mvvm.viewmodel", this);
         }
 
-        private async __setState(state: State, parentComponent: IViewComponent): Promise<void> {
+        private async __setState(state: State, stateChangeRootComponent: IViewComponent): Promise<void> {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.mvvm.viewmodel", this);
 
@@ -467,7 +467,7 @@ namespace Ajs.MVVM.ViewModel {
 
             this.ajs.stateQueue.push({
                 component: this,
-                parentComponent: parentComponent,
+                stateChangeRoot: stateChangeRootComponent,
                 state: state
             });
 
@@ -558,7 +558,7 @@ namespace Ajs.MVVM.ViewModel {
 
             let schi: IStateChangeInfo = {
                 component: this,
-                parentComponent: null,
+                stateChangeRoot: null,
                 state: null
             };
 
@@ -681,12 +681,20 @@ namespace Ajs.MVVM.ViewModel {
                 // if the state property exists in this ViewComponent, update it
                 if (this.hasOwnProperty(filteredKey)) {
 
-                    await this.__updateExistingStateKey(filteredKey, stateChangeInfo);
+                    await this.__updateExistingStateKey(filteredKey, {
+                        component: stateChangeInfo.component,
+                        stateChangeRoot: stateChangeInfo.stateChangeRoot,
+                        state: state
+                    });
 
                 // if the property does not exist, create it
                 } else {
 
-                    await this.__createNewStateKey(filteredKey, stateChangeInfo);
+                    await this.__createNewStateKey(filteredKey, {
+                        component: stateChangeInfo.component,
+                        stateChangeRoot: stateChangeInfo.stateChangeRoot,
+                        state: state
+                    });
 
                 }
 
@@ -720,54 +728,59 @@ namespace Ajs.MVVM.ViewModel {
 
                 }
 
-            } else {
-
-                // if the state is array, try to filter the array and check if the state is applicable after array filtering
-                let filteredStates: IFilteredState[] = [];
-                if (state[key] instanceof Array) {
-                    for (let i: number = 0; i < state[key].length; i++) {
-                        let filteredState: IFilteredState = this._filterStateArrayItem(key, i, state[key].length, state[key][i]);
-                        if (filteredState.filterApplied) {
-                            if (filteredState.key !== key) {
-                                filteredStates.push(filteredState);
-                            }
-                        }
-                    }
-                }
-
-                // build a new filtered state
-                if (filteredStates.length > 0) {
-
-                    let filteredState: IViewComponentState = {};
-                    for (let i: number = 0; i < filteredStates.length; i++) {
-                        if (filteredState[filteredStates[i].key] === undefined) {
-                            filteredState[filteredStates[i].key] = [];
-                        }
-                        if (filteredStates[i].state instanceof Array) {
-                            for (let j: number = 0; j < (<IViewComponentState[]>filteredStates[i].state).length; j++) {
-                                filteredState[filteredStates[i].key].push(filteredStates[i].state[j]);
-                            }
-                        } else {
-                            filteredState[filteredStates[i].key].push(filteredStates[i].state);
-                        }
-                    }
-
-                    // try to reapply the filtered state
-                    await this.__applyState(<any>filteredState);
-
-                } else {
-
-                    this[key] = state[key];
-                    this.ajs.stateKeys.push(key);
-                    this.ajs.stateChanged = true;
-
-                    if (stateChangeInfo.parentComponent !== null) {
-                        stateChangeInfo.parentComponent.ajs.stateChanged = true;
-                    }
-
-                }
+                return;
 
             }
+
+            // if the state is array, try to filter the array and check if the state is applicable after array filtering
+            let filteredStates: IFilteredState[] = [];
+            if (state[key] instanceof Array) {
+                for (let i: number = 0; i < state[key].length; i++) {
+                    let filteredState: IFilteredState = this._filterStateArrayItem(key, i, state[key].length, state[key][i]);
+                    if (filteredState.filterApplied) {
+                        if (filteredState.key !== key) {
+                            filteredStates.push(filteredState);
+                        }
+                    }
+                }
+            }
+
+            // build a new filtered state
+            if (filteredStates.length > 0) {
+
+                let filteredState: IViewComponentState = {};
+                for (let i: number = 0; i < filteredStates.length; i++) {
+                    if (filteredState[filteredStates[i].key] === undefined) {
+                        filteredState[filteredStates[i].key] = [];
+                    }
+                    if (filteredStates[i].state instanceof Array) {
+                        for (let j: number = 0; j < (<IViewComponentState[]>filteredStates[i].state).length; j++) {
+                            filteredState[filteredStates[i].key].push(filteredStates[i].state[j]);
+                        }
+                    } else {
+                        filteredState[filteredStates[i].key].push(filteredStates[i].state);
+                    }
+                }
+
+                // try to reapply the filtered state
+                await this.__applyState(<any>filteredState);
+
+                return;
+
+            }
+
+            this[key] = state[key];
+            this.ajs.stateKeys.push(key);
+            this.ajs.stateChanged = true;
+
+            if (stateChangeInfo.stateChangeRoot !== null) {
+                let c: IViewComponent = this;
+                while (c !== stateChangeInfo.stateChangeRoot) {
+                    c = c.ajs.parentComponent;
+                    c.ajs.stateChanged = true;
+                }
+            }
+
         }
 
         /**
@@ -845,7 +858,8 @@ namespace Ajs.MVVM.ViewModel {
 
             // update children component state
             if (this[key] instanceof ViewComponent) {
-                await (<IViewComponent>this[key]).setState(state[key], this);
+                await (<IViewComponent>this[key]).setState(state[key],
+                    stateChangeInfo.stateChangeRoot !== null ? stateChangeInfo.stateChangeRoot : this);
                 return;
             }
 
@@ -868,9 +882,14 @@ namespace Ajs.MVVM.ViewModel {
                 this[key] = state[key];
                 this.ajs.stateChanged = true;
 
-                if (stateChangeInfo.parentComponent !== null) {
-                    stateChangeInfo.parentComponent.ajs.stateChanged = true;
+                if (stateChangeInfo.stateChangeRoot !== null) {
+                    let c: IViewComponent = this;
+                    while (c !== stateChangeInfo.stateChangeRoot) {
+                        c = c.ajs.parentComponent;
+                        c.ajs.stateChanged = true;
+                    }
                 }
+
             }
 
         }
@@ -909,8 +928,12 @@ namespace Ajs.MVVM.ViewModel {
                 // destory the component
                 (<IViewComponent>this[key][i]).destroy();
 
-                if (stateChangeInfo.parentComponent !== null) {
-                    stateChangeInfo.parentComponent.ajs.stateChanged = true;
+                if (stateChangeInfo.stateChangeRoot !== null) {
+                    let c: IViewComponent = this;
+                    while (c !== stateChangeInfo.stateChangeRoot) {
+                        c = c.ajs.parentComponent;
+                        c.ajs.stateChanged = true;
+                    }
                 }
 
                 this[key].splice(i, 1);
@@ -930,7 +953,8 @@ namespace Ajs.MVVM.ViewModel {
 
                 // update component state
                 if (this[key].length > i && this[key][i].key === state[key][i].key) {
-                    await (<IViewComponent>this[key][i]).setState(state[key][i], this);
+                    await (<IViewComponent>this[key][i]).setState(state[key][i],
+                        stateChangeInfo.stateChangeRoot !== null ? stateChangeInfo.stateChangeRoot : this);
                     continue;
                 }
 
