@@ -26,9 +26,9 @@ namespace Ajs.Resources.Storages {
     "use strict";
 
     export const LOG_AJSRESSTOR: string = "";
-    export const LOG_LOCAL_STORAGE_NOT_SUPPORTED = "";
-    export const LOG_SESSION_STORAGE_NOT_SUPPORTED = "";
-    export const LOG_INDEXEDDB_STORAGE_NOT_SUPPORTED = "";
+    export const LOG_LOCAL_STORAGE_NOT_SUPPORTED: string = "";
+    export const LOG_SESSION_STORAGE_NOT_SUPPORTED: string = "";
+    export const LOG_INDEXEDDB_STORAGE_NOT_SUPPORTED: string = "";
     export const LOG_CLEARING_STORAGE: string = "";
     export const LOG_ADDING_RESOSURCE: string = "";
     export const LOG_NOT_ENOUGH_SPACE: string = "";
@@ -40,5 +40,6 @@ namespace Ajs.Resources.Storages {
     export const LOG_UPDATE_RESOURCE: string = "";
     export const LOG_CACHE_CLEAN: string = "";
     export const LOG_CLEAN_ALL: string = "";
+    export const LOG_AJSINDEXEDDBNOTSET: string = "";
 
 }

@@ -23,7 +23,9 @@ IN THE SOFTWARE.
 
 namespace Ajs.Resources.StorageProviders {
 
-    export const LOG_AJSRESSTORP = "";
+    "use strict";
+
+    export const LOG_AJSRESSTORP: string = "";
 
     export const LOG_INITIALIZING_LOCAL_STORAGE: string = "";
     export const LOG_CLEARING_LOCAL_STORAGE: string = "";
