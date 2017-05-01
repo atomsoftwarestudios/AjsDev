@@ -101,7 +101,15 @@
     0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; }
 }
 
+@-webkit-keyframes ajsDocMenuButtonLogo {
+    0% { opacity: 1; } 60% { opacity: 1; } 100% { opacity: 0; }
+}
+
 @keyframes ajsDocMenuButtonHamburger {
+    0% { opacity: 0; } 60% { opacity: 0; } 100% { opacity: 0.6; }
+}
+
+@-webkit-keyframes ajsDocMenuButtonHamburger {
     0% { opacity: 0; } 60% { opacity: 0; } 100% { opacity: 0.6; }
 }
 
@@ -115,6 +123,8 @@
     background-repeat: no-repeat;
     background-size: cover;
     animation: ajsDocMenuButtonLogo alternate infinite 3s;
+    -webkit-animation: ajsDocMenuButtonLogo alternate infinite 3s;
+    -moz-animation: ajsDocMenuButtonLogo alternate infinite 3s;
 }
 
 .ajsDocLayoutMenuButtonHamburger {
@@ -127,6 +137,8 @@
     background-repeat: no-repeat;
     background-size: cover;
     animation: ajsDocMenuButtonHamburger alternate infinite 3s;
+    -webkit-animation: ajsDocMenuButtonHamburger alternate infinite 3s;
+    -moz-animation: ajsDocMenuButtonHamburger alternate infinite 3s;
 }
 
 .ajsDocLayoutMenuButton[menuvisible="false"] {
