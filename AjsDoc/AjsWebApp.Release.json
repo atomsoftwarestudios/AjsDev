@@ -2,15 +2,15 @@
 
   "$schema": "./buildtools/AjsWebAppSchema.json#",
 
-  "enableSourceMaps": true,
+  "enableSourceMaps": false,
 
-  "cssMinify": true,
+  "cssMinify": false,
   "cssMinifyOptions": {},
 
-  "htmlMinify": true,
+  "htmlMinify": false,
   "htmlMinifyOptions": {},
 
-  "jsMinify": true,
+  "jsMinify": false,
   "jsMinifyOptions": {},
 
   "processLESS": true,
