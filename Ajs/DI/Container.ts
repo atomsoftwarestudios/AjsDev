@@ -322,7 +322,19 @@ namespace Ajs.DI {
         }
 
         /**
-         * Resolves service dependencies and constructs the service instance with passing configured dependencies and other configuration parameters to the service implementation constructor
+         * Resolves service dependencies and constructs the service instance
+         * <p>Resolver finds an preconfigred service using the interface identifier which was used to register it.
+         * If the service was constructed earlier its instance will be returned (except transient services which are
+         * instanced all the time). If the service has to be instanced its configuration (constructor parameters) are
+         * checked for dependencies on other registered services and these services are also instantiated (or reused)
+         * according to described rules. Once dependecies are resolved the constructor of the service is called with
+         * passing configured dependencies and other configuration parameters to the service implementation constructor.
+         * </p>
+         * <p>
+         * Resolver also takes care of service initialization. Both, synchronous and asynchronous service initialization
+         * modes are supported. If the service 'initialize' returns the Promise the resolver waits until the service
+         * is fully initialized before it continues with resolving of other dependencies.
+         * </p>
          * @param serviceInterfaceIdentifier Identifier of the service interface
          * @returns Instaniated service or null if the service was not registered
          */
