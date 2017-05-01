@@ -26,12 +26,19 @@ namespace Ajs.DI {
     "use strict";
 
     /**
-     * Used internally by DI container to keep track of services instances constructed
+     * Used internally by DI container to keep track of services instances previously constructed
      */
     export interface IServiceInstance {
+
+        /** Identifier of the interface the service implements */
         serviceInterfaceIdentifier: any;
+
+        /** Instance of the service */
         serviceInstance: any;
+
+        /** Number of services instanced for the particular interface identifier */
         referenceCount: number;
+
     }
 
 }

@@ -25,6 +25,15 @@ namespace Ajs.DI {
 
     "use strict";
 
+    /**
+     * Helper class to be inherited by services requiring asynchronous initialization
+     * <p>
+     * The asynchronous initialization ensuring the service will be initialized just once
+     * is implemented in this abstract class. If the initialization of the service begun
+     * alredy and another call to initialize it is made the Promise is returned but it is
+     * resolved once the first initialization request finishes.
+     * </p>
+     */
     export abstract class ServiceAsyncInit {
 
         /**

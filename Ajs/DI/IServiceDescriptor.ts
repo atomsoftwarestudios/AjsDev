@@ -29,8 +29,16 @@ namespace Ajs.DI {
      * Service descriptor used internally by the DI container to keep the track of registered services
      */
     export interface IServiceDescriptor {
+
+        /** Holds the interface identifier - unique JS object, usually constant
+         * #see [DI.II]{Ajs.DI.II} helper should be used to define it
+         */
         serviceInterfaceIdentifier: any;
+
+        /** Holds reference to the service constructor */
         serviceConstructor: any;
+
+        /** Holds list of parameters to be passed to constructor in the same order as stored in the array */
         serviceConfiguration: any[];
     }
 

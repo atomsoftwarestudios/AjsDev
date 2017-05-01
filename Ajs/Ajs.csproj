@@ -90,9 +90,7 @@
     <TypeScriptCompile Include="DI\II.ts" />
     <TypeScriptCompile Include="DI\Exceptions.ts" />
     <TypeScriptCompile Include="DI\Container.ts" />
-    <TypeScriptCompile Include="DI\Decorators.ts" />
     <TypeScriptCompile Include="DI\IContainer.ts" />
-    <TypeScriptCompile Include="DI\IServiceConstructorParameters.ts" />
     <TypeScriptCompile Include="DI\IServiceDescriptor.ts" />
     <TypeScriptCompile Include="DI\IServiceInstance.ts" />
     <TypeScriptCompile Include="Doc\IDocumentManager.ts" />
