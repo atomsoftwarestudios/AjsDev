@@ -439,13 +439,9 @@ namespace Ajs.Boot {
 
             if (Ajs && Ajs.bootConfig && Ajs.bootConfig.bootConfig.offlineSupport) {
                 setTimeout(() => {
-                    if (!bootStarted) {
-                        bootStarted = true;
-                        _boot();
-                    }
+                    _boot();
                 }, bootConfig.bootConfig.offlineFallbackTimeout);
             } else {
-                bootStarted = true;
                 _boot();
             }
 
