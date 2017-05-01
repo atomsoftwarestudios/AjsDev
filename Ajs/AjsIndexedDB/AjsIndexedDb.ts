@@ -46,14 +46,19 @@ namespace Ajs.AjsIndexedDb {
      * Calling the store request (such as read / update value operations) always creates a new transaction for given request. Multiple
      * requests per single transactions are not supported now (so multiple operations can be slow).
      * </p>
+     * <p>
+     * Use the following example carefully. If support of pre-2.0 IndexDB implementation is required the store.count will not work. In such case
+     * use #see [countItemsUsingCursor]{Ajs.AjsIndexedDb.IAjsIndexedDb.countItemsUsingCursor} instead. It is highly recommended to test
+     * all required functionalities on all targeted platform before release.
+     * </p>
      * #example [Usage of the AjsIndexedDb]{/ajsIndexedDbUsage.ts}
      */
     export class AjsIndexedDb extends DI.ServiceAsyncInit implements IAjsIndexedDb {
 
-        /** Stores the name of the IndexedDB used by Ajs (confrigurable through the constructor) */
+        /** Stores the name of the IndexedDB used by the service (confrigurable through the constructor) */
         private __dbName: string;
 
-        /** Reference to the database object */
+        /** Reference to the IDBDatabase database object */
         private __db: IDBDatabase;
 
         /** Return information if the IndexedDB implementation is pre-2.0 standard */
@@ -118,8 +123,9 @@ namespace Ajs.AjsIndexedDb {
         }
 
         /**
-         * #see [doStoreRequest]{Ajs.AjsIndexedDb.AjsIndexedDb.doStoreRequest} promise executor implementation
+         * Opens a store and performs the data operation implemented in the callback.
          * <p>Called internally from #see [doStoreRequest]{Ajs.AjsIndexedDb.AjsIndexedDb.doStoreRequest} to perform the store request</p>
+         * <p>See #see [doStoreRequest]{Ajs.AjsIndexedDb.AjsIndexedDb.doStoreRequest} promise executor implementation for details.</p>
          * @param name Name of the store to be used to perform the request
          * @param mode Access mode to the store
          * @param requestCb Callback performing the action above the store (i.e. store.clear());
