@@ -177,6 +177,10 @@ namespace Ajs.AjsIndexedDb {
             }
         }
 
+        /**
+         * For older browsers it is neccessary to count items using cursors as there is not store.count available
+         * @param storeName Name of the store which items has to be counted
+         */
         public async countItemsUsingCursor(storeName: string): Promise<number> {
             return new Promise<number>(
                 (resolve: (value: number) => void, reject: (reason: any) => void) => {
@@ -186,6 +190,12 @@ namespace Ajs.AjsIndexedDb {
         }
 
 
+        /**
+         * Counts items in the store by iterating all items in the store
+         * @param storeName Name of the store which items has to be counted
+         * @param resolve Resolver to be called when items are counted
+         * @param reject Rejector to be called when items counting fails
+         */
         private __countItemsUsingCursor(
             storeName: string,
             resolve: (value: number) => void,
