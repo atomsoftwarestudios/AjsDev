@@ -1,0 +1,15 @@
+{
+  // TypeScript 2.1 compiler configuration
+  // DEBUG CONFIGURATION
+  "$schema": "http://json.schemastore.org/tsconfig#",
+
+  "extends": "./tsconfig.common.json",
+
+  "compilerOptions": {
+    // generate source maps
+    "sourceMap": false,
+    // remove comments
+    "removeComments": false
+  }
+
+}
