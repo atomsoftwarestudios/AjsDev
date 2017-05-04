@@ -136,7 +136,7 @@ namespace Ajs.Doc {
                 }
 
                 // if node has ajsData
-                if (node.ajsData) {
+                if (node.ajsData && node.ajsData.eventListeners) {
                     // remove event listeners
                     for (let i: number = 0; i < node.ajsData.eventListeners.length; i++) {
                         node.removeEventListener(node.ajsData.eventListeners[i].eventType, node.ajsData.eventListeners[i].eventListener);
@@ -179,7 +179,7 @@ namespace Ajs.Doc {
                 throw new RenderTargetNotInManagedDocumentException();
             }
 
-            // just retype the node to INode, extended information is checked in all cases
+            // just cast the node to INode, extended information is checked in all cases
             let src: INode = <INode>source;
             let tgt: INode = <INode>target;
 
@@ -219,27 +219,46 @@ namespace Ajs.Doc {
                 if (src.ajsData === undefined || !src.ajsData.skipUpdate) {
 
                     // compare node names
-                    if (src.nodeName === tgt.nodeName) {
-
-                        // update the node attributes
-                        this._updateNodeAttributes(src, tgt);
-
-                        // update or add children nodes - the updateDom for children is called inside the method
-                        this._updateChildren(src, tgt);
-
-                        // remove any additional children nodes not existing with the source
-                        // it is not neccessary to inform components as they should not exist anymore after state update
-                        while (source.childNodes.length < target.childNodes.length) {
-                            tgt.removeChild(tgt.childNodes.item(src.childNodes.length));
-                        }
-
-                    } else {
+                    if (src.nodeName !== tgt.nodeName) {
 
                         // the source node is different to target so replace target with source
                         let adoptedNode: INode = this._replaceNode(src, tgt);
                         this.updateDom(source, adoptedNode);
+                        return;
 
                     }
+
+                    // if node is ASHTML, don't process children, just clone it completely, replace current ASHTML
+                    // and assing ahref listeners
+                    if (src.nodeName === "ASHTML") {
+                        try {
+                            let adoptedNode: INode = this._replaceNode(src, tgt, true);
+                            // find all a hrefs and process their attributes
+                            let srcAhrefs: NodeListOf<HTMLAnchorElement> = (<Element><any>src).getElementsByTagName("a");
+                            let tgtAhrefs: NodeListOf<HTMLAnchorElement> = (<Element><any>adoptedNode).getElementsByTagName("a");
+                            for (let i: number = 0; i < srcAhrefs.length; i++) {
+                                this._registerEventListeners(<INode><any>srcAhrefs.item(i), <INode><any>tgtAhrefs.item(i));
+                            }
+                            return;
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+
+                    // if nodes have same name but differs from ASHTML
+
+                    // update the node attributes
+                    this._updateNodeAttributes(src, tgt);
+
+                    // update or add children nodes - the updateDom for children is called inside the method
+                    this._updateChildren(src, tgt);
+
+                    // remove any additional children nodes not existing with the source
+                    // it is not neccessary to inform components as they should not exist anymore after state update
+                    while (source.childNodes.length < target.childNodes.length) {
+                        tgt.removeChild(tgt.childNodes.item(src.childNodes.length));
+                    }
+
                 }
 
             }
@@ -353,6 +372,21 @@ namespace Ajs.Doc {
                     child = <INode>tgt.childNodes.item(i);
                 } else {
                     // otherwise append the node and continue with its tree
+                    try {
+                        if (src.childNodes.item(i).nodeName === "ASHTML") {
+                            let adoptedNode: INode = this._appendNode(<INode>src.childNodes.item(i), tgt, true);
+                            // find all a hrefs and process their attributes
+                            let srcAhrefs: NodeListOf<HTMLAnchorElement> = (<Element><any>src).getElementsByTagName("a");
+                            let tgtAhrefs: NodeListOf<HTMLAnchorElement> = (<Element><any>adoptedNode).getElementsByTagName("a");
+                            for (let i: number = 0; i < srcAhrefs.length; i++) {
+                                this._registerEventListeners(<INode><any>srcAhrefs.item(i), <INode><any>tgtAhrefs.item(i));
+                            }
+                            continue;
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+
                     child = this._appendNode(<INode>src.childNodes.item(i), tgt);
                 }
 
@@ -370,7 +404,7 @@ namespace Ajs.Doc {
          * @param src Appends the source node (from shadow DOM) to the target
          * @param tgt Target for the source node
          */
-        protected _appendNode(src: INode, tgt: INode): INode {
+        protected _appendNode(src: INode, tgt: INode, innerHTML: boolean = false): INode {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
@@ -379,6 +413,10 @@ namespace Ajs.Doc {
 
             let clonedNode: Node = src.cloneNode(false);
             let adoptedNode: INode = <INode>tgt.ownerDocument.adoptNode(clonedNode);
+
+            if (innerHTML) {
+                (<any>adoptedNode).innerHTML = (<any>src).innerHTML;
+            }
 
             this._setNodeMetadata(src, adoptedNode);
             this._adoptStrangeAttributes(adoptedNode);
@@ -397,7 +435,7 @@ namespace Ajs.Doc {
          * @param src Inserts the source node (from shadow DOM) before the target node
          * @param tgt Target node before which the source will be inserted
          */
-        protected _insertBefore(src: INode, tgt: INode): INode {
+        protected _insertBefore(src: INode, tgt: INode, innerHTML: boolean = false): INode {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
@@ -407,6 +445,10 @@ namespace Ajs.Doc {
             // clone, adapt and insert node from shadow dom to target document
             let clonedNode: Node = src.cloneNode(false);
             let adoptedNode: INode = <INode>tgt.ownerDocument.adoptNode(clonedNode);
+
+            if (innerHTML) {
+                (<any>adoptedNode).innerHTML = (<any>src).innerHTML;
+            }
 
             this._setNodeMetadata(src, adoptedNode);
             this._adoptStrangeAttributes(adoptedNode);
@@ -424,7 +466,7 @@ namespace Ajs.Doc {
          * @param src Source node (from shadow DOM) used to replace existing target
          * @param tgt Target node to be replaced
          */
-        protected _replaceNode(src: INode, tgt: INode): INode {
+        protected _replaceNode(src: INode, tgt: INode, innerHTML: boolean = false): INode {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, "ajs.doc", this);
 
@@ -451,6 +493,10 @@ namespace Ajs.Doc {
 
             let clonedNode: Node = src.cloneNode(false);
             let adoptedNode: INode = <INode>tgt.ownerDocument.adoptNode(clonedNode);
+
+            if (innerHTML) {
+                (<any>adoptedNode).innerHTML = (<any>src).innerHTML;
+            }
 
             this._adoptStrangeAttributes(adoptedNode);
             this._setNodeMetadata(src, adoptedNode);
