@@ -34,7 +34,7 @@
     <TypeScriptCompile Include="MVVM\Model\Exceptions.ts" />
     <TypeScriptCompile Include="MVVM\Model\IModel.ts" />
     <TypeScriptCompile Include="MVVM\ViewModel\IStateChangeInfo.ts" />
-    <TypeScriptCompile Include="MVVM\ViewModel\IViewComponentDependancies.ts" />
+    <TypeScriptCompile Include="MVVM\ViewModel\IViewComponentDependencies.ts" />
     <TypeScriptCompile Include="MVVM\ViewModel\IViewComponentStateMethods.ts" />
     <TypeScriptCompile Include="MVVM\ViewModel\viewcomponent.Decorator.ts" />
     <TypeScriptCompile Include="Resources\Enums.ts" />
@@ -177,6 +177,23 @@
     <TypeScriptCompile Include="Utils\exceptionHandler.ts" />
     <TypeScriptCompile Include="Utils\sizeOf.ts" />
     <TypeScriptCompile Include="Utils\Utils.ts" />
+    <TypeScriptCompile Include="VDom\Attr.ts" />
+    <TypeScriptCompile Include="VDom\CommentNode.ts" />
+    <TypeScriptCompile Include="VDom\Document.ts" />
+    <TypeScriptCompile Include="VDom\DomParser.ts" />
+    <TypeScriptCompile Include="VDom\Element.ts" />
+    <TypeScriptCompile Include="VDom\Exceptions.ts" />
+    <TypeScriptCompile Include="VDom\HTMLCollectionOf.ts" />
+    <TypeScriptCompile Include="VDom\HTMLCollectionOfImpl.ts" />
+    <TypeScriptCompile Include="VDom\HTMLElement.ts" />
+    <TypeScriptCompile Include="VDom\INamedItem.ts" />
+    <TypeScriptCompile Include="VDom\INodeList.ts" />
+    <TypeScriptCompile Include="VDom\NamedNodeMap.ts" />
+    <TypeScriptCompile Include="VDom\Node.ts" />
+    <TypeScriptCompile Include="VDom\NodeListImpl.ts" />
+    <TypeScriptCompile Include="VDom\NodeListOf.ts" />
+    <TypeScriptCompile Include="VDom\TextNode.ts" />
+    <TypeScriptCompile Include="VDom\VDomWorker.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="tsconfig.json" />
