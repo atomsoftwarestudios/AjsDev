@@ -71,7 +71,7 @@ namespace Ajs.Boot {
         return {
             showErrors: true,
             offlineSupport: false,
-            offlineFallbackTimeout: 1000,
+            offlineFallbackTimeout: 250,
             errorHandler: _bootErrorHandler
         };
     }
@@ -315,11 +315,13 @@ namespace Ajs.Boot {
      */
     async function _boot(): Promise<void> {
 
+        console.log("Boot called", bootStarted, preventBoot);
+
         if (preventBoot || bootStarted) {
             return;
         }
 
-        // indexedDB.deleteDatabase("Ajs");
+        bootStarted = true;
 
         // configure boot
         _configureBoot();
