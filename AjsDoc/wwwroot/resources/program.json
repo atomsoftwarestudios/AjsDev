@@ -308,7 +308,7 @@
           "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/ResourceManager.ts:24:1"
         },
         {
-          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:24:1"
+          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:24:1"
         },
         {
           "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Constants.ts:24:1"
@@ -329,7 +329,7 @@
           "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/SessionStorageProvider.ts:24:1"
         },
         {
-          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:24:1"
+          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:24:1"
         },
         {
           "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/AjsStorage.ts:24:1"
@@ -362,7 +362,7 @@
           "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/StorageSession.ts:24:1"
         },
         {
-          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:24:1"
+          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:24:1"
         },
         {
           "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Routing/IRoute.ts:24:1"
@@ -7539,7 +7539,19 @@
                   "modifierFlags": 1,
                   "modifierFlagsString": [
                     "Export"
-                  ]
+                  ],
+                  "extends": {
+                    "flags": 32768,
+                    "name": "IViewComponent",
+                    "flagsString": [
+                      "Object"
+                    ],
+                    "objectFlags": 2,
+                    "objectFlagsString": [
+                      "Interface"
+                    ],
+                    "fqdn": "Ajs.MVVM.ViewModel.IViewComponent"
+                  }
                 },
                 {
                   "kind": 229,
@@ -7625,8 +7637,8 @@
                     {
                       "kind": 147,
                       "kindString": "PropertySignature",
-                      "name": "parentComponent",
-                      "fqdn": "Ajs.MVVM.ViewModel.IStateChangeInfo.parentComponent",
+                      "name": "stateChangeRoot",
+                      "fqdn": "Ajs.MVVM.ViewModel.IStateChangeInfo.stateChangeRoot",
                       "type": {
                         "flags": 32768,
                         "name": "IViewComponent",
@@ -7916,8 +7928,8 @@
                           "optional": true,
                           "kind": 145,
                           "kindString": "Parameter",
-                          "name": "parentComponent",
-                          "fqdn": "Ajs.MVVM.ViewModel.IViewComponent.setState.parentComponent",
+                          "name": "stateChangeRootComponent",
+                          "fqdn": "Ajs.MVVM.ViewModel.IViewComponent.setState.stateChangeRootComponent",
                           "type": {
                             "flags": 32768,
                             "name": "IViewComponent",
@@ -10078,8 +10090,8 @@
                         {
                           "kind": 145,
                           "kindString": "Parameter",
-                          "name": "parentComponent",
-                          "fqdn": "Ajs.MVVM.ViewModel.ViewComponent.setState.parentComponent",
+                          "name": "stateChangeRootComponent",
+                          "fqdn": "Ajs.MVVM.ViewModel.ViewComponent.setState.stateChangeRootComponent",
                           "type": {
                             "flags": 32768,
                             "name": "IViewComponent",
@@ -11150,8 +11162,8 @@
                         {
                           "kind": 145,
                           "kindString": "Parameter",
-                          "name": "parentComponent",
-                          "fqdn": "Ajs.MVVM.ViewModel.ViewComponent.___setState.parentComponent",
+                          "name": "stateChangeRootComponent",
+                          "fqdn": "Ajs.MVVM.ViewModel.ViewComponent.___setState.stateChangeRootComponent",
                           "type": {
                             "flags": 32768,
                             "name": "IViewComponent",
@@ -11342,7 +11354,7 @@
                             ],
                             "fqdn": "Ajs.MVVM.ViewModel.IStateChangeInfo"
                           },
-                          "initializer": "{\r\n                component: this,\r\n                parentComponent: null,\r\n                state: null\r\n            }"
+                          "initializer": "{\r\n                component: this,\r\n                stateChangeRoot: null,\r\n                state: null\r\n            }"
                         }
                       ],
                       "files": [
@@ -11521,9 +11533,11 @@
                         ],
                         "fqdn": "Promise"
                       },
-                      "nodeFlags": 128,
+                      "nodeFlags": 384,
                       "nodeFlagsString": [
-                        "HasImplicitReturn"
+                        "HasImplicitReturn",
+                        "HasExplicitReturn",
+                        "ReachabilityCheckFlags"
                       ],
                       "modifierFlags": 264,
                       "modifierFlagsString": [
@@ -11577,7 +11591,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:706:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:714:13"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -11606,7 +11620,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:726:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:736:13"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -11639,10 +11653,10 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:729:25"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:739:21"
                             },
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:741:21"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:751:17"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -11669,11 +11683,44 @@
                             "fqdn": "Ajs.MVVM.ViewModel.IFilteredState"
                           },
                           "initializer": "this._filterStateArrayItem(key, i, state[key].length, state[key][i])"
+                        },
+                        {
+                          "kind": 225,
+                          "kindString": "VariableDeclaration",
+                          "files": [
+                            {
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:777:17"
+                            }
+                          ],
+                          "nodeFlags": 16385,
+                          "nodeFlagsString": [
+                            "Let",
+                            "AwaitContext"
+                          ],
+                          "atsNodeFlags": 1,
+                          "atsNodeFlagsString": [
+                            "let"
+                          ],
+                          "name": "c",
+                          "fqdn": "Ajs.MVVM.ViewModel.ViewComponent.___createNewStateKey.c",
+                          "type": {
+                            "flags": 32768,
+                            "name": "IViewComponent",
+                            "flagsString": [
+                              "Object"
+                            ],
+                            "objectFlags": 2,
+                            "objectFlagsString": [
+                              "Interface"
+                            ],
+                            "fqdn": "Ajs.MVVM.ViewModel.IViewComponent"
+                          },
+                          "initializer": "this"
                         }
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:704:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:712:9"
                         }
                       ]
                     },
@@ -11750,7 +11797,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:780:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:793:13"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -11779,7 +11826,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:790:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:803:17"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -11812,10 +11859,10 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:795:21"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:808:21"
                             },
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:810:21"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:823:21"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -11847,7 +11894,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:807:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:820:17"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -11873,7 +11920,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:778:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:791:9"
                         }
                       ]
                     },
@@ -11952,7 +11999,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:844:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:857:13"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -11975,11 +12022,44 @@
                             "fqdn": "Ajs.MVVM.ViewModel.ViewComponent.State"
                           },
                           "initializer": "<State>stateChangeInfo.state"
+                        },
+                        {
+                          "kind": 225,
+                          "kindString": "VariableDeclaration",
+                          "files": [
+                            {
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:886:21"
+                            }
+                          ],
+                          "nodeFlags": 16385,
+                          "nodeFlagsString": [
+                            "Let",
+                            "AwaitContext"
+                          ],
+                          "atsNodeFlags": 1,
+                          "atsNodeFlagsString": [
+                            "let"
+                          ],
+                          "name": "c",
+                          "fqdn": "Ajs.MVVM.ViewModel.ViewComponent.___updateExistingStateKey.c",
+                          "type": {
+                            "flags": 32768,
+                            "name": "IViewComponent",
+                            "flagsString": [
+                              "Object"
+                            ],
+                            "objectFlags": 2,
+                            "objectFlagsString": [
+                              "Interface"
+                            ],
+                            "fqdn": "Ajs.MVVM.ViewModel.IViewComponent"
+                          },
+                          "initializer": "this"
                         }
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:842:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:855:9"
                         }
                       ]
                     },
@@ -12056,7 +12136,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:885:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:904:13"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -12085,7 +12165,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:889:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:908:13"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -12113,7 +12193,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:892:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:911:17"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -12141,7 +12221,40 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:938:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:932:21"
+                            }
+                          ],
+                          "nodeFlags": 16385,
+                          "nodeFlagsString": [
+                            "Let",
+                            "AwaitContext"
+                          ],
+                          "atsNodeFlags": 1,
+                          "atsNodeFlagsString": [
+                            "let"
+                          ],
+                          "name": "c",
+                          "fqdn": "Ajs.MVVM.ViewModel.ViewComponent.___updateArrayState.c",
+                          "type": {
+                            "flags": 32768,
+                            "name": "IViewComponent",
+                            "flagsString": [
+                              "Object"
+                            ],
+                            "objectFlags": 2,
+                            "objectFlagsString": [
+                              "Interface"
+                            ],
+                            "fqdn": "Ajs.MVVM.ViewModel.IViewComponent"
+                          },
+                          "initializer": "this"
+                        },
+                        {
+                          "kind": 225,
+                          "kindString": "VariableDeclaration",
+                          "files": [
+                            {
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:962:17"
                             }
                           ],
                           "nodeFlags": 16385,
@@ -12172,7 +12285,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:883:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:902:9"
                         }
                       ]
                     },
@@ -12254,7 +12367,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:962:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:986:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12275,7 +12388,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:956:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:980:9"
                         }
                       ]
                     },
@@ -12361,7 +12474,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:980:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1004:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12388,7 +12501,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1000:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1024:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12414,7 +12527,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:976:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1000:9"
                         }
                       ]
                     },
@@ -12521,7 +12634,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1019:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1043:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12544,7 +12657,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1044:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1068:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12571,7 +12684,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1056:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1080:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12592,7 +12705,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1017:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1041:9"
                         }
                       ]
                     },
@@ -12683,7 +12796,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1087:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1111:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12711,7 +12824,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1088:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1112:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12739,7 +12852,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1094:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1118:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12765,7 +12878,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1086:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1110:9"
                         }
                       ]
                     },
@@ -12835,7 +12948,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1110:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1134:9"
                         }
                       ]
                     },
@@ -12884,7 +12997,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1142:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1166:9"
                         }
                       ]
                     },
@@ -12936,7 +13049,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1159:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1183:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12964,7 +13077,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1165:21"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1189:21"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -12987,7 +13100,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1176:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1200:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13015,7 +13128,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1181:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1205:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13041,7 +13154,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1157:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1181:9"
                         }
                       ]
                     },
@@ -13087,7 +13200,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1190:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1214:9"
                         }
                       ]
                     },
@@ -13140,7 +13253,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1212:21"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1236:21"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13163,7 +13276,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1215:25"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1239:25"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13191,7 +13304,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1221:25"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1245:25"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13217,7 +13330,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1205:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1229:9"
                         }
                       ]
                     },
@@ -13270,7 +13383,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1255:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1279:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13296,7 +13409,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1254:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1278:9"
                         }
                       ]
                     },
@@ -13356,7 +13469,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1277:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1301:9"
                         }
                       ]
                     },
@@ -13420,7 +13533,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1284:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1308:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13441,7 +13554,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1282:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1306:9"
                         }
                       ]
                     },
@@ -13505,7 +13618,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1299:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1323:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13533,7 +13646,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1301:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1325:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13554,7 +13667,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1298:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1322:9"
                         }
                       ]
                     },
@@ -13618,7 +13731,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1317:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1341:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13641,7 +13754,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1323:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1347:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13664,7 +13777,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1332:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1356:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13692,7 +13805,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1336:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1360:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13720,7 +13833,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1342:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1366:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13746,7 +13859,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1311:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1335:9"
                         }
                       ]
                     },
@@ -13806,7 +13919,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1355:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1379:9"
                         }
                       ]
                     },
@@ -13909,7 +14022,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1375:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1399:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13936,7 +14049,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1384:13"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1408:13"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -13958,7 +14071,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1364:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1388:9"
                         }
                       ]
                     },
@@ -14016,7 +14129,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1398:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1422:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -14037,7 +14150,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1390:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1414:9"
                         }
                       ]
                     },
@@ -14122,7 +14235,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1409:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1433:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -14150,7 +14263,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1411:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1435:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -14176,7 +14289,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1405:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1429:9"
                         }
                       ]
                     },
@@ -14234,7 +14347,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1431:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1455:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -14262,7 +14375,7 @@
                           "kindString": "VariableDeclaration",
                           "files": [
                             {
-                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1432:17"
+                              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1456:17"
                             }
                           ],
                           "atsNodeFlags": 1,
@@ -14288,7 +14401,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1427:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1451:9"
                         }
                       ]
                     },
@@ -14334,7 +14447,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1449:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1473:9"
                         }
                       ]
                     },
@@ -14394,7 +14507,7 @@
                       ],
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1465:9"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/MVVM/ViewModel/ViewComponent.ts:1489:9"
                         }
                       ]
                     },
@@ -18025,13 +18138,13 @@
               "kindString": "ClassDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:51:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:56:5"
                 }
               ],
               "name": "AjsIndexedDb",
               "fqdn": "Ajs.AjsIndexedDb.AjsIndexedDb",
               "commentShort": "AjsIndexedDB is used for internal purposes of AJs Framework. Its a wrapper for the IndexedDB browsers feature",
-              "commentLong": "<p>\nIt is not supposed to be used by the application as it can be slow for multi-store configurations / multi-data per\nrequest operations.\n</p>\n<p>\nAjs IndexedDB is asynchronous Promise wrapper of IndexedDB implementing only functionalities required by the Ajs Framework.\nCurrently, it provides functionality of creating a store, configuring  it and simple methods to manipulate values in the store.\nThe database is always opened once the initialize method is called. Even if the request to reconfigure the DB is made\nthe database is closed and reopenned again.\n</p>\nWhen create store request is made the database is closed and reopened with a new version for configuration if the store does not exist.\nOnce the store is created the DB is closed and reopenned for standard DB operations. It is not supported creation of multiple\nstores per a single create store request and multiple requests always follows the described process (so can be slow).\n<p>\nCalling the store request (such as read / update value operations) always creates a new transaction for given request. Multiple\nrequests per single transactions are not supported now (so multiple operations can be slow).\n</p>\n#example [Usage of the AjsIndexedDb]{/ajsIndexedDbUsage.ts}\n",
+              "commentLong": "<p>\nIt is not supposed to be used by the application as it can be slow for multi-store configurations / multi-data per\nrequest operations.\n</p>\n<p>\nAjs IndexedDB is asynchronous Promise wrapper of IndexedDB implementing only functionalities required by the Ajs Framework.\nCurrently, it provides functionality of creating a store, configuring  it and simple methods to manipulate values in the store.\nThe database is always opened once the initialize method is called. Even if the request to reconfigure the DB is made\nthe database is closed and reopenned again.\n</p>\nWhen create store request is made the database is closed and reopened with a new version for configuration if the store does not exist.\nOnce the store is created the DB is closed and reopenned for standard DB operations. It is not supported creation of multiple\nstores per a single create store request and multiple requests always follows the described process (so can be slow).\n<p>\nCalling the store request (such as read / update value operations) always creates a new transaction for given request. Multiple\nrequests per single transactions are not supported now (so multiple operations can be slow).\n</p>\n<p>\nUse the following example carefully. If support of pre-2.0 IndexDB implementation is required the store.count will not work. In such case\nuse #see [countItemsUsingCursor]{Ajs.AjsIndexedDb.IAjsIndexedDb.countItemsUsingCursor} instead. It is highly recommended to test\nall required functionalities on all targeted platform before release.\n</p>\n#example [Usage of the AjsIndexedDb]{/ajsIndexedDbUsage.ts}\n",
               "modifierFlags": 1,
               "modifierFlagsString": [
                 "Export"
@@ -18042,7 +18155,7 @@
                   "kindString": "PropertyDeclaration",
                   "name": "__dbName",
                   "fqdn": "Ajs.AjsIndexedDb.AjsIndexedDb.___dbName",
-                  "commentShort": "Stores the name of the IndexedDB used by Ajs (confrigurable through the constructor) ",
+                  "commentShort": "Stores the name of the IndexedDB used by the service (confrigurable through the constructor) ",
                   "type": {
                     "flags": 2,
                     "name": "string",
@@ -18060,7 +18173,7 @@
                   "kindString": "PropertyDeclaration",
                   "name": "__db",
                   "fqdn": "Ajs.AjsIndexedDb.AjsIndexedDb.___db",
-                  "commentShort": "Reference to the database object ",
+                  "commentShort": "Reference to the IDBDatabase database object ",
                   "type": {
                     "flags": 32768,
                     "name": "IDBDatabase",
@@ -18125,7 +18238,7 @@
                   "fqdn": "Ajs.AjsIndexedDb.AjsIndexedDb.__constructor",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:73:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:78:9"
                     }
                   ]
                 },
@@ -18161,7 +18274,7 @@
                   "parameters": [],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:86:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:91:9"
                     }
                   ]
                 },
@@ -18291,7 +18404,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:108:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:113:9"
                     }
                   ]
                 },
@@ -18300,8 +18413,8 @@
                   "kindString": "MethodDeclaration",
                   "name": "__doStoreRequest",
                   "fqdn": "Ajs.AjsIndexedDb.AjsIndexedDb.___doStoreRequest",
-                  "commentShort": "#see [doStoreRequest]{Ajs.AjsIndexedDb.AjsIndexedDb.doStoreRequest} promise executor implementation",
-                  "commentLong": "<p>Called internally from #see [doStoreRequest]{Ajs.AjsIndexedDb.AjsIndexedDb.doStoreRequest} to perform the store request</p>\n",
+                  "commentShort": "Opens a store and performs the data operation implemented in the callback.",
+                  "commentLong": "<p>Called internally from #see [doStoreRequest]{Ajs.AjsIndexedDb.AjsIndexedDb.doStoreRequest} to perform the store request</p>\n<p>See #see [doStoreRequest]{Ajs.AjsIndexedDb.AjsIndexedDb.doStoreRequest} promise executor implementation for details.</p>\n",
                   "type": {
                     "flags": 1024,
                     "name": "void",
@@ -18514,7 +18627,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:156:17"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:162:17"
                         }
                       ],
                       "atsNodeFlags": 1,
@@ -18542,7 +18655,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:163:17"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:169:17"
                         }
                       ],
                       "atsNodeFlags": 1,
@@ -18568,7 +18681,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:129:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:135:9"
                     }
                   ]
                 },
@@ -18617,7 +18730,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:184:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:190:9"
                     }
                   ]
                 },
@@ -18754,7 +18867,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:217:13"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:223:13"
                         }
                       ],
                       "atsNodeFlags": 1,
@@ -18777,7 +18890,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:221:17"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:227:17"
                         }
                       ],
                       "atsNodeFlags": 1,
@@ -18805,7 +18918,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:228:17"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:234:17"
                         }
                       ],
                       "atsNodeFlags": 1,
@@ -18831,7 +18944,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:199:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:205:9"
                     }
                   ]
                 },
@@ -18958,7 +19071,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:263:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:269:9"
                     }
                   ]
                 },
@@ -19177,7 +19290,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:304:13"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:310:13"
                         }
                       ],
                       "nodeFlags": 16385,
@@ -19203,7 +19316,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:287:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:293:9"
                     }
                   ]
                 },
@@ -19318,7 +19431,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:357:13"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:363:13"
                         }
                       ],
                       "atsNodeFlags": 1,
@@ -19344,7 +19457,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:350:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:356:9"
                     }
                   ]
                 },
@@ -19420,7 +19533,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:374:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:380:9"
                     }
                   ]
                 },
@@ -19571,7 +19684,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:406:17"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:412:17"
                         }
                       ],
                       "atsNodeFlags": 1,
@@ -19596,7 +19709,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:394:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:400:9"
                     }
                   ]
                 },
@@ -19694,7 +19807,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:440:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:446:9"
                     }
                   ]
                 },
@@ -19856,7 +19969,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:491:21"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:497:21"
                         }
                       ],
                       "atsNodeFlags": 1,
@@ -19879,7 +19992,7 @@
                       "kindString": "VariableDeclaration",
                       "files": [
                         {
-                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:499:25"
+                          "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:505:25"
                         }
                       ],
                       "atsNodeFlags": 1,
@@ -19904,7 +20017,7 @@
                   ],
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:470:9"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/AjsIndexedDB/AjsIndexedDb.ts:476:9"
                     }
                   ]
                 }
@@ -35611,7 +35724,7 @@
               "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/ResourceManager.ts:24:15"
             },
             {
-              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:24:15"
+              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:24:15"
             },
             {
               "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Constants.ts:24:15"
@@ -35632,7 +35745,7 @@
               "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/SessionStorageProvider.ts:24:15"
             },
             {
-              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:24:15"
+              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:24:15"
             },
             {
               "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/AjsStorage.ts:24:15"
@@ -35665,7 +35778,7 @@
               "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/StorageSession.ts:24:15"
             },
             {
-              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:24:15"
+              "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:24:15"
             }
           ],
           "name": "Resources",
@@ -41205,7 +41318,7 @@
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:28:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:28:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41225,14 +41338,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Ajs.Resources\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:30:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:30:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41252,14 +41365,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Local storage used space: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:31:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:31:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41279,14 +41392,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Local storage managed resources count: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:32:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:32:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41306,14 +41419,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Session storage used space: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:33:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:33:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41333,14 +41446,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Session storage managed resources count: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:34:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:34:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41360,14 +41473,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"IndexedDb storage used space: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:35:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:35:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41387,14 +41500,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"IndexedDb storage managed resources count: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:36:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:36:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41414,14 +41527,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Memory storage used space: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:37:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:37:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41441,14 +41554,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Memory storage managed resources count: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:39:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:39:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41468,14 +41581,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"ResourceManager configuration not provided, fallback to default\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:41:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:41:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41495,14 +41608,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Getting list of previously managed resources\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:42:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:42:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41522,14 +41635,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Number of previously managed resources [local storage]: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:43:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:43:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41549,14 +41662,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Number of previously managed resources [session storage]: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:44:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:44:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41576,14 +41689,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Number of previously managed resources [indexedDb storage]: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:46:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:46:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41603,14 +41716,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Restering managed resource (count): \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:47:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:47:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41630,14 +41743,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Restering managed resource: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:49:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:49:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41657,14 +41770,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Getting cached resource: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:50:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:50:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41684,14 +41797,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Setting cached resource: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:51:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:51:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41711,14 +41824,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Removing the cached resource: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:53:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:53:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41738,14 +41851,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Invalid storage type!\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:55:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:55:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41765,14 +41878,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Getting resource: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:56:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:56:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41792,14 +41905,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Local resource requested but not exists in cache\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:57:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:57:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41819,14 +41932,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Resource not cached, trying to load it from server\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:59:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:59:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41846,14 +41959,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Getting multiple resources: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:60:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:60:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41873,14 +41986,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Loading resource: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:62:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:62:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41900,14 +42013,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Cache policy not set\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:63:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:63:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41927,14 +42040,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Fallback to CACHE_POLICY.NONE\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:65:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:65:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41954,14 +42067,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Processing loaded resource \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:66:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:66:5"
                 }
               ],
               "modifierFlags": 1,
@@ -41981,14 +42094,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Binary file loaded\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:67:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:67:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42008,14 +42121,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Text file loaded\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:68:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:68:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42035,14 +42148,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Loaded resource is requested to be cached. Caching/Updating.\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:69:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:69:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42062,14 +42175,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Not modified, using cached resource\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:70:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:70:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42089,14 +42202,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Resource failed to load and is not cached \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:71:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:71:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42116,14 +42229,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Failed to load resource: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:72:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:72:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42143,14 +42256,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Looking for managed resource \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:74:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:74:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42170,14 +42283,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Evaluating sript resource\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:75:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:75:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42197,14 +42310,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Adding a script resource to the HEAD as a tag\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:77:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:77:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42224,14 +42337,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Requesting [GET] resource \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:78:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:78:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42251,14 +42364,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Initializing the XHR\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:79:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:79:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42278,14 +42391,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"XHR readyState: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:80:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:80:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42305,14 +42418,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\", URL: \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:81:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:81:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42332,14 +42445,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"XHR for '\""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:82:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:82:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42359,14 +42472,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"' ready in \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:83:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:83:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42386,14 +42499,14 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"ms with \""
             },
             {
               "kind": 225,
               "kindString": "VariableDeclaration",
               "files": [
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Release.ts:84:5"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Strings_Log.Debug.ts:84:5"
                 }
               ],
               "modifierFlags": 1,
@@ -42413,7 +42526,7 @@
                   "String"
                 ]
               },
-              "initializer": "\"\""
+              "initializer": "\"Offline mode detected, index.html served\""
             },
             {
               "kind": 225,
@@ -42462,7 +42575,7 @@
                   "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/SessionStorageProvider.ts:24:25"
                 },
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:24:25"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:24:25"
                 }
               ],
               "name": "StorageProviders",
@@ -44075,7 +44188,7 @@
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:28:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:28:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44095,14 +44208,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Ajs.Resources.StorageProviders\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:30:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:30:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44122,14 +44235,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Initializing Local Storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:31:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:31:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44149,14 +44262,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Clearing Local Storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:32:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:32:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44176,14 +44289,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Setting Local Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:33:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:33:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44203,14 +44316,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting Local Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:34:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:34:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44230,14 +44343,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting Local Storage item index: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:35:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:35:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44257,14 +44370,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Removing Local Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:37:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:37:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44284,14 +44397,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Initializing Session Storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:38:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:38:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44311,14 +44424,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Clearing Session Storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:39:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:39:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44338,14 +44451,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Setting Session Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:40:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:40:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44365,14 +44478,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting Session Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:41:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:41:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44392,14 +44505,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting Session Storage item index: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:42:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:42:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44419,14 +44532,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Removing Session Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:44:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:44:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44446,14 +44559,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Initializing IndexedDb Storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:45:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:45:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44473,14 +44586,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Clearing IndexedDb Storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:46:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:46:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44500,14 +44613,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Setting IndexedDb Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:47:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:47:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44527,14 +44640,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting IndexedDb Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:48:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:48:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44554,14 +44667,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting IndexedDb Storage item index: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:49:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:49:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44581,14 +44694,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Removing IndexedDb Storage item index: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:50:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:50:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44608,14 +44721,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Gettig IndexedDb storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:51:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:51:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44635,14 +44748,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Failed to clear indexed DB storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:52:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:52:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44662,14 +44775,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Failed to set indexed DB item\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:53:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:53:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44689,14 +44802,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Failed to get indexed DB item\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:54:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:54:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44716,14 +44829,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Failed to remove indexed DB item\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:55:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:55:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44743,14 +44856,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Failed to count indexed DB items\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:56:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:56:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44770,14 +44883,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Counting indexed DB items\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:58:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:58:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44797,14 +44910,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Initializing Memory Storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:59:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:59:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44824,14 +44937,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Clearing Memory Storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:60:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:60:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44851,14 +44964,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Setting Memory Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:61:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:61:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44878,14 +44991,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting Memory Storage item: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:62:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:62:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44905,14 +45018,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting Memory Storage item index: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Release.ts:63:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/StorageProviders/Strings_Log.Debug.ts:63:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -44932,7 +45045,7 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Removing Memory Storage item index: \""
                 }
               ]
             },
@@ -44968,7 +45081,7 @@
                   "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/StorageSession.ts:24:25"
                 },
                 {
-                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:24:25"
+                  "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:24:25"
                 }
               ],
               "name": "Storages",
@@ -47953,7 +48066,7 @@
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:28:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:28:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -47973,14 +48086,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Ajs.Resources.Storages\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:29:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:29:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48000,14 +48113,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Local storage is not supported!\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:30:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:30:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48027,14 +48140,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Session storage is not supported!\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:31:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:31:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48054,14 +48167,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"IndexedDb storage is not supported!\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:32:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:32:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48081,14 +48194,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Clearing storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:33:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:33:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48108,14 +48221,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Adding cached resource to the storage \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:34:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:34:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48135,14 +48248,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Not enough space in the storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:35:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:35:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48162,14 +48275,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Not enough space for metadata in the storage\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:36:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:36:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48189,14 +48302,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting cached resource from the storage: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:37:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:37:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48216,14 +48329,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Removing cached resource: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:38:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:38:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48243,14 +48356,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Getting resources info\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:39:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:39:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48270,14 +48383,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Cached resource not found in the storage: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:40:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:40:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48297,14 +48410,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Updating cached resource: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:41:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:41:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48324,14 +48437,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Cleaning resource cache. Required space: \""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:42:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:42:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48351,14 +48464,14 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Complete clean\""
                 },
                 {
                   "kind": 225,
                   "kindString": "VariableDeclaration",
                   "files": [
                     {
-                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Release.ts:43:5"
+                      "file": "d:/Documents/Visual Studio 2015/Projects/AjsDev/Ajs/Resources/Storages/Strings_Log.Debug.ts:43:5"
                     }
                   ],
                   "modifierFlags": 1,
@@ -48378,7 +48491,7 @@
                       "String"
                     ]
                   },
-                  "initializer": "\"\""
+                  "initializer": "\"Ajs Idexed DB must be set before initializing IndexedDB provider!\""
                 }
               ]
             },
