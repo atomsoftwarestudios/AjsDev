@@ -96,6 +96,8 @@ namespace Ajs.Resources.StorageProviders {
 
             Ajs.Dbg.log(Ajs.Dbg.LogType.Enter, 0, LOG_AJSRESSTORP, this);
 
+            let oldItem = await this.getItem(key);
+
             await this.__db.doStoreRequest(
                 INDEXDB_STORAGE_PROVIDER_STORAGE_NAME,
                 "readwrite",
@@ -106,7 +108,9 @@ namespace Ajs.Resources.StorageProviders {
                 }
             );
 
-            this.__length = await this.__count();
+            if (oldItem === null) {
+                this.__length++;
+            }
 
         }
 
@@ -149,7 +153,7 @@ namespace Ajs.Resources.StorageProviders {
                 }
             );
 
-            this.__length = await this.__count();
+            this.__length--;
 
         }
 
