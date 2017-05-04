@@ -29,6 +29,8 @@
     opacity: 0.35;
     z-index: 5000;
     display: none;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .ajsDocLayoutDialog[dialogvisible="true"] {
@@ -95,6 +97,8 @@
     animation: ajsDocMenuButtonVisible 350ms forwards;
     -webkit-animation: ajsDocMenuButtonVisible 350ms forwards;
     -moz-animation: ajsDocMenuButtonVisible 350ms forwards;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 @keyframes ajsDocMenuButtonLogo {
@@ -125,6 +129,8 @@
     animation: ajsDocMenuButtonLogo alternate infinite 3s;
     -webkit-animation: ajsDocMenuButtonLogo alternate infinite 3s;
     -moz-animation: ajsDocMenuButtonLogo alternate infinite 3s;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .ajsDocLayoutMenuButtonHamburger {
@@ -139,6 +145,8 @@
     animation: ajsDocMenuButtonHamburger alternate infinite 3s;
     -webkit-animation: ajsDocMenuButtonHamburger alternate infinite 3s;
     -moz-animation: ajsDocMenuButtonHamburger alternate infinite 3s;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .ajsDocLayoutMenuButton[menuvisible="false"] {
