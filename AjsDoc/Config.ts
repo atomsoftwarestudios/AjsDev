@@ -25,6 +25,11 @@ namespace AjsDoc {
     Ajs.configureBoot = (config: Ajs.Boot.IBootConfig): void => {
         config.showErrors = true;
         config.offlineSupport = true;
+        config.offlineFilesCount = 14;
+        config.cacheUpdateText = {
+            "en": "Updating the AjsDoc application files. Please wait",
+            "cz": "Aplikace AjsDoc se aktualizuje. Prosím počkejte..."
+        }
     };
 
     Ajs.configureFramework = (config: Ajs.IAjsConfig): void => {

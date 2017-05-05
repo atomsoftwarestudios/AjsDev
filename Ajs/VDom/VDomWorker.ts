@@ -27,10 +27,7 @@ namespace Ajs.VDom {
 
     "use strict";
 
-
-
-    export class VDomWorker implements WorkerService {
-    }
-
+    /*export class VDomWorker implements WorkerService {
+    }*/
 
 }
