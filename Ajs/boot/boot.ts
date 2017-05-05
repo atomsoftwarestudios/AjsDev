@@ -31,6 +31,11 @@ namespace Ajs.Boot {
     import Logger = Dbg.Modules.Logger;
 
     /**
+     * Simple boot progress bar implementation
+     */
+    let bootProgressBar: IBootProgressBar = null;
+
+    /**
      * Internal flag indicating the boot was configured already and another configuration call should be prevented
      * This is important especially for offline timed fallback
      */
@@ -46,6 +51,11 @@ namespace Ajs.Boot {
      * This is important especially for offline timed fallback
      */
     let bootStarted: boolean = false;
+
+    /**
+     * Holds the navigator language in order to be possible to translate boot messages shown in the progress bar
+     */
+    let bootLanguage: string = (<any>window.navigator).userLanguage || window.navigator.language;
 
     /**
      * Handles unhandled errors until framework event handler is assigned
@@ -71,8 +81,12 @@ namespace Ajs.Boot {
         return {
             showErrors: true,
             offlineSupport: false,
+            offlineFilesCount: 4,
+            cacheUpdateText: {
+                "en": "Updating the application. Please wait..."
+            },
             offlineFallbackTimeout: 250,
-            errorHandler: _bootErrorHandler
+            errorHandler: _bootErrorHandler,
         };
     }
 
@@ -315,8 +329,6 @@ namespace Ajs.Boot {
      */
     async function _boot(): Promise<void> {
 
-        console.log("Boot called", bootStarted, preventBoot);
-
         if (preventBoot || bootStarted) {
             return;
         }
@@ -391,6 +403,68 @@ namespace Ajs.Boot {
     }
 
     /**
+     * Checks if the progress bar is defined in HTML and setups it for use during the boot
+     */
+    function _setupBootProgressBar(): void {
+
+        let pbar: HTMLElement = document.getElementById("ajsProgressBar");
+
+        if (pbar === undefined || pbar === null) {
+            return;
+        }
+
+        bootProgressBar = <any>{
+            ajsProgressBar: pbar,
+            ajsProgressBarPerc: document.getElementById("ajsProgressBarPerc"),
+            ajsProgressBarLabel: document.getElementById("ajsProgressBarLabel"),
+
+            getLabel: (): string => {
+                return (<any>bootProgressBar).ajsProgressBarLabel.innerText;
+            },
+
+            setLabel: (label: string): void => {
+                (<any>bootProgressBar).ajsProgressBarLabel.innerText = label;
+            },
+
+            setProgress: (current: number, total: number): void => {
+                (<any>bootProgressBar).ajsProgressBarPerc.style.width = ((100 / total) * current) + "%";
+            }
+        };
+
+    }
+
+    /**
+     * Translates the text to the language obtained from the system configuration
+     * @param what What to translate ( { "lang": "translation"  } object format )
+     * @param defaultText Text to be returned when translation is not found
+     */
+    function _translate(what: IBootText, defaultText: string): string {
+
+        if (!what) {
+            return defaultText;
+        }
+
+        let dt: string = null;
+
+        for (let key in what) {
+            if (what.hasOwnProperty(key)) {
+                if (bootLanguage.indexOf(key) !== -1) {
+                    return what[key];
+                }
+                if (dt === null) {
+                    dt = what[key];
+                }
+            }
+        }
+
+        if (dt !== null) {
+            return dt;
+        }
+
+        return defaultText;
+    }
+
+    /**
      * Setup listeners related to Application cache feature used to start the booting process
      * <p>
      * During tests it was confirmed the application cache feature, especially notifications
@@ -401,17 +475,69 @@ namespace Ajs.Boot {
      */
     function _setupEventListeners(): void {
 
+        let checking: boolean = false;
+        let downloading: boolean = false;
+        let progressEventCount: number = 0;
+        let oldPbarLabel: string = null;
+
+        _setupBootProgressBar();
+
         // cant use logger as it is possible it is not loaded at this time
 
         if (window.applicationCache) {
 
+            window.applicationCache.addEventListener("checking", () => {
+                checking = true;
+            });
+
+            window.applicationCache.addEventListener("downloading", () => {
+
+                downloading = true;
+
+            });
+
+            window.applicationCache.addEventListener("progress", (e: Event) => {
+
+                if (bootProgressBar === null) {
+
+                    _setupBootProgressBar();
+
+                    if (bootProgressBar === null) {
+                        return;
+                    }
+
+                    oldPbarLabel = bootProgressBar.getLabel();
+
+                    bootProgressBar.setLabel(
+                        _translate(bootConfig.bootConfig.cacheUpdateText, "Updating...")
+                    );
+
+                    bootProgressBar.setProgress(0, 0);
+                }
+
+                if ((<any>e).lengthComputable) {
+                    bootProgressBar.setProgress((<any>e).loaded, (<any>e).total);
+                } else {
+                    bootProgressBar.setProgress(progressEventCount, bootConfig.bootConfig.offlineFilesCount);
+                }
+
+            });
+
             // process cached event (no change in cached files, boot directly)
             window.applicationCache.addEventListener("cached", () => {
+                if (bootProgressBar !== null && oldPbarLabel !== null) {
+                    bootProgressBar.setLabel(oldPbarLabel);
+                    bootProgressBar.setProgress(0, 0);
+                }
                 _boot();
             });
 
             // process noupdate - means that cached files (mainly the cache.manifest) were not updated
             window.applicationCache.addEventListener("noupdate", () => {
+                if (bootProgressBar !== null && oldPbarLabel !== null) {
+                    bootProgressBar.setLabel(oldPbarLabel);
+                    bootProgressBar.setProgress(0, 0);
+                }
                 _boot();
             });
 
@@ -425,6 +551,11 @@ namespace Ajs.Boot {
             // to ensure the latest boot/ajs versions are in use and also latest versions of the application code and application
             // resources will be used
             window.applicationCache.addEventListener("updateready", () => {
+                if (bootProgressBar !== null && oldPbarLabel !== null) {
+                    bootProgressBar.setLabel(oldPbarLabel);
+                    bootProgressBar.setProgress(0, 0);
+
+                }
                 _update();
             });
 
@@ -441,7 +572,9 @@ namespace Ajs.Boot {
 
             if (Ajs && Ajs.bootConfig && Ajs.bootConfig.bootConfig.offlineSupport) {
                 setTimeout(() => {
-                    _boot();
+                    if (!checking && !downloading) {
+                        _boot();
+                    }
                 }, bootConfig.bootConfig.offlineFallbackTimeout);
             } else {
                 _boot();

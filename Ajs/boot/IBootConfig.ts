@@ -45,6 +45,38 @@ namespace Ajs.Boot {
         offlineSupport: boolean;
 
         /**
+         * Defines how many offline files are cached in the application cache
+         * <p>
+         * The number of files stored in the application cache is used to draw the progress
+         * bar when the application cache is being updated by the browser. Standard defines
+         * the browser should provide information about files being downloaded in the progress
+         * event but if it is not provided this number will be used and number of progress
+         * events counted to determine the percentage of the cache update progress.
+         * </p>
+         */
+        offlineFilesCount: number;
+
+        /**
+         * Holds translations for the cache update text to be dispayed when the app cache being updated
+         * <p>
+         * The first translation in the list is taken as a default so if it will not be possible to
+         * find the translation for the current browser setting this translation will be used.
+         * </p>
+         * <p>
+         * the translation should be specified like the language identifier (i.e. "en", "de", "cz")
+         * followed by the translated text such as:
+         * <pre>
+         * cacheUpdateText = {
+         *    "en": "Updating the application, please wait...",
+         *    "de": "Aktualisieren der Anwendung, bitte warten...",
+         *    "cz": "Aktualizuji aplikaci, prosím počkejte..."
+         * }
+         * </pre>
+         * </p>
+         */
+        cacheUpdateText: IBootText;
+
+        /**
          * Specifies the timeout for how long will be Ajs waiting for app cache event after onLoad event
          * When the specified timeout will be reached the boot will start event without a app cache event
          */
