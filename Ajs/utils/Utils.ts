@@ -105,7 +105,11 @@ namespace Ajs.Utils {
      */
     export function getClassName(obj: any): string {
 
-        if (obj && obj.name) {
+        if (obj !== undefined && obj.name !== undefined) {
+            // hack:because some chrome versions returns Empty for anonymous functions
+            if (obj.name === "Empty") {
+                return "";
+            }
             return obj.name;
         }
 
@@ -281,9 +285,11 @@ namespace Ajs.Utils {
     export function extend(d: any, b: any): void {
 
         for (let p in b) {
-            if (b.hasOwnProperty(p)) d[p] = b[p];
+            if (b.hasOwnProperty(p)) {
+                d[p] = b[p];
+            }
         }
-        
+
         function extended(): void {
             this.constructor = d;
         };
