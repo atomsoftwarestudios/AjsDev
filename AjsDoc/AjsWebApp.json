@@ -25,6 +25,7 @@
     "/safari-pinned-tab.svg",
     "/js/ajs.js",
     "/js/ajs.lib.js",
+    "/js/ajs.wworker.js",
     "/js/ajsdocbrowser.js"
   ]
 
