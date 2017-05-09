@@ -592,3 +592,127 @@ namespace Ajs.Boot {
     _setupEventListeners();
 
 }
+/*
+class A {
+
+    constructor() {
+    }
+
+    public msg(): void {
+    }
+
+    private __apriv(): void {
+    }
+
+    protected _aprot(): void {
+    }
+
+    public apub(): void {
+    }
+
+}
+
+class B extends A {
+
+    private __a;
+    protected _b;
+    public c;
+
+    constructor(a: number, b: number, c: number) {
+        super();
+        this.__a = a;
+        this._b = b;
+        this.c = c;
+    }
+
+    private __bpriv(): void {
+    }
+
+    protected _bprot(): void {
+    }
+
+    public bpub(): void {
+    }
+
+    public async msg(): Promise<void> {
+        super.msg();
+        await new Promise<void>((resolve: () => void) => {
+            setTimeout(resolve, 2000);
+        });
+    }
+}
+
+class C extends A {
+
+    constructor() {
+        super();
+    }
+
+    public msg(): void {
+        super.msg();
+    }
+}
+
+class D extends B {
+
+    constructor(a: number, b: number, c: number) {
+        super(a, b, c);
+    }
+
+    public async msg(): Promise<void> {
+        await super.msg();
+    }
+}
+
+window.onload = async function (): Promise<void> {
+
+    let smc: Ajs.DistributedServices.IServiceManagerConfig = {
+        workerUrl: "/js/ajs.wworker.js",
+        workerLibraries: ["/js/ajs.lib.js"]
+    }
+
+    try {
+
+        document.body.innerHTML += "Creating SM...<br />";
+
+        let sm: Ajs.DistributedServices.ServiceManager = new Ajs.DistributedServices.ServiceManager(smc);
+
+        document.body.innerHTML += "Creating TestWorker...<br />";
+
+        await sm.createWebWorker("TestWorker");
+
+        document.body.innerHTML += "Creating Worker...<br />";
+
+        await sm.createWebWorker("Worker");
+
+        document.body.innerHTML += "Deploying D to TestWorker...<br />";
+
+        await sm.deployService("TestWorker", D, 1, 2, 3);
+
+        document.body.innerHTML += "Deploying C to TestWorker...<br />";
+
+        await sm.deployService("TestWorker", C);
+
+        document.body.innerHTML += "Deploying D to Worker...<br />";
+
+        await sm.deployService("Worker", C);
+
+        document.body.innerHTML += "Done<br />";
+
+        document.body.innerHTML += "Performing a test call...<br />";
+        await sm.testCall(3, "msg");
+        document.body.innerHTML += "Done<br />";
+
+    } catch (e) {
+
+        document.body.innerHTML += "Error: " + e + "<br />";
+        console.log(e);
+
+    }
+
+
+    /*
+    await sm.test("TestWorker");
+    */
+
+//};
