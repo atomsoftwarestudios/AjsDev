@@ -195,7 +195,6 @@ namespace Ajs.AjsIndexedDb {
             );
         }
 
-
         /**
          * Counts items in the store by iterating all items in the store
          * @param storeName Name of the store which items has to be counted
