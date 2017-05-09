@@ -1,4 +1,4 @@
-﻿/*! ************************************************************************
+﻿/* *************************************************************************
 The MIT License (MIT)
 Copyright (c)2016-2017 Atom Software Studios. All rights reserved.
 
@@ -21,28 +21,12 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 **************************************************************************** */
 
-/**
- * Initializes libraries in the correct order
- */
-
-namespace ajs.libinit {
+namespace Ajs.RMI {
 
     "use strict";
 
-    export let libinitdone: boolean;
-
-    function initLib(): void {
-        if (!libinitdone) {
-
-            // 01 - es6-promise.js
-            if (!(window as any).Promise) {
-                (window as any).Promise = (window as any).ES6Promise;
-            }
-
-            libinitdone = true;
-        }
+    export interface IRMICallPromises {
+        [messageId: number]: IRMICallPromise;
     }
 
-    window.addEventListener("load", initLib);
 }
-

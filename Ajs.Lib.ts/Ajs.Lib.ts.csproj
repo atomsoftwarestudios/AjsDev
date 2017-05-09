@@ -3,7 +3,7 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <ProjectGuid>{7F34711F-1944-4BA2-B78E-9B2DC58D4FF0}</ProjectGuid>
+    <ProjectGuid>{B671C67C-4B45-490C-A85A-4752EF6F13AE}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <OutputPath>bin</OutputPath>
@@ -39,13 +39,28 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="WebWorker.ts" />
+    <TypeScriptCompile Include="Exception.ts" />
+    <TypeScriptCompile Include="MessageTransport\ITransportMessage.ts" />
+    <TypeScriptCompile Include="MessageTransport\TransportInterface.ts" />
+    <TypeScriptCompile Include="MessageTransport\ITransportInterface.ts" />
+    <TypeScriptCompile Include="MessageTransport\ITransportReciever.ts" />
+    <TypeScriptCompile Include="MessageTransport\ITransportRecievers.ts" />
+    <TypeScriptCompile Include="MessageTransport\Protocol.ts" />
+    <TypeScriptCompile Include="RMI\Enums.ts" />
+    <TypeScriptCompile Include="RMI\Exceptions.ts" />
+    <TypeScriptCompile Include="RMI\IRMIEndpointRegisteredListener.ts" />
+    <TypeScriptCompile Include="RMI\IRMICall.ts" />
+    <TypeScriptCompile Include="RMI\IRMICallPromise.ts" />
+    <TypeScriptCompile Include="RMI\IRMICallPromises.ts" />
+    <TypeScriptCompile Include="RMI\IRMIRouteTable.ts" />
+    <TypeScriptCompile Include="RMI\IRMIMessage.ts" />
+    <TypeScriptCompile Include="RMI\IRMINotify.ts" />
+    <TypeScriptCompile Include="RMI\IRMIReturn.ts" />
+    <TypeScriptCompile Include="RMI\RMIRouter.ts" />
+    <TypeScriptCompile Include="RMI\RMIEndPoint.ts" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ajs.Lib.ts\Ajs.Lib.ts.csproj">
-      <Project>{b671c67c-4b45-490c-a85a-4752ef6f13ae}</Project>
-      <Name>Ajs.Lib.ts</Name>
-    </ProjectReference>
+    <Folder Include="RemoteService\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>

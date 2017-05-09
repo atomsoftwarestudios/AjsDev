@@ -25,7 +25,8 @@
     "noImplicitAny": false
   },
   "include": [
-    "./**/*"
+    "../Ajs.Lib.ts/bin/*.js",
+    "./lib/**/*.js"
   ],
   "exclude": [
     "./bin/**/*"

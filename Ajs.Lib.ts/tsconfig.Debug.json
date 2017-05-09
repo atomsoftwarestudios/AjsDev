@@ -11,7 +11,7 @@
     // source map root
     "mapRoot": "/js",
     // map root
-    "sourceRoot": "/src/Ajs.WebWorker",
+    "sourceRoot": "/src/Ajs.Lib.ts",
     // remove comments
     "removeComments": false
   }

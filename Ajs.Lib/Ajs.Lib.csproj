@@ -24,11 +24,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE" />
+    <Content Include="lib\es6-promise.js" />
     <Content Include="lib\source-map.js" />
+    <Content Include="lib\!extensions.js" />
     <Content Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="lib\es6-promise.js" />
+    <Content Include="lib\ZZZ-libinit.js" />
     <None Include="README.MD" />
     <None Include="tsconfig.common.json">
       <DependentUpon>tsconfig.json</DependentUpon>
@@ -41,7 +43,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="libinit.ts" />
+    <None Include="libinit.tsi" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ajs.Lib.ts\Ajs.Lib.ts.csproj">
+      <Project>{b671c67c-4b45-490c-a85a-4752ef6f13ae}</Project>
+      <Name>Ajs.Lib.ts</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
