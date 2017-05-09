@@ -24,6 +24,7 @@
     "experimentalDecorators": true
   },
   "include": [
+    "../../../Ajs.Lib.ts/bin/ajs.lib.ts.d.ts",
     "../../../Ajs/bin/ajs.d.ts",
     "./**/*"
   ],
