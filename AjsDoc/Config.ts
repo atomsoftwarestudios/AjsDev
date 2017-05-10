@@ -84,7 +84,7 @@ namespace AjsDoc {
             ]
         };
 
-        /*config.resources = {
+        config.resources = {
             indexedDbPermanent: [
                 "/js/ajsdoc.lib.js",
                 "/resources/css/hljsvs.css",
@@ -105,7 +105,7 @@ namespace AjsDoc {
                 "/resources/charts/index-load.svg",
                 "/resources/charts/mvvm.svg"
             ]
-        };*/
+        };
 
         config.templates = {
             indexedDbPermanent: [
