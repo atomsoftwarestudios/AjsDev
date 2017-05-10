@@ -1,3 +1,4 @@
+"use strict";
 /// <binding Clean='clean' ProjectOpened='projectOpen' />
 /*
 The MIT License (MIT)
@@ -43,7 +44,6 @@ Processing includes:
 
 ------------------------------------------------------------------------------------
 */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // ************************ initialization & configuration *************************
 /** Configurable name of the Ajs Web Application project configuration file */
