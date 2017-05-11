@@ -103,9 +103,10 @@ namespace Ajs.AjsWebWorker {
                     });
                     break;
                 case 1:
+                    let startWorkerCode: Function = this.__runCode(data);
                     this.__worker.postMessage("initDone");
-                    this.__runInitCode(data);
                     this.__initialized = true;
+                    startWorkerCode();
                     break;
                 default:
                     throw new Error("Invalid Ajs Web Worker init state");
@@ -128,7 +129,7 @@ namespace Ajs.AjsWebWorker {
                     loadedCount++;
                     if (loadedCount === libraries.length) {
                         for (let lib of libraries) {
-                            this.__runInitCode(loadedLibraries[lib]);
+                            this.__runCode.call(this.__worker, loadedLibraries[lib]);
                         }
                         doneCb();
                     }
@@ -138,8 +139,8 @@ namespace Ajs.AjsWebWorker {
 
         }
 
-        private __runInitCode(code: string): void {
-            eval.call(null, code);
+        private __runCode(code: string): any {
+            return eval.call(this, code);
         }
 
         private __loadLibrary(url: string, doneCb: (url: string, code: string) => void): void {
