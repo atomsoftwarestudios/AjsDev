@@ -325,7 +325,6 @@ namespace Ajs.RMI {
 
         }
 
-
         private __getNextEndpointId(): number {
             return this.__nextEndpointId++;
         }
