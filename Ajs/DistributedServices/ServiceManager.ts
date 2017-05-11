@@ -25,25 +25,9 @@ namespace Ajs.DistributedServices {
 
     "use strict";
 
-    export interface IServiceManagerConfig {
-        workerUrl: string;
-        workerLibraries: string[];
-    }
+    export class ServiceContainerExistsAlreadyException extends Exception { };
 
-    export interface IWorkerInfo {
-        worker: AjsWebWorker.AjsWebWorker;
-        serviceManagerId: number;
-        webWokrerReadyResolver: () => void;
-        webWorkerReadyRejector: (reason: any) => void;
-    }
-
-    export interface IWorkersInfo {
-        [name: string]: IWorkerInfo;
-    }
-
-    export class NamedWorkerExistsAlreadyException extends Exception { };
-
-    export class WebWorkerNotExistException extends Exception { };
+    export class ServiceContainerNotExistException extends Exception { };
 
     export class FailedToLocateWebWorkerException extends Exception { };
 
@@ -51,18 +35,73 @@ namespace Ajs.DistributedServices {
 
     export class ServiceManagerNotRegisteredWithTheWebWorkerException extends Exception { };
 
+    export interface IServiceManagerConfig {
+        workerUrl: string;
+        workerLibraries: string[];
+        mainUiThreadServiceContainerName: string;
+    }
+
+    export interface IAjsWorkerInfo {
+        worker: AjsWebWorker.AjsWebWorker;
+        serviceManagerId: number;
+        webWokrerReadyResolver: () => void;
+        webWorkerReadyRejector: (reason: any) => void;
+    }
+
+    export interface INamedServiceInstance {
+        id: number,
+        serviceLocator: string;
+        serviceClass: Utils.Ctor;
+        serviceInstance: any;
+    }
+
+    export interface INamedServiceInstances {
+        [name: string]: INamedServiceInstance;
+    }
+
+    export interface IServiceContainer {
+        /** array of class constructors deployed in the container */
+        deployedServices: string[];
+        /** list of service id's instanced in the container */
+        instancedServices: number[];
+        /** instances of services or service proxies held by the container */
+        namedServiceInstances: INamedServiceInstances;
+    }
+
+    export interface IServiceContainerInfo extends IServiceContainer {
+        ajsWorkerInfo: IAjsWorkerInfo;
+    }
+
+    export interface IServiceContainers {
+        [name: string]: IServiceContainerInfo;
+    }
+
+    export interface IDeployedServiceMethods {
+        service: Utils.Ctor;
+        methods: string[];
+    }
+
     export class ServiceManager {
+
+        private __config: IServiceManagerConfig;
 
         private __rmiRouter: RMI.RMIRouter;
 
         private __workerUrl: string;
         private __workerLibraries: string[];
 
-        private __webWorkers: IWorkersInfo;
+        // holds service containers
+        private __localServiceContainer: IServiceContainerInfo;
+        private __serviceContainers: IServiceContainers;
+
+        // holds list of constructors of all services deployed in the infrastructure
+        private __deployedServices: Utils.Ctor[];
+        private __deployedServicesMethods: IDeployedServiceMethods[];
+
 
         constructor(config?: IServiceManagerConfig) {
 
-            config = config || this.__defaultConfig();
+            this.__config = config || this.__defaultConfig();
 
             this.__rmiRouter = new RMI.RMIRouter();
             this.__rmiRouter.addEndpointRegisteredListener(
@@ -71,14 +110,32 @@ namespace Ajs.DistributedServices {
                 }
             );
 
-            this.__workerUrl = config.workerUrl;
-            this.__workerLibraries = config.workerLibraries;
-            this.__webWorkers = {};
+            this.__workerUrl = this.__config.workerUrl;
+            this.__workerLibraries = this.__config.workerLibraries;
+
+            this.__localServiceContainer = {
+                ajsWorkerInfo: {
+                    worker: null,
+                    webWokrerReadyResolver: null,
+                    webWorkerReadyRejector: null,
+                    serviceManagerId: 0
+                },
+                deployedServices: [],
+                instancedServices: [],
+                namedServiceInstances: {}
+            }
+
+            this.__serviceContainers = {};
+            this.__serviceContainers[this.__config.mainUiThreadServiceContainerName] = this.__localServiceContainer;
+
+            this.__deployedServices = [];
+            this.__deployedServicesMethods = [];
+
 
         }
 
         /**
-         * Creates a named web worker, initializes it and starts up the RMI communication
+         * Creates a named service container, initializes it, starts worker and starts up the RMI communication
          * <p>
          * When the web worker is created the remote service manager is created. This manager
          * is used to deploy services remotely to the worker environment and to locate services
@@ -97,16 +154,16 @@ namespace Ajs.DistributedServices {
          * <li>Services supposed to run together at one time should be placed in differend workers (i.e. HTTP and VDOM updates)</li>
          * </ul>
          * </p>
-         * @param name Name of the worker to be created
+         * @param name Name of the service container to be created
          */
-        public createWebWorker(name: string): Promise<void> {
+        public createServiceContainer(name: string): Promise<void> {
 
-            let wwreadyPromise: Promise<void> = new Promise<void>(
+            let scReadyPromise: Promise<void> = new Promise<void>(
 
                 (resolve: () => void, reject: (reason: any) => void) => {
 
-                    if (name in this.__webWorkers) {
-                        reject(new NamedWorkerExistsAlreadyException());
+                    if (name in this.__serviceContainers) {
+                        reject(new ServiceContainerExistsAlreadyException());
                     }
 
                     let worker: AjsWebWorker.AjsWebWorker = new AjsWebWorker.AjsWebWorker(
@@ -117,82 +174,169 @@ namespace Ajs.DistributedServices {
 
                     this.__rmiRouter.addInterface(worker);
 
-                    this.__webWorkers[name] = {
-                        worker: worker,
-                        serviceManagerId: -1,
-                        webWokrerReadyResolver: resolve,
-                        webWorkerReadyRejector: reject
+                    this.__serviceContainers[name] = {
+                        ajsWorkerInfo: {
+                            worker: worker,
+                            webWokrerReadyResolver: resolve,
+                            webWorkerReadyRejector: reject,
+                            serviceManagerId: -1
+                        },
+                        deployedServices: [],
+                        instancedServices: [],
+                        namedServiceInstances: {}
                     };
+
                 }
 
             );
 
-            return wwreadyPromise;
+            return scReadyPromise;
+
+        }
+
+        public async instantiateLocalNamedService(serviceName: string, service: Utils.Ctor, ...ctorArgs: any[]): Promise<any> {
+        }
+
+        /**
+         * 
+         * @param service
+         * @param ctorArgs
+         */
+        public async instantiateLocalService(service: Utils.Ctor, ...ctorArgs: any[]): Promise<any> {
+        }
+
+        /**
+         * 
+         * @param serviceName
+         * @param serviceContainerName
+         * @param serviceCodeScope
+         * @param service
+         * @param ctorArgs
+         */
+        public async instantiateNamedService(
+            serviceName: string,
+            serviceContainerName: string,
+            serviceCodeScope: string,
+            service: Utils.Ctor,
+            ...ctorArgs: any[]
+        ): Promise<any> {
+
+            return null;
 
         }
 
         /**
-         * Deploys a service to the specified worker
-         * @param workerName
+         * Instantiates service in the given service container and returns its instance or proxy
+         * @param serviceContainerName
+         * @param serviceCodeScope
          * @param service
+         * @param ctorArgs
          */
-        public async deployService(workerName: string, service: new (...args: any[]) => any, ...ctorArgs: any[]): Promise<void> {
+        public async instantiateService(
+            serviceContainerName: string,
+            service: Utils.Ctor,
+            ...ctorArgs: any[]
+        ): Promise<any> {
 
-            if (!(workerName in this.__webWorkers)) {
-                throw new WebWorkerNotExistException();
+            if (!(serviceContainerName in this.__serviceContainers)) {
+                throw new ServiceContainerNotExistException();
             }
 
-            let wi: IWorkerInfo = this.__webWorkers[workerName];
+            if (serviceContainerName === this.__config.mainUiThreadServiceContainerName) {
+                return this.instantiateLocalService.apply(this, [service].concat(ctorArgs));
+            }
+
+            let si: IServiceContainerInfo = this.__serviceContainers[serviceContainerName];
+            let wi: IAjsWorkerInfo = si.ajsWorkerInfo;
+
+            if (wi.serviceManagerId === -1) {
+                throw new ServiceManagerNotRegisteredWithTheWebWorkerException();
+            }
+
+            let className: string = Ajs.Utils.getClassName(service);
+
+            if (si.deployedServices.indexOf(className) === -1) {
+                await this.__deployServiceCode(serviceContainerName, service);
+            }
+
+            let serviceId = await this.__instantiateService_call.apply(this, [wi.serviceManagerId, className].concat(ctorArgs));
+
+            return this.__createServiceProxy(service, serviceId);
+        }
+
+        /**
+         * 
+         * @param serviceContainerName
+         * @param serviceCodeScope
+         * @param service
+         */
+        private async __deployServiceCode(serviceContainerName: string, service: Utils.Ctor): Promise<void> {
+
+            if (!(serviceContainerName in this.__serviceContainers)) {
+                throw new ServiceContainerNotExistException();
+            }
+
+            let wi: IAjsWorkerInfo = this.__serviceContainers[serviceContainerName].ajsWorkerInfo;
 
             if (wi.serviceManagerId === -1) {
                 throw new ServiceManagerNotRegisteredWithTheWebWorkerException();
             }
 
             try {
-                console.log(await this.__deployService.apply(
-                    this, [
-                        wi.serviceManagerId,
-                        Ajs.Utils.getClassName(service),
-                        this.__serializeClass(service)
-                    ].concat(ctorArgs)
-                ))
+                let className: string = Ajs.Utils.getClassName(service);
+                let code: string = this.__serializeClass(service);
+
+                await this.__deployServiceCode_call(wi.serviceManagerId, className, code);
+
+                this.__serviceContainers[serviceContainerName].deployedServices.push(className);
+
+                if (this.__deployedServices.indexOf(service) === -1) {
+                    this.__extractDeployedServiceMethods(service);
+                    this.__deployedServices.push(service);
+                }
+
+                console.log("Service '" + className + "' deployed to " + serviceContainerName + " (worker service manager id: " + wi.serviceManagerId + ")");
+
             } catch (e) {
                 console.error(e);
             }
 
         }
+
+        /**
+         * 
+         * @param serviceId
+         */
+        private __createServiceProxy(serviceCtor: Utils.Ctor, serviceId: number): any {
+
+            let dsm: IDeployedServiceMethods = this.__getDeployedServiceMethods(serviceCtor);
+            if (dsm === null) {
+                return null;
+            }
+
+            let proxyClass: any = function ServiceProxy(rmiRouter: RMI.RMIRouter, rmiServiceId: number): any {
+                this["__ajsRmiRouter"] = rmiRouter;
+                this["__ajsRmiServiceId"] = rmiServiceId;
+            };
+            proxyClass.prototype = serviceCtor.prototype;
+
+            let proxy: any = new proxyClass(this.__rmiRouter, serviceId);
+
+            for (let m of dsm.methods) {
+                let fndef: string = "return function " + m + "() {";
+                fndef += "var args = []; ";
+                fndef += "for (var i = 0; i < arguments.length; i++) { args.push(arguments[i]); }; ";
+                fndef += "return this.__ajsRmiRouter.makeCall.apply(this.__ajsRmiRouter, [this.__ajsRmiServiceId, \"" + m + "\"].concat(args))";
+                fndef += "}";
+                proxy[m] = (new Function(fndef))();
+            }
+
+            return proxy;
+        }
+
 
         public async testCall(rmiId: number, method: string, ...args: any[]): Promise<any> {
-            return this.__rmiRouter.makeCall.apply(this.__rmiRouter, [rmiId, method].concat(args));
-        }
-
-        public async test(workerName: string): Promise<void> {
-
-            if (!(workerName in this.__webWorkers)) {
-                throw new WebWorkerNotExistException();
-            }
-
-            let wi: IWorkerInfo = this.__webWorkers[workerName];
-
-            try {
-                console.log(await this.__passTest(wi.serviceManagerId));
-            } catch (e) {
-                console.error(e);
-            }
-
-            try {
-                console.log(await this.__failTest(wi.serviceManagerId));
-            } catch (e) {
-                console.error(e);
-            }
-
-            try {
-                console.log(await this.__divTest(wi.serviceManagerId, 10, 2));
-                console.log(await this.__divTest(wi.serviceManagerId, 0, 0));
-            } catch (e) {
-                console.error(e);
-            }
-
+            return
         }
 
         /**
@@ -205,11 +349,13 @@ namespace Ajs.DistributedServices {
          */
         private async __onRMIEndpointCreated(iface: MessageTransport.ITransportInterface, endpointId: number): Promise<void> {
 
-            let wi = this.__getWebWorkerInfoByWorker(<AjsWebWorker.AjsWebWorker>iface);
+            let sc: IServiceContainerInfo = this.__getServiceContainerByWorker(<AjsWebWorker.AjsWebWorker>iface);
 
-            if (wi === null) {
+            if (sc === null || sc.ajsWorkerInfo === null || sc.ajsWorkerInfo.worker === null) {
                 throw new FailedToLocateWebWorkerException();
             }
+
+            let wi: IAjsWorkerInfo = sc.ajsWorkerInfo;
 
             // if service manager is not assigned to given interface the create endpoint is service manager for sure
             if (wi.serviceManagerId === -1) {
@@ -226,18 +372,77 @@ namespace Ajs.DistributedServices {
         }
 
         /**
-         * Searches local wokrer info table for given worker and returns the info record if found.
-         * @param worker AjsWebWorker to be searched in the worker info table
+         * Searches for the wokrer in service containers
+         * @param worker AjsWebWorker to be searched for
          */
-        private __getWebWorkerInfoByWorker(worker: AjsWebWorker.AjsWebWorker): IWorkerInfo {
-            for (let name in this.__webWorkers) {
-                if (this.__webWorkers.hasOwnProperty(name)) {
-                    if (this.__webWorkers[name].worker === worker) {
-                        return this.__webWorkers[name];
+        private __getServiceContainerByWorker(ajsWorker: AjsWebWorker.AjsWebWorker): IServiceContainerInfo {
+            for (let name in this.__serviceContainers) {
+                if (this.__serviceContainers.hasOwnProperty(name)) {
+
+                    if (this.__serviceContainers[name].ajsWorkerInfo &&
+                        this.__serviceContainers[name].ajsWorkerInfo.worker === ajsWorker) {
+                        return this.__serviceContainers[name];
                     }
+
                 }
             }
             return null;
+        }
+
+        /**
+         * Returns information about methods of the deployed service
+         * @param service
+         */
+        private __getDeployedServiceMethods(service: Utils.Ctor): IDeployedServiceMethods {
+            if (this.__deployedServices.indexOf(service) === -1) {
+                return null;
+            }
+
+            for (let dsm of this.__deployedServicesMethods) {
+                if (dsm.service === service) {
+                    return dsm;
+                }
+            }
+
+            return null;
+        }
+
+        /**
+         * Extracts methods of the class passed to the method
+         * @param service Service which's methods has to be extracted
+         */
+        private __extractDeployedServiceMethods(service: Utils.Ctor): void {
+
+            if (this.__deployedServices.indexOf(service) !== -1) {
+                return;
+            }
+
+            let methods: string[] = [];
+
+            let current = service;
+            while (current && current.prototype) {
+
+                let props: string[] = Object.getOwnPropertyNames(current.prototype);
+
+                for (let prop of props) {
+                    if (prop === "constructor") {
+                        continue;
+                    }
+
+                    if (typeof (current.prototype[prop]) === "function" && methods.indexOf(prop) === -1) {
+                        methods.push(prop);
+                        continue;
+                    }
+                }
+
+                current = Object.getPrototypeOf(current);
+            }
+
+            this.__deployedServicesMethods.push({
+                service: service,
+                methods: methods,
+            });
+
         }
 
         /**
@@ -318,56 +523,90 @@ namespace Ajs.DistributedServices {
 
             return {
                 workerUrl: "/js/ajs.wworker.js",
-                workerLibraries: ["/js/ajs.lib.js"]
+                workerLibraries: ["/js/ajs.lib.js"],
+                mainUiThreadServiceContainerName: "main-ui-thread"
             }
 
         }
 
-        /**********************************************************************************************************
+        /* ******************************************************************************************************
                                    following code is  related to remote service manager
         /******************************************************************************************************** */
 
-        private async __deployService(serviceManager: number, serviceName: string, serviceCode: string, ...ctorArgs: any[]): Promise<number> {
-            return this.__rmiRouter.makeCall.apply(this.__rmiRouter, [serviceManager, "deployService", serviceName, serviceCode].concat(ctorArgs));
+        private async __deployServiceCode_call(
+            remoteServiceManager: number,
+            serviceName: string,
+            serviceCode: string): Promise<void> {
+
+            return this.__rmiRouter.makeCall(remoteServiceManager, "deployServiceCode", serviceName, serviceCode);
+
         }
 
-        private async __failTest(serviceManager: number): Promise<any> {
-            return this.__rmiRouter.makeCall(serviceManager, "failTest", 1, 2, 3, 4, 5);
-        }
+        private async __instantiateService_call(
+            remoteServiceManager: number,
+            serviceName: string,
+            ctorArgs: any[]
+        ): Promise<number> {
 
-        private async __passTest(serviceManager: number): Promise<any> {
-            return this.__rmiRouter.makeCall(serviceManager, "passTest", 1, 2, 3, 4, 5);
-        }
+            return this.__rmiRouter.makeCall.apply(
+                this.__rmiRouter,
+                [remoteServiceManager, "instantiateService", serviceName].concat(ctorArgs)
+            );
 
-        private async __divTest(serviceManager: number, a: number, b: number): Promise<number> {
-            return this.__rmiRouter.makeCall(serviceManager, "divTest", a, b);
         }
 
         /**
          * Code to be run once the worker is created. Basically, it contains worker related service manager/locator
          */
-        private __workerCode(): void {
+        private __workerCode(): Function {
 
-            let servicesSourceCodeScope: any = {};
+            let servicesSourceCodeScopes: any = {};
+
+            class FailedToDelpoyTheServiceException extends Exception { };
+            class ServiceNameDoesNotMatchCodeException extends Exception { };
 
             class ServiceManager {
 
-                public async deployService(serviceName: string, serviceCode: string, ...ctorArgs: any[]): Promise<number> {
+                private __selfRMIEndpointId: number;
+
+                public constructor() {
+                    this.__selfRMIEndpointId = -1;
+                }
+
+                public set selfRMIEndpointId(value: number) {
+                    if (this.__selfRMIEndpointId === -1) {
+                        this.__selfRMIEndpointId = value;
+                    }
+                }
+
+                public async deployServiceCode(serviceName: string, serviceCode: string): Promise<void> {
 
                     function deploy(): void {
-                        eval(serviceCode);
+                        try {
+                            eval(serviceCode);
+                        } catch(e) {
+                            throw new FailedToDelpoyTheServiceException(e);
+                        }
                     }
 
+                    deploy.apply(servicesSourceCodeScopes);
+
+                    console.log(servicesSourceCodeScopes);
+
+                    if (!(serviceName in servicesSourceCodeScopes)) {
+                        throw new ServiceNameDoesNotMatchCodeException();
+                    }
+
+                }
+
+                public async instantiateService(serviceName: string, ...ctorArgs: any[]): Promise<number> {
+
                     function instantiate(): any {
-                        let ctor: new (...args: any[]) => any = servicesSourceCodeScope[serviceName];
+                        let ctor: new (...args: any[]) => any = servicesSourceCodeScopes[serviceName];
                         return new (ctor.bind.apply(ctor, [null].concat(ctorArgs)));
                     }
 
-                    deploy.apply(servicesSourceCodeScope);
-
-                    if (!(serviceName in servicesSourceCodeScope)) {
-                        throw new Error("Invalid service name or code!");
-                    }
+                    console.log(serviceName);
 
                     let instance: any = instantiate();
 
@@ -377,26 +616,16 @@ namespace Ajs.DistributedServices {
                     return rmiep.endPointId;
                 }
 
-                public divTest(a: number, b: number): number {
-                    return a / b;
-                }
-
-                public failTest(...args: any[]): any {
-                    console.log(args);
-                    console.log("throwing testing exception");
-                    //throw new Error("Fail test exception");
-                    return window.document;
-                }
-
-                public passTest(...args: any[]): string {
-                    console.log(args);
-                    return "This is pass test return value";
-                }
-
             }
 
-            let serviceManager = new ServiceManager();
-            let rmiep: Ajs.RMI.RMIEndpoint = new Ajs.RMI.RMIEndpoint(Ajs.AjsWebWorker.ajsWorkerInstance, serviceManager);
+            async function createServiceManager(): Promise<void> {
+                let serviceManager = new ServiceManager();
+                let rmiep: Ajs.RMI.RMIEndpoint = new Ajs.RMI.RMIEndpoint(Ajs.AjsWebWorker.ajsWorkerInstance, serviceManager);
+                await rmiep.waitRegistered();
+                serviceManager.selfRMIEndpointId = rmiep.endPointId;
+            }
+
+            return createServiceManager;
 
         }
 
