@@ -25,6 +25,9 @@ namespace Ajs.Utils {
 
     "use strict";
 
+    export type Ctor = new (...args: any[]) => any;
+    export type CtorTyped<T> = new (...args: any[]) => T;
+
     /**
      * Helper to determine if variable is defined
      * @param object Object to be checked
