@@ -110,9 +110,7 @@ namespace Ajs.AjsWebWorker {
         }
 
         private __getFunctionCode(fn: Function): string {
-            let code: string = fn.toString();
-            code = code.substr(code.indexOf("{") + 1);
-            code = code.substr(0, code.lastIndexOf("}") - 1);
+            let code: string = "(" + fn.toString() + ")()";
             return code;
         }
 
