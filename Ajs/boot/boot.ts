@@ -599,6 +599,7 @@ class A {
     }
 
     public msg(): void {
+        console.log("A");
     }
 
     private __apriv(): void {
@@ -637,7 +638,8 @@ class B extends A {
     public async msg(): Promise<void> {
         super.msg();
         await new Promise<void>((resolve: () => void) => {
-            setTimeout(resolve, 2000);
+            console.log("B");
+            setTimeout(resolve, 0);
         });
     }
 }
@@ -650,10 +652,15 @@ class C extends A {
 
     public msg(): void {
         super.msg();
+        console.log("C");
     }
 }
 
 class D extends B {
+
+    private __number;
+    public get num(): number { return this.__number; };
+    public set num(value: number) { this.__number = value; };
 
     constructor(a: number, b: number, c: number) {
         super(a, b, c);
@@ -661,14 +668,46 @@ class D extends B {
 
     public async msg(): Promise<void> {
         await super.msg();
+        console.log("D");
     }
+}
+
+class Num {
+    public async add(a: number, b: number): Promise<number> {
+        return a + b;
+    }
+
+    public async sub(a: number, b: number): Promise<number> {
+        return a - b;
+    }
+
+    public async mul(a: number, b: number): Promise<number> {
+        return a * b;
+    }
+
+    public async div(a: number, b: number): Promise<number> {
+        return a / b;
+    }
+}
+
+class Complex {
+
+    constructor() {
+    }
+
+    public async date(): Promise<Date> {
+        return new Date();
+    }
+
+
 }
 
 window.onload = async function (): Promise<void> {
 
     let smc: Ajs.DistributedServices.IServiceManagerConfig = {
         workerUrl: "/js/ajs.wworker.js",
-        workerLibraries: ["/js/ajs.lib.js"]
+        workerLibraries: ["/js/ajs.lib.js"],
+        mainUiThreadServiceContainerName: "main-ui-thread"
     }
 
     try {
@@ -679,34 +718,60 @@ window.onload = async function (): Promise<void> {
 
         document.body.innerHTML += "Creating TestWorker...<br />";
 
-        await sm.createWebWorker("TestWorker");
+        await sm.createServiceContainer("TestWorker");
 
         document.body.innerHTML += "Creating Worker...<br />";
 
-        await sm.createWebWorker("Worker");
+        await sm.createServiceContainer("Worker");
 
         document.body.innerHTML += "Deploying D to TestWorker...<br />";
 
-        await sm.deployService("TestWorker", D, 1, 2, 3);
+        let d1Inst: D = await sm.instantiateService("TestWorker", D, 1, 2, 3);
 
         document.body.innerHTML += "Deploying C to TestWorker...<br />";
 
-        await sm.deployService("TestWorker", C);
+        let c1Inst: C = await sm.instantiateService("TestWorker", C);
 
         document.body.innerHTML += "Deploying D to Worker...<br />";
 
-        await sm.deployService("Worker", C);
+        let c2Inst: C = await sm.instantiateService("Worker", C);
+
+        document.body.innerHTML += "Deploying Num to Worker...<br />";
+
+        let num: Num = await sm.instantiateService("Worker", Num);
+
+        document.body.innerHTML += "Deploying Complex to Worker...<br />";
+
+        let complex: Complex = await sm.instantiateService("TestWorker", Complex);
 
         document.body.innerHTML += "Done<br />";
 
-        document.body.innerHTML += "Performing a test call...<br />";
-        await sm.testCall(3, "msg");
+        console.log(d1Inst);
+
+        document.body.innerHTML += "Performing test calls...<br />";
+        await d1Inst.msg();
+        await c1Inst.msg();
+        await c2Inst.msg();
+
+        let results: number[] = await Promise.all([
+            num.add(1, 1),
+            num.sub(16, 5),
+            num.mul(100, 100),
+            num.div(16384, 8)
+        ]);
+
+        console.log(results);
+
+        let date: Date = await complex.date();
+        console.log(typeof (date));
+        console.log(date);
+
         document.body.innerHTML += "Done<br />";
 
     } catch (e) {
 
         document.body.innerHTML += "Error: " + e + "<br />";
-        console.log(e);
+        console.error(e);
 
     }
 
@@ -715,4 +780,4 @@ window.onload = async function (): Promise<void> {
     await sm.test("TestWorker");
     */
 
-//};
+//}

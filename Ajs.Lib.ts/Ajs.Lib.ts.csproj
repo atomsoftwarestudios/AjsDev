@@ -52,7 +52,7 @@
     <TypeScriptCompile Include="RMI\IRMICall.ts" />
     <TypeScriptCompile Include="RMI\IRMICallPromise.ts" />
     <TypeScriptCompile Include="RMI\IRMICallPromises.ts" />
-    <TypeScriptCompile Include="RMI\IRMIRouteTable.ts" />
+    <TypeScriptCompile Include="RMI\IRMIRoutingTable.ts" />
     <TypeScriptCompile Include="RMI\IRMIMessage.ts" />
     <TypeScriptCompile Include="RMI\IRMINotify.ts" />
     <TypeScriptCompile Include="RMI\IRMIReturn.ts" />
